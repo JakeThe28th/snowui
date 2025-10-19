@@ -1,4 +1,7 @@
-package snowui.utility;
+package frost3d.utility;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.joml.Vector4f;
 
@@ -24,4 +27,14 @@ public class Utility {
 				);
 	}
 
+	public static double lerp(double x, double y, double t) {
+		return (1 - t) * x + t * y;
+	}
+	
+	public static String getStackTrace(Throwable e) {
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
+		return sw.toString();
+	}
+	
 }

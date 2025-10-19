@@ -1,4 +1,4 @@
-package snowui.utility;
+package frost3d.utility;
 
 public record Rectangle(int left, int top, int right, int bottom) {
 	
