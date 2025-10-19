@@ -4,6 +4,8 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import frost3d.interfaces.F3DWindow;
+
 import java.nio.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -12,13 +14,16 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class SimpleWindow impents F3DWindow {
+public class SimpleWindow implements F3DWindow {
 	
 	// The window handle
 	private long window;
 	public int width;
 	public int height;
 	
+	public int width() { return width; }
+	public int height() { return height; }
+
 	public boolean should_close() {
 		return glfwWindowShouldClose(window);
 	}
@@ -36,6 +41,8 @@ public class SimpleWindow impents F3DWindow {
 		width = w;
 		height = h;
 		
+		onWindowResize();
+		
 		// Configure GLFW
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
@@ -50,6 +57,13 @@ public class SimpleWindow impents F3DWindow {
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+		});
+		
+		glfwSetWindowSizeCallback(window, (_, width, height) -> {
+			this.width = width;
+			this.height = height;
+			viewport();
+			onWindowResize();
 		});
 
 		// Get the thread stack and push a new frame
@@ -103,5 +117,18 @@ public class SimpleWindow impents F3DWindow {
 		// TODO Auto-generated method stub <-- actually the default is what i wanted :)
 		return 0;
 	}
+	
+	public void viewport() {
+		glViewport(0,0, width, height);
+	}
+	
+	@Override public long identifier() { return window; }
+	@Override public void bind() {
+		// TODO Auto-generated method stub
+	}
+	
+	// ... //
+
+	public void onWindowResize() { }
 
 }

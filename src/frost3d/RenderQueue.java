@@ -118,14 +118,16 @@ public class RenderQueue {
 			
 			if (last_scissor != state.scissor) {
 				if (state.scissor != null) {
-					GL40.glScissor(
-							state.scissor().left(), 
-							DEMO_GUI0.current_window.height - state.scissor().bottom(), 
-							(state.scissor().right()-state.scissor().left()), 
-							(state.scissor().bottom()-state.scissor().top()));
+//					GL40.glScissor(
+//							state.scissor().left(), 
+//							DEMO_GUI0.current_window.height - state.scissor().bottom(), 
+//							(state.scissor().right()-state.scissor().left()), 
+//							(state.scissor().bottom()-state.scissor().top()));
+					GL40.glScissor(state.scissor().left(), 	state.scissor().top(), 
+								   state.scissor().width(), state.scissor().height());
 					GL40.glEnable(GL40.GL_SCISSOR_TEST);
 				} else {
-					GL40.glScissor(0, 0, DEMO_GUI0.current_window.width, DEMO_GUI0.current_window.height);
+					//GL40.glScissor(0, 0, DEMO_GUI0.current_window.width, DEMO_GUI0.current_window.height);
 					GL40.glDisable(GL40.GL_SCISSOR_TEST);
 				}
 				last_scissor = state.scissor;

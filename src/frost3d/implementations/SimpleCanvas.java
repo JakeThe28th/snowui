@@ -24,7 +24,7 @@ public class SimpleCanvas implements F3DCanvas {
 	
 		// -- ++ (  effectively final state,  ) ++ -- //
 
-		public RenderQueue renderqueue = new RenderQueue();
+		private RenderQueue renderqueue = new RenderQueue();
 		
 		// -- ++ ( infrequently changed state ) ++ -- //
 		
@@ -71,6 +71,11 @@ public class SimpleCanvas implements F3DCanvas {
 		public void color(Vector4f color) {
 			// TODO
 			this.color = color;
+		}
+		
+
+		public void world_transform(Matrix4f mat) {
+			this.renderqueue.world_transform(mat);
 		}
 		
 		// -- **  ** -- //

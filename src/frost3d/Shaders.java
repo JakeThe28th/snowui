@@ -23,7 +23,7 @@ public class Shaders {
 	// TODO ^^^ //
 	
 
-	static int current_context = 0; // TODO -- Handle windows switching contexts...
+	static long current_context = 0; // TODO -- Handle windows switching contexts...
 	static int current_shader = -1;
 	
 	static HashMap<String, Integer> shaders = new HashMap<>();
