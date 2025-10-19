@@ -6,6 +6,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 import org.lwjgl.opengl.*;
 import frost3d.Shaders;
+import frost3d.conveniences.Icons;
 import frost3d.implementations.SimpleWindow;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleMesh;
@@ -52,7 +53,9 @@ public class DEMO_GUI0 {
 			canvas.height(window.height);
 			
 			// Set the text renderer ...
-			canvas.textrenderer(new SimpleTextRenderer());
+			SimpleTextRenderer text = new SimpleTextRenderer();
+			text.anti_aliasing_enabled(true);
+			canvas.textrenderer(text);
 			
 			int xx = 0;
 			
@@ -72,6 +75,9 @@ public class DEMO_GUI0 {
 				
 				canvas.color(new Vector4f(1,0,1,1));
 				canvas.rect(50, 25, 60, 60, 3);
+				
+				canvas.color(new Vector4f(1,1,0.5f,1));
+				Icons.icon(canvas, xx, 60, 4, "home", 30);
 				
 				canvas.draw_frame();
 

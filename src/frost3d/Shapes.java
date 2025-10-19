@@ -10,7 +10,7 @@ import frost3d.utility.Utility;
 
 public class Shapes {
 	
-	static SimpleTexture white = newWhiteTexture();
+	public static SimpleTexture white = newWhiteTexture();
 
 	private static SimpleTexture newWhiteTexture() {
 		//BufferedImage white = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);

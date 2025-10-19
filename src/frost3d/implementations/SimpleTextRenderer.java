@@ -27,6 +27,9 @@ public class SimpleTextRenderer implements F3DTextRenderer {
 	 * have to be eaten. */
 	
 	public boolean anti_aliasing_enabled = false;
+	public void anti_aliasing_enabled(boolean b) {
+		anti_aliasing_enabled = b;
+	}
 	
 	int font_size = 18;
 	//Font font = new Font("SansSerif", Font.PLAIN, font_size);
