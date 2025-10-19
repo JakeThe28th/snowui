@@ -1,14 +1,11 @@
 package frost3d.implementations;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
-
 import java.util.Stack;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
+import frost3d.Framebuffer;
 import frost3d.GLState;
 import frost3d.RenderQueue;
 import frost3d.Shapes;
@@ -29,7 +26,7 @@ public class SimpleCanvas implements F3DCanvas {
 		
 		F3DTextRenderer textrenderer;
 		
-		int framebuffer 	= -1;
+		Framebuffer framebuffer = null;
 		int width 			= -1;
 		int height 			= -1;
 
@@ -37,9 +34,14 @@ public class SimpleCanvas implements F3DCanvas {
 		
 		public void textrenderer(F3DTextRenderer v) { this.textrenderer = v; }
 
-		public void framebuffer	(int v) { this.framebuffer 	= v; }
-		public void width		(int v) { this.width 		= v; }
-		public void height		(int v) { this.height 		= v; }
+		public void framebuffer	(Framebuffer v) { this.framebuffer 	= v; }
+		public Framebuffer framebuffer	() { return this.framebuffer; }
+
+		public void size		(int w, int h) { 
+			this.width = w;
+			this.height = h;
+			world_transform(new Matrix4f().ortho(0, width, height, 0, -1024f, 1024f));
+			}
 		
 		// -- ++ (  frequently changed state  ) ++ -- //
 
@@ -77,6 +79,8 @@ public class SimpleCanvas implements F3DCanvas {
 		public void draw_frame() {
 			
 			// clear the framebuffer
+			if (framebuffer != null) framebuffer.bind();
+			GLState.clearColor(1, 0, 1, 1);
 			GLState.clear();
 
 			renderqueue.render();

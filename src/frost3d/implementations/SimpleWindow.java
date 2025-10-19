@@ -149,6 +149,8 @@ public class SimpleWindow implements F3DWindow {
 	@Override public long identifier() { return window; }
 	@Override public void bind() {
 		// TODO Auto-generated method stub
+		GL40.glBindFramebuffer(GL40.GL_FRAMEBUFFER, 0);
+		viewport();
 	}
 	
 	// ... //

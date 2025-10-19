@@ -3,15 +3,15 @@ package frost3d.interfaces;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
+import frost3d.Framebuffer;
 import frost3d.utility.Rectangle;
 
 public interface F3DCanvas {
 	
 	public void textrenderer(F3DTextRenderer v);
 
-	public void framebuffer	(int v);
-	public void width		(int v);
-	public void height		(int v);
+	public void framebuffer	(Framebuffer f);
+	public void size		(int w, int h);
 	
 	// -- ++ STATE ++ -- //
 	

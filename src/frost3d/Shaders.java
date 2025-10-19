@@ -22,7 +22,7 @@ public class Shaders {
 	
 	// TODO ^^^ //
 	
-
+//todo registry stuff decoupling
 	static long current_context = 0; // TODO -- Handle windows switching contexts...
 	static int current_shader = -1;
 	
@@ -184,6 +184,35 @@ public class Shaders {
 				""");
 		
 	 	bind("core");
+	 	
+	 	register("screen", """
+		 			#version 330 core
+					layout (location = 0) in vec3 aPos;
+					layout (location = 1) in vec2 aTexCoord;
+			
+					out vec2 TexCoord;
+			
+					void main()
+					{
+						gl_Position = vec4(aPos, 1.0);
+						TexCoord = aTexCoord;
+					}
+	 			""", """
+	 				#version 330 core
+					out vec4 FragColor;
+					  
+					in vec2 TexCoord;
+			
+					uniform sampler2D fragment_texture;
+			
+					void main()
+					{
+						vec4 texColor = texture(fragment_texture, TexCoord);
+						if(texColor.a < 0.1)
+							discard;
+						FragColor = texColor;
+					}
+	 			""");
 			
 	}
 	
