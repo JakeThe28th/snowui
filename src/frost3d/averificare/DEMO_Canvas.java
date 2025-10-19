@@ -1,17 +1,10 @@
 package frost3d.averificare;
 
-import static org.lwjgl.glfw.GLFW.glfwInit;
-import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
-import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFWErrorCallback;
-
+import frost3d.GLState;
 import frost3d.Shaders;
 import frost3d.conveniences.Icons;
 import frost3d.interfaces.*;
@@ -25,11 +18,9 @@ public class DEMO_Canvas {
 	}
 	
 	private static void canvas_test() {
-
-		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
-		GLFWErrorCallback.createPrint(System.err).set();
-		if ( !glfwInit() ) throw new IllegalStateException("Unable to initialize GLFW");
-						
+	
+		GLState.initializeGLFW();
+		
 		SimpleCanvas canvas = new SimpleCanvas();
 		
 			// Create window ...
@@ -90,8 +81,7 @@ public class DEMO_Canvas {
 		
 		window.end();
 
-		glfwTerminate();
-		glfwSetErrorCallback(null).free();
+		GLState.endGLFW();
 		
 	}
 

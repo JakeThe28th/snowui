@@ -9,6 +9,7 @@ import java.util.Stack;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
+import frost3d.GLState;
 import frost3d.RenderQueue;
 import frost3d.Shapes;
 import frost3d.interfaces.F3DCanvas;
@@ -76,7 +77,7 @@ public class SimpleCanvas implements F3DCanvas {
 		public void draw_frame() {
 			
 			// clear the framebuffer
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			GLState.clear();
 
 			renderqueue.render();
 						

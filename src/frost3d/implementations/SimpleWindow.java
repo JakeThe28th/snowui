@@ -16,12 +16,16 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class SimpleWindow implements F3DWindow {
 	
-	Input input;
+	Input 				input;
 	public Input input() { return input; }
 	
-	private long window;
-	public int width;
-	public int height;
+	private long 		window;
+	public int 			width;
+	public int 			height;
+	
+	private boolean 	should_close = false;
+	public boolean 		decorated 	 = true;
+
 	
 	public int width() { return width; }
 	public int height() { return height; }
@@ -32,13 +36,18 @@ public class SimpleWindow implements F3DWindow {
 	
 	public void tick() {
 		glfwSwapBuffers(window); // swap the color buffers
+		
+		input.clearKeys();
 
-		// Poll for window events. The key callback above will only be
-		// invoked during this call.
+		// Poll for window events.
 		glfwPollEvents();
 	}
 
 	public SimpleWindow(int w, int h, String title) {
+		this(w, h, title, true, 0);
+	}
+	
+	public SimpleWindow(int w, int h, String title, boolean decorated, int anti_aliasing_samples) {
 		
 		width = w;
 		height = h;
@@ -49,6 +58,15 @@ public class SimpleWindow implements F3DWindow {
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+		
+		if (!decorated) {
+			glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+			this.decorated = false;
+		}
+		
+		if (anti_aliasing_samples > 1) {
+			glfwWindowHint(GLFW_SAMPLES, anti_aliasing_samples);
+		}
 
 		// Create the window
 		window = glfwCreateWindow(w, h, title, NULL, NULL);
@@ -107,6 +125,10 @@ public class SimpleWindow implements F3DWindow {
 		glClearColor(0.20f, 0.0f, 0.0f, 0.0f);
 
 		input = new Input(identifier());
+		
+		if (anti_aliasing_samples > 1) {
+			GL13.glEnable(GL13.GL_MULTISAMPLE);
+		}
 	}
 	
 	public void end() {
@@ -132,5 +154,27 @@ public class SimpleWindow implements F3DWindow {
 	// ... //
 
 	public void onWindowResize() { }
+	
+
+	protected boolean shouldClose() {
+		return (should_close || GLFW.glfwWindowShouldClose(window));
+	}
+
+	public void title(String title) {
+		GLFW.glfwSetWindowTitle(window, title);
+	}
+
+	public void setVsync(boolean value) {
+		glfwSwapInterval(value ? 1 : 0);		
+	}
+	
+	public void setDecorated(boolean b) {
+		decorated = b;
+		if (b) {
+			GLFW.glfwSetWindowAttrib(identifier(), GLFW_DECORATED, GLFW_TRUE);
+		} else {
+			GLFW.glfwSetWindowAttrib(identifier(), GLFW_DECORATED, GLFW_FALSE);
+		}
+	}
 
 }
