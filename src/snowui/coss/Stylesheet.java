@@ -7,7 +7,7 @@ import org.joml.Vector4f;
 
 import disaethia.io.nbt.NBTCompound;
 import disaethia.io.nbt.NBTList;
-import snowui.utility.Utility;
+import frost3d.utility.Utility;
 import snowui.coss.StyleEnums.*;
 import snowui.coss.datatypes.StyleProperty;
 import snowui.coss.datatypes.StyleType;

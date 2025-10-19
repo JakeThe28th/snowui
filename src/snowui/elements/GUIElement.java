@@ -1,15 +1,17 @@
 package snowui.elements;
 
+import snowui.coss.datatypes.StylePropertyCollection;
+
 public abstract class GUIElement {
 	
-	also sub elements and interaction  
-	
-	also drawing style
-	
+//	also sub elements and interaction  
+//	
+//	also drawing style
+//	
 	// ==-- Style --== //
-	ElementStyle style
+	StylePropertyCollection style;
 	
 	// ==-- State --== //
-	ElementState state
+	ElementState state;
 	
 }
