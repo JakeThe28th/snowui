@@ -73,7 +73,8 @@ public class DEMO_Canvas {
 		while (!window.should_close()) {
 			
 			//xx = window.input().mouseX();
-			xx = canvas.internalpoint(new Vector2i( window.input().mouseX(),0), window.width, window.height).x;
+			canvas.outrectangle(window.width, window.height);
+			xx = canvas.internalpoint(new Vector2i(window.input().mouseX(),0)).x;
 			Shaders.bind("gui");
 			
 			// Rendering Tests //
@@ -101,11 +102,11 @@ public class DEMO_Canvas {
 				GLState.clearColor(1, 0, 0, 1);
 				GLState.clear();
 				Shaders.bind("screen");				
-				canvas.mesh(window.width, window.height).bind();
+				canvas.mesh().bind();
 				GL40.glActiveTexture(GL40.GL_TEXTURE0);									// Activate texture0
 				GL40.glBindTexture(GL40.GL_TEXTURE_2D,  canvas.framebuffer().color_texture.gltexture());	// Bind the texture t to texture0
 				
-				GL40.glDrawElements(GL_TRIANGLES, canvas.mesh(window.width, window.height).index_count(), GL_UNSIGNED_INT, 0);
+				GL40.glDrawElements(GL_TRIANGLES, canvas.mesh().index_count(), GL_UNSIGNED_INT, 0);
 
 
 			window.tick();
