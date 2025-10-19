@@ -9,16 +9,13 @@ import java.util.Stack;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
-import averificare.DEMO_GUI0;
 import frost3d.RenderQueue;
 import frost3d.Shapes;
 import frost3d.interfaces.F3DCanvas;
 import frost3d.interfaces.F3DTextRenderer;
 import frost3d.interfaces.GLMesh;
 import frost3d.interfaces.GLTexture;
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
-import snowui.api.GUITextRenderer;
 
 public class SimpleCanvas implements F3DCanvas {
 	//turn this into generic canvas and make gui use ICanvas an interface
@@ -64,16 +61,11 @@ public class SimpleCanvas implements F3DCanvas {
 		}
 		
 		public void push_scissor(int left, int top, int right, int bottom) {
-			// TODO
+			push_scissor(new Rectangle(left, top, right, bottom));
 		}
 		
 		Vector4f color = new Vector4f();
-		
-		public void color(Vector4f color) {
-			// TODO
-			this.color = color;
-		}
-		
+		public void color(Vector4f color) { this.color = color; }
 
 		public void world_transform(Matrix4f mat) {
 			this.renderqueue.world_transform(mat);
@@ -93,19 +85,15 @@ public class SimpleCanvas implements F3DCanvas {
 		// -- ** Drawing API ** -- //
 
 		public void rect(int left, int top, int right, int bottom, int depth) {
-			// TODO
 			Shapes.rect(this, left, top, right, bottom, depth);
 		}
 		
 		public void text(int x, int y, int depth, String text) {
-			// TODO
 			textrenderer.text(this, x, y, depth, text);
 		}
 		
-
 		@Override
 		public void queue(GLMesh mesh, Matrix4f transform, GLTexture texture) {
-			// TODO Auto-generated method stub
 			// default
 			renderqueue.mix_color(color);
 			

@@ -1,12 +1,12 @@
 package frost3d;
 
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
 
 import frost3d.implementations.SimpleMesh;
 import frost3d.implementations.SimpleTexture;
 import frost3d.interfaces.F3DCanvas;
 import frost3d.interfaces.GLTexture;
+import frost3d.utility.Utility;
 
 public class Shapes {
 	
@@ -40,40 +40,40 @@ public class Shapes {
 		    1, 2, 3    // second triangle
 		});
 	
-//	static SimpleMesh unit_dot = meshCircle(0, 0, 0, 0, 360, 20, 1f);
+	static SimpleMesh unit_dot = meshCircle(0, 0, 0, 0, 360, 20, 1f);
 			
-//	public static SimpleMesh meshCircle(float x, float y, float z, double start_angle, double end_angle, int resolution, float length) {
-//		
-//		float[] vertices = new float[resolution * 3];
-//		int[] indices 	 = new int[(resolution*3)];
-//				
-//		// Set the first entry (entry 0) in the vertex array to be the center point of the circle
-//		vertices[0] = x;
-//		vertices[1] = y;
-//		vertices[2] = 0;
-//		
-//		// Get the x and y coordinates around the circle, and add them as vertices
-//		double angle = start_angle;
-//		for (int i = 1; i < resolution; i++) {
-//			// Set the current outer vertex
-//			vertices[(i*3)+0] = (float) (x + (Math.sin(Math.toRadians(angle)) * length));
-//			vertices[(i*3)+1] = (float) (y + (Math.cos(Math.toRadians(angle)) * length));
-//			vertices[(i*3)+2] = 0;
-//			// Indices for the current triangle
-//			indices[((i-1)*3)+0] = 0;	// The first set vertex is the center point
-//			indices[((i-1)*3)+1] = i-1; // The second set vertex is the previously made vertex
-//			indices[((i-1)*3)+2] = i;   // The third set vertex is the current vertex
-//
-//			angle = Utility.lerp(start_angle, end_angle, ((float) i )/(resolution-2));
-//				// -1 because  it can only reach 14/5
-//				// -1 because  we include the end angle as a triangle so need an extra point
-//				// ^^^^^^^^^^^^^^^^^ i forgot what that means xD ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-//		}
-//		
-//		float[] texcoords = new float[resolution * 2]; // Defaulted to 0 I think so it's fine???
-//		return new SimpleMesh(vertices, texcoords, indices);
-//		
-//	}
+	public static SimpleMesh meshCircle(float x, float y, float z, double start_angle, double end_angle, int resolution, float length) {
+		
+		float[] vertices = new float[resolution * 3];
+		int[] indices 	 = new int[(resolution*3)];
+				
+		// Set the first entry (entry 0) in the vertex array to be the center point of the circle
+		vertices[0] = x;
+		vertices[1] = y;
+		vertices[2] = 0;
+		
+		// Get the x and y coordinates around the circle, and add them as vertices
+		double angle = start_angle;
+		for (int i = 1; i < resolution; i++) {
+			// Set the current outer vertex
+			vertices[(i*3)+0] = (float) (x + (Math.sin(Math.toRadians(angle)) * length));
+			vertices[(i*3)+1] = (float) (y + (Math.cos(Math.toRadians(angle)) * length));
+			vertices[(i*3)+2] = 0;
+			// Indices for the current triangle
+			indices[((i-1)*3)+0] = 0;	// The first set vertex is the center point
+			indices[((i-1)*3)+1] = i-1; // The second set vertex is the previously made vertex
+			indices[((i-1)*3)+2] = i;   // The third set vertex is the current vertex
+
+			angle = Utility.lerp(start_angle, end_angle, ((float) i )/(resolution-2));
+				// -1 because  it can only reach 14/5
+				// -1 because  we include the end angle as a triangle so need an extra point
+				// ^^^^^^^^^^^^^^^^^ i forgot what that means xD ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		}
+		
+		float[] texcoords = new float[resolution * 2]; // Defaulted to 0 I think so it's fine???
+		return new SimpleMesh(vertices, texcoords, indices);
+		
+	}
 	
 	// -- Drawing stuff -- //
 	
@@ -87,9 +87,9 @@ public class Shapes {
 		canvas.queue(unit_square, transform, texture);
 	}
 
-//	public static void dot(F3DCanvas canvas, int x, int y, int z, int radius) {
-//		Matrix4f transform = new Matrix4f().translate(x, y, z).scale(radius);
-//		RenderQueue.queue(unit_dot, transform, color, white);
-//	}
+	public static void dot(F3DCanvas canvas, int x, int y, int z, int radius) {
+		Matrix4f transform = new Matrix4f().translate(x, y, z).scale(radius);
+		canvas.queue(unit_dot, transform, white);
+	}
 
 }

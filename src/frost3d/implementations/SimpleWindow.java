@@ -1,9 +1,9 @@
 package frost3d.implementations;
-import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import frost3d.Input;
 import frost3d.interfaces.F3DWindow;
 
 import java.nio.*;
@@ -16,7 +16,9 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class SimpleWindow implements F3DWindow {
 	
-	// The window handle
+	Input input;
+	public Input input() { return input; }
+	
 	private long window;
 	public int width;
 	public int height;
@@ -54,10 +56,10 @@ public class SimpleWindow implements F3DWindow {
 			throw new RuntimeException("Failed to create the GLFW window");
 
 		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
-		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-		});
+//		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+//			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+//				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+//		});
 		
 		glfwSetWindowSizeCallback(window, (_, width, height) -> {
 			this.width = width;
@@ -104,7 +106,7 @@ public class SimpleWindow implements F3DWindow {
 		// Set the clear color
 		glClearColor(0.20f, 0.0f, 0.0f, 0.0f);
 
-		
+		input = new Input(identifier());
 	}
 	
 	public void end() {

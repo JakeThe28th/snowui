@@ -54,11 +54,15 @@ public class DEMO_GUI0 {
 			// Set the text renderer ...
 			canvas.textrenderer(new SimpleTextRenderer());
 			
+			int xx = 0;
+			
 		while (!window.should_close()) {
+			
+			xx = window.input().mouseX();
 			
 			// Rendering Tests //
 				canvas.color(new Vector4f(1,1,1,1));
-				canvas.text(10, 10, 0, "Text A");
+				canvas.text(xx, 10, 0, "Text A");
 				
 				canvas.color(new Vector4f(1,1,0,1));
 				canvas.rect(20, 20, 50, 50, 1);

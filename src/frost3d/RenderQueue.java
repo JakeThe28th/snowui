@@ -12,11 +12,9 @@ import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL40;
 
-import averificare.DEMO_GUI0;
 import frost3d.interfaces.GLMesh;
 import frost3d.interfaces.GLTexture;
 import frost3d.utility.LimitedStack;
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 
 public class RenderQueue {
