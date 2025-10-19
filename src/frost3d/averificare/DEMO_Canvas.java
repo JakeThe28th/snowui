@@ -1,29 +1,27 @@
-package averificare;
+package frost3d.averificare;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
-import org.lwjgl.opengl.*;
-import frost3d.Shaders;
-import frost3d.conveniences.Icons;
-import frost3d.implementations.SimpleWindow;
-import frost3d.implementations.SimpleCanvas;
-import frost3d.implementations.SimpleMesh;
-import frost3d.implementations.SimpleTextRenderer;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
-import static org.lwjgl.opengl.GL11.*;
+import frost3d.Shaders;
+import frost3d.conveniences.Icons;
+import frost3d.interfaces.*;
+import frost3d.utility.Log;
+import frost3d.implementations.*;
 
-public class DEMO_GUI0 {
-	
+public class DEMO_Canvas {
+
 	public static void main(String[] args) {
 		canvas_test();
-		//gui_test();
 	}
 	
 	private static void canvas_test() {
@@ -59,6 +57,9 @@ public class DEMO_GUI0 {
 			
 			int xx = 0;
 			
+		GLTexture khronos = null;
+		try { khronos = new SimpleTexture("khronos.png"); } catch (IOException _) { Log.send("Failed to load texture."); }
+			
 		while (!window.should_close()) {
 			
 			xx = window.input().mouseX();
@@ -76,8 +77,11 @@ public class DEMO_GUI0 {
 				canvas.color(new Vector4f(1,0,1,1));
 				canvas.rect(50, 25, 60, 60, 3);
 				
+				canvas.color(new Vector4f(1,1,1,1));
+				canvas.rect(70, 70, 170, 170, 4, khronos);
+				
 				canvas.color(new Vector4f(1,1,0.5f,1));
-				Icons.icon(canvas, xx, 60, 4, "home", 30);
+				Icons.icon(canvas, xx, 60, 5, "home", 30);
 				
 				canvas.draw_frame();
 

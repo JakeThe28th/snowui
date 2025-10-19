@@ -14,11 +14,7 @@ import org.lwjgl.BufferUtils;
 
 import frost3d.interfaces.GLTexture;
 
-/**
- * Code ported from the musicplayer...
- * It's probably fine.....
- */
-public class SimpleTexture implements GLTexture{
+public class SimpleTexture implements GLTexture {
 
 	int texture;
 	

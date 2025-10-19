@@ -88,6 +88,10 @@ public class SimpleCanvas implements F3DCanvas {
 			Shapes.rect(this, left, top, right, bottom, depth);
 		}
 		
+		public void rect(int left, int top, int right, int bottom, int depth, GLTexture texture) {
+			Shapes.rect(this, left, top, right, bottom, depth, texture);
+		}
+		
 		public void text(int x, int y, int depth, String text) {
 			textrenderer.text(this, x, y, depth, text);
 		}

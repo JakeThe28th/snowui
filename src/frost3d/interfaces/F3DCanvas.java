@@ -31,6 +31,8 @@ public interface F3DCanvas {
 	
 	public void rect(int left, int top, int right, int bottom, int depth);
 	
+	public void rect(int left, int top, int right, int bottom, int depth, GLTexture texture);
+	
 	public void text(int x, int y, int depth, String text);
 	
 	// -- ++  ...  ++ -- //
