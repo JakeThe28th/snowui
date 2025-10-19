@@ -3,14 +3,11 @@ package frost3d.interfaces;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
-import frost3d.implementations.SimpleMesh;
-import frost3d.implementations.SimpleTexture;
 import frost3d.utility.Rectangle;
-import snowui.api.GUITextRenderer;
 
 public interface F3DCanvas {
 	
-	public void textrenderer(GUITextRenderer v);
+	public void textrenderer(F3DTextRenderer v);
 
 	public void framebuffer	(int v);
 	public void width		(int v);

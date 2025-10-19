@@ -9,6 +9,7 @@ import frost3d.Shaders;
 import frost3d.implementations.SimpleWindow;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleMesh;
+import frost3d.implementations.SimpleTextRenderer;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
@@ -32,16 +33,16 @@ public class DEMO_GUI0 {
 						
 		SimpleCanvas canvas = new SimpleCanvas();
 		
-			// Create core shaders
-			Shaders.init();
-			Shaders.bind("gui");
-		
 			// Create window ...
 			SimpleWindow window = new SimpleWindow(300, 600, "Canvas Rendering Tests") {
 				@Override public void onWindowResize() {
 					canvas.world_transform(new Matrix4f().ortho(0, width(), height(), 0, -1024f, 1024f));
 				}
 			};
+			
+			// Create core shaders (needs to be done after window cuz context)
+			Shaders.init();
+			Shaders.bind("gui");
 			
 			// The canvas will render directly to the window.
 			// So, after calling draw_frame(), all that's
@@ -50,24 +51,20 @@ public class DEMO_GUI0 {
 			canvas.width(window.width);
 			canvas.height(window.height);
 			
-			//canvas.textrenderer( /* TODO */);
-			
-			// TODO
-			
-			
-			//glViewport(0,0,window.width, window.height);
+			// Set the text renderer ...
+			canvas.textrenderer(new SimpleTextRenderer());
 			
 		while (!window.should_close()) {
 			
 			// Rendering Tests //
-				//canvas.color(new Vector4f(1,1,1,1));
-				//canvas.text(10, 10, 0, "Text A");
+				canvas.color(new Vector4f(1,1,1,1));
+				canvas.text(10, 10, 0, "Text A");
 				
 				canvas.color(new Vector4f(1,1,0,1));
 				canvas.rect(20, 20, 50, 50, 1);
 				
-				//canvas.color(new Vector4f(1,0,0,1));
-				//canvas.text(10, 10, 2, "Text B (red)");
+				canvas.color(new Vector4f(1,0,0,1));
+				canvas.text(10, 40, 2, "Text B (red)");
 				
 				canvas.color(new Vector4f(1,0,1,1));
 				canvas.rect(50, 25, 60, 60, 3);

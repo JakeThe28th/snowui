@@ -13,6 +13,7 @@ import averificare.DEMO_GUI0;
 import frost3d.RenderQueue;
 import frost3d.Shapes;
 import frost3d.interfaces.F3DCanvas;
+import frost3d.interfaces.F3DTextRenderer;
 import frost3d.interfaces.GLMesh;
 import frost3d.interfaces.GLTexture;
 import frost3d.utility.Log;
@@ -28,7 +29,7 @@ public class SimpleCanvas implements F3DCanvas {
 		
 		// -- ++ ( infrequently changed state ) ++ -- //
 		
-		GUITextRenderer textrenderer;
+		F3DTextRenderer textrenderer;
 		
 		int framebuffer 	= -1;
 		int width 			= -1;
@@ -36,7 +37,7 @@ public class SimpleCanvas implements F3DCanvas {
 
 		private Rectangle current_scissor;
 		
-		public void textrenderer(GUITextRenderer v) { this.textrenderer = v; }
+		public void textrenderer(F3DTextRenderer v) { this.textrenderer = v; }
 
 		public void framebuffer	(int v) { this.framebuffer 	= v; }
 		public void width		(int v) { this.width 		= v; }
@@ -98,6 +99,7 @@ public class SimpleCanvas implements F3DCanvas {
 		
 		public void text(int x, int y, int depth, String text) {
 			// TODO
+			textrenderer.text(this, x, y, depth, text);
 		}
 		
 
