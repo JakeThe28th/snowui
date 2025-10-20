@@ -15,19 +15,18 @@ public class DEMO_GUI {
 		GLState.initializeGLFW();
 		
 		// Create window ...
-		SimpleWindow window = new SimpleWindow(300, 600, "GUI Test") {
-			@Override public void onWindowResize() {
-				canvas.world_transform(new Matrix4f().ortho(0, width(), height(), 0, -1024f, 1024f));
-			}
-		};
+		SimpleWindow window = new SimpleWindow(300, 600, "GUI Test");
+		//window.setVsync(false);
 		
 		// Create core shaders (needs to be done after window cuz context)
 		Shaders.init();
 		
-		GUIInstance gui = new GUIInstance(window);
+		GUIInstance gui = new GUIInstance(window, window.input());
 		
 		while (!window.should_close()) {
+			gui.size(window.width, window.height);
 			gui.render();
+			gui.frame_start_time = System.currentTimeMillis();
 			window.tick();
 		}
 		
