@@ -19,5 +19,8 @@ public interface F3DPositionedCanvas extends F3DCanvas {
 	 *  be drawn to the space within this canvas, in units. */
 	public Vector2i internalpoint(Vector2i point);
 	
+	public void draw(F3DCanvas canvas);
+	public void draw(F3DWindow window);
+	
 
 }

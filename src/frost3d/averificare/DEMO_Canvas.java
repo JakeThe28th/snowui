@@ -34,7 +34,7 @@ public class DEMO_Canvas {
 		
 		SimplePositionedCanvas canvas = new SimplePositionedCanvas();
 		
-			canvas.size(80, 120);
+			canvas.size(180, 120);
 		
 			// Create window ...
 			SimpleWindow window = new SimpleWindow(300, 600, "Canvas Rendering Tests") {
@@ -51,7 +51,7 @@ public class DEMO_Canvas {
 			// So, after calling draw_frame(), all that's
 			// necessary is glfwSwapBuffers().
 			canvas.framebuffer(null);
-			Framebuffer frame = new Framebuffer(80,120);
+			Framebuffer frame = new Framebuffer(180,120);
 			canvas.framebuffer(frame);
 			
 			// Set the text renderer ...
@@ -63,6 +63,13 @@ public class DEMO_Canvas {
 			canvas.valign(Alignment.MIDDLE);
 			canvas.fillmode(FillMode.CONTAIN);
 			
+			SimplePositionedCanvas insidecv = new SimplePositionedCanvas();
+				insidecv.size(100, 100);
+				insidecv.framebuffer(new Framebuffer(100,100));
+				insidecv.valign(Alignment.BOTTOM);
+				insidecv.clear_color(1, 0, 0.2f, 0.5f);
+				insidecv.textrenderer(new SimpleTextRenderer());
+				
 			int xx = 0;
 			
 		GLTexture khronos = null;
@@ -96,17 +103,17 @@ public class DEMO_Canvas {
 				canvas.color(new Vector4f(1,1,0.5f,1));
 				Icons.icon(canvas, xx, 60, 5, "home", 30);
 				
+					insidecv.outrectangle(canvas.width(), canvas.height());
+					int yy = insidecv.internalpoint(canvas.internalpoint(new Vector2i(0, window.input().mouseY()))).y;
+					insidecv.color(new Vector4f(1,0,0,1));
+					insidecv.rect(30, 30, 70, 70, 1);
+					insidecv.text(10, yy, 2, "Pseudo");
+					insidecv.draw_frame();
+					insidecv.draw(canvas);
+				
 				canvas.draw_frame();
-				
-				window.bind();
-				GLState.clearColor(1, 0, 0, 1);
-				GLState.clear();
-				Shaders.bind("screen");				
-				canvas.mesh().bind();
-				GL40.glActiveTexture(GL40.GL_TEXTURE0);									// Activate texture0
-				GL40.glBindTexture(GL40.GL_TEXTURE_2D,  canvas.framebuffer().color_texture.gltexture());	// Bind the texture t to texture0
-				
-				GL40.glDrawElements(GL_TRIANGLES, canvas.mesh().index_count(), GL_UNSIGNED_INT, 0);
+				GLState.clearColor(0, 0, 1, 0);
+				canvas.draw(window);
 
 
 			window.tick();

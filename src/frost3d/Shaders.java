@@ -22,7 +22,11 @@ public class Shaders {
 	
 	// TODO ^^^ //
 	
-//todo registry stuff decoupling
+	public static final String CORE = "core";
+	public static final String MONOCOLORED_TEXTURED_UNSHADED = "monocolored_textured_unshaded";
+	public static final String SCREEN = "screen";
+
+	//todo registry stuff decoupling
 	static long current_context = 0; // TODO -- Handle windows switching contexts...
 	static int current_shader = -1;
 	
@@ -182,6 +186,33 @@ public class Shaders {
 						FragColor.a = FragColor.a * blend_alpha;
 					} 
 				""");
+		
+		register("monocolored_textured_unshaded", """
+				#version 330 core
+				layout (location = 0) in vec3 v_position;
+				layout (location = 1) in vec2 v_texcoord;
+
+				uniform mat4 world_transform;	
+				uniform mat4 transform;											
+				out vec2 f_texcoord;
+
+				void main() {
+					f_texcoord = v_texcoord;
+				    gl_Position = world_transform * transform * vec4(v_position, 1.0);
+				}
+			""", """
+				#version 330 core
+				out vec4 FragColor;
+
+				uniform sampler2D texture_image;
+				in vec2 f_texcoord;
+				uniform vec4 mix_color;
+
+				void main() {
+					FragColor = texture(texture_image, f_texcoord) * mix_color;
+					if (FragColor.a < 0.001) discard;
+				} 
+			""");
 		
 	 	bind("core");
 	 	

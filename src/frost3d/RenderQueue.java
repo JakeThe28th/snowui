@@ -27,6 +27,7 @@ public class RenderQueue {
 	LimitedStack	<Rectangle>  		scissors 		= new LimitedStack<>();
 	GLMesh 					 			mesh 			= null;
 	GLTexture							texture			= null;
+	String 								shader			= Shaders.CORE;
 	
 	{ scissors.push(null); }
 	
@@ -48,7 +49,8 @@ public class RenderQueue {
 	public LimitedStack<Rectangle> 	scissors() 		{ return scissors  ; }
 	public void 				 	mesh(GLMesh m) 	{ mesh 			= m; }
 	public void 					texture(GLTexture t) { texture 		= t; }
-
+	public void						shader(String shader) { this.shader = shader; }
+	
 	public void mix_color(Vector4f color) {
 		uniform("mix_color", color);
 	}
@@ -68,13 +70,14 @@ public class RenderQueue {
 			HashMap<String, Matrix4f> 	matuniforms,
 			Rectangle 	scissor,
 			GLMesh 		mesh,
-			GLTexture 	texture
+			GLTexture 	texture,
+			String		shader
 			) { }
 	
-	static ArrayList<RenderState> queue = new ArrayList<RenderState>();
+	ArrayList<RenderState> queue = new ArrayList<RenderState>();
 	
 	public void queue() {
-		queue.add(new RenderState(intuniforms, vecuniforms, matuniforms, scissors.peek(), mesh, texture));
+		queue.add(new RenderState(intuniforms, vecuniforms, matuniforms, scissors.peek(), mesh, texture, shader));
 	}
 	
 	// -- ++ (  actual rendering  ) ++ -- //
@@ -82,14 +85,21 @@ public class RenderQueue {
 	GLMesh last_mesh = null;
 	GLTexture last_texture = null;
 	Rectangle last_scissor = null;
+	String last_shader = null;
 	
 	public void render() {
 		last_mesh = null;
 		last_texture = null;
 		last_scissor = null;
+		last_shader = null;
 		
 		for (RenderState state : queue) {
 
+			if (last_shader == null || !last_shader.equals(state.shader)) {
+				Shaders.bind(state.shader);
+				last_shader = state.shader;
+			}
+			
 			for (String uniform : state.intuniforms.keySet()) {
 				Shaders.uniform(uniform, state.intuniforms.get(uniform));
 			}

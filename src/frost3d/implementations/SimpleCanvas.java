@@ -8,6 +8,7 @@ import org.joml.Vector4f;
 import frost3d.Framebuffer;
 import frost3d.GLState;
 import frost3d.RenderQueue;
+import frost3d.Shaders;
 import frost3d.Shapes;
 import frost3d.interfaces.F3DCanvas;
 import frost3d.interfaces.F3DTextRenderer;
@@ -29,6 +30,8 @@ public class SimpleCanvas implements F3DCanvas {
 		Framebuffer framebuffer = null;
 		int width 			= -1;
 		int height 			= -1;
+		public int width() { return width; }
+		public int height() { return height; }
 
 		private Rectangle current_scissor;
 		
@@ -68,10 +71,14 @@ public class SimpleCanvas implements F3DCanvas {
 		}
 		
 		Vector4f color = new Vector4f();
+		Vector4f clear_color = new Vector4f(1,1,1,1);
+		
+		Matrix4f world_transform;
+
 		public void color(Vector4f color) { this.color = color; }
 
 		public void world_transform(Matrix4f mat) {
-			this.renderqueue.world_transform(mat);
+			world_transform = mat;
 		}
 		
 		// -- **  ** -- //
@@ -80,9 +87,9 @@ public class SimpleCanvas implements F3DCanvas {
 			
 			// clear the framebuffer
 			if (framebuffer != null) framebuffer.bind();
-			GLState.clearColor(1, 0, 1, 1);
+			GLState.clearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 			GLState.clear();
-
+			
 			renderqueue.render();
 						
 		}
@@ -109,8 +116,29 @@ public class SimpleCanvas implements F3DCanvas {
 			// specific
 			renderqueue.mesh(mesh);
 			renderqueue.transform(transform);
+			renderqueue.world_transform(world_transform);
 			renderqueue.texture(texture);
+			renderqueue.shader(Shaders.MONOCOLORED_TEXTURED_UNSHADED);
 			renderqueue.queue();
+		}
+		
+		@Override
+		public void queue(GLMesh mesh, Matrix4f transform, Matrix4f world_transform, String shader, GLTexture texture) {
+			// default
+			renderqueue.mix_color(color);
+			
+			// specific
+			renderqueue.mesh(mesh);
+			renderqueue.transform(transform);
+			renderqueue.world_transform(world_transform);
+			renderqueue.texture(texture);
+			renderqueue.shader(shader);
+			renderqueue.queue();
+		}
+
+		@Override
+		public void clear_color(float r, float g, float b, float a) {
+			clear_color = new Vector4f(r,g,b,a);
 		}
 
 }
