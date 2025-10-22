@@ -9,7 +9,6 @@ import snowui.GUIInstance;
 
 public class DEMO_GUI {
 
-
 	public static void main(String[] args) {
 
 		GLState.initializeGLFW();
@@ -26,7 +25,6 @@ public class DEMO_GUI {
 		while (!window.should_close()) {
 			gui.size(window.width, window.height);
 			gui.render();
-			gui.frame_start_time = System.currentTimeMillis();
 			window.tick();
 		}
 		
@@ -35,4 +33,5 @@ public class DEMO_GUI {
 		GLState.endGLFW();
 		
 	}
+	
 }

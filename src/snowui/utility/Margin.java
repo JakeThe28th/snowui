@@ -1,6 +1,6 @@
 package snowui.utility;
 
-import snowui.coss.datatypes.StylePropertyCollection;
+import snowui.coss.StylePropertyCollection;
 
 public class Margin {
 	

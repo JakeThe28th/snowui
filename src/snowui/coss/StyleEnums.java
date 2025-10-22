@@ -19,7 +19,6 @@ public class StyleEnums {
 		
 		TRANSPARENT_WHITE(new Vector4f(1,1,1,.5f)),
 		TRANSPARENT_BLACK(new Vector4f(0,0,0,.75f));
-
 		
 		Vector4f color = null;
 		Color(Vector4f color) { this.color = color; }

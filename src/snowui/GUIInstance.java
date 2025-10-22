@@ -11,9 +11,12 @@ import frost3d.Shaders;
 import frost3d.conveniences.Icons;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
+import frost3d.interfaces.F3DCanvas;
 import frost3d.interfaces.F3DWindow;
 
 public class GUIInstance {
+	
+	static final boolean SHOW_FPS = true;
 	
 	public static final Vector4f TRANSPARENT_WHITE 	= new Vector4f(1, 1, 1, 0.25f);
 	public static final Vector4f TRANSLUCENT_WHITE 	= new Vector4f(1, 1, 1, 0.5f);
@@ -63,12 +66,6 @@ public class GUIInstance {
 		
 	}
 	
-	static final boolean SHOW_FPS = true;
-	
-	public long frame_start_time = 0;
-	int cumulative_frame_time = 0;
-	int frames_counted = 0;
-	
 	public void render() {
 		
 		//if (SHOW_FPS) frame_start_time = System.currentTimeMillis();
@@ -95,40 +92,57 @@ public class GUIInstance {
 			canvas.color(new Vector4f(1,1,0.5f,1));
 			Icons.icon(canvas, xx, 60, 5, "home", 30);
 			
+			drawFPS();
+	
+			canvas.draw_frame();
+
+	}
+	
+	public long 	frame_start_time 		= 0;
+	int[] 			frametimes 				= new int[60];
+	int 			frametime_index 		= 0;
+	
+	public void drawFPS() {
 		if (SHOW_FPS) {
+
 			NumberFormat f = DecimalFormat.getInstance();
 			f.setMinimumIntegerDigits(3);
 			f.setMinimumFractionDigits(3);
 			
-			String mspt_text = "MSPT=" + f.format((cumulative_frame_time / (float) frames_counted));
-			Vector2i size1 = text.size(mspt_text);
-			canvas.color(BLACK75);
-			canvas.rect(5, 5, size1.x+10, size1.y+10, 1000);
-			canvas.color(WHITE);
-			canvas.text(10, 10, 1001, mspt_text);
+			int cumulative_frame_time = 0;
+			for (int t : frametimes) cumulative_frame_time += t;
 			
-			int offset = size1.y + 20;
-			String fps_text = "FPS=" + f.format(1000f/(cumulative_frame_time / (float) frames_counted));
-			Vector2i size2 = text.size(fps_text);
-			canvas.color(BLACK75);
-			canvas.rect(5, 5+offset, size2.x+10, size2.y+10+offset, 1000);
-			canvas.color(WHITE);
-			canvas.text(10, 10+offset, 1001, fps_text);
-		}
+			drawStrings(canvas, 5, 5, 1000, 
+				"MSPT=" + f.format((cumulative_frame_time / (float) frametimes.length)),
+				"FPS=" + f.format(1000f/(cumulative_frame_time / (float) frametimes.length))
+				);
 			
-			canvas.draw_frame();
-			
-		if (SHOW_FPS) {
 			int frame_time = (int) (System.currentTimeMillis()-frame_start_time);
-			cumulative_frame_time += frame_time;
-			frames_counted++;
+			frametimes[frametime_index] = frame_time;
+			frametime_index ++;
+			if (frametime_index >= frametimes.length) frametime_index = 0;
 			
-			if (frames_counted > 120) {
-				frames_counted = 1;
-				cumulative_frame_time = frame_time;
-			}
+			//
+			
+			frame_start_time = System.currentTimeMillis();
+			
 		}
-			
 	}
+	
+	void drawStrings(F3DCanvas canvas, int x, int y, int depth, String... strings) {
+		int xx = x;
+		int yy = y;
+		int m  = 5;
+		for (String str : strings) {
+			Vector2i size = text.size(str);
+			canvas.color(BLACK75);
+			canvas.rect(xx, yy, xx+size.x+(m*2), yy+size.y+(m*2), depth);
+			canvas.color(WHITE);
+			canvas.text(xx+m, yy+m, depth+1, str);
+			yy += size.y + m*3;
+		}
+	}
+	
+	//todo maybe the frametime of the gui alone is a useful metric but the round trip is prolly good enough for now
 
 }

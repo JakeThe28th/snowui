@@ -1,6 +1,6 @@
 package snowui.elements;
 
-import snowui.coss.datatypes.StylePropertyCollection;
+import snowui.coss.StylePropertyCollection;
 
 public abstract class GUIElement {
 	
