@@ -262,6 +262,11 @@ public class Utility {
 		return getNormalizedInternalCoordinates(rect.left(), rect.top(), rect.right(), rect.bottom(), vector2d);
 	}
 
+	public static int clamp(int val, int min, int max) {
+		if (val < min) val = min;
+		if (val > max) val = max;
+		return val;
+	}
 
 	
 }

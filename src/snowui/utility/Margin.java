@@ -1,22 +1,21 @@
 package snowui.utility;
 
-import snowui.coss.StylePropertyCollection;
+import snowui.coss.CachedProperties;
+import static snowui.coss.StyleEnums.Constant.*;
+import static snowui.coss.StyleEnums.StylePropertyType.*;
+
+import frost3d.utility.Rectangle;
+import frost3d.utility.Utility;
 
 public class Margin {
-	
-	// The bounding box of the (properly aligned and padded) internal part of the element.
-	public int left, right, top, bottom;
-	public int outer_left, outer_right, outer_top, outer_bottom;
-	
-	public void calculate(StylePropertyCollection info, int left_limit, int top_limit, int right_limit, int bottom_limit) {
-		outer_left   = left_limit;
-		outer_top    = top_limit;
-		outer_right  = right_limit;
-		outer_bottom = bottom_limit;
 		
-		int target_width = info.target_width;
-		int target_height = info.target_height;
+	public Rectangle calculate(CachedProperties info, Rectangle bounds, int target_width, int target_height) {
 
+		int left_limit 		= bounds.left();
+		int top_limit 		= bounds.top();
+		int right_limit 	= bounds.right();
+		int bottom_limit 	= bounds.bottom();
+		
 		// Get the width/height of the internal part of the element.
 		
 			// --** = Width = **-- //
@@ -29,7 +28,7 @@ public class Margin {
 			     if (info.max_width.type()     == PIXELS) 	{  maximum_width = info.max_width.pixels(); }
 			else if (info.max_width.constant() == CONTAINER) {  maximum_width = info.unpadw(right_limit-left_limit); }
 	
-			int internal_width  = info.clamp(target_width, minimum_width, maximum_width);
+			int internal_width  = Utility.clamp(target_width, minimum_width, maximum_width);
 	
 			 // --** = Height (copied from Width) = **-- //
 		    
@@ -41,7 +40,7 @@ public class Margin {
 			     if (info.max_height.type()     == PIXELS) 	{  maximum_height = info.max_height.pixels(); }
 			else if (info.max_height.constant() == CONTAINER){  maximum_height = info.unpadh(bottom_limit-top_limit); }
 		
-			int internal_height  = info.clamp(target_height, minimum_height, maximum_height);
+			int internal_height  = Utility.clamp(target_height, minimum_height, maximum_height);
 			
 		/* Horizontal Alignment; Ignoring margins, 
 		 * If left aligned,  
@@ -61,8 +60,8 @@ public class Margin {
 			if (info.halign.constant() == RIGHT)  { x_offset  = available_bounding_width-internal_width; }
 			
 			// Adding back in the margins.
-			left  = left_limit + info.left_margin.integer() + x_offset;
-			right = 			 left  + internal_width;
+			int left  = left_limit + info.left_margin.integer() + x_offset;
+			int right = 			 left  + internal_width;
 
 		/* Vertical Alignment; What We Just Did But top is Top and bottom is Bottom. */
 			int available_bounding_height = info.unpadh(bottom_limit-top_limit);
@@ -73,8 +72,11 @@ public class Margin {
 			if (info.valign.constant() == BOTTOM) { y_offset  = available_bounding_height-internal_height; }
 			
 			// Adding back in the margins.
-			top   = top_limit  + info.top_margin.integer() + y_offset;
-			bottom = 			 top + internal_height;
+			int top   = top_limit  + info.top_margin.integer() + y_offset;
+			int bottom = 			 top + internal_height;
+			
+			// The bounding box of the (properly aligned and padded) internal part of the element.
+			return new Rectangle(left, top, right, bottom);
 	}
 
 }

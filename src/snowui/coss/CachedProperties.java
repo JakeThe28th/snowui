@@ -2,6 +2,11 @@ package snowui.coss;
 
 public class CachedProperties {
 	
+	public int padw(int w)   { return left_margin.integer() + w + right_margin.integer(); }
+	public int padh(int h)   { return top_margin. integer() + h + bottom_margin.integer(); }
+	public int unpadw(int w) { return w - (left_margin.integer() + right_margin.integer()); }
+	public int unpadh(int h) { return h - (top_margin. integer() + bottom_margin.integer()); }
+	
 	public COSSProperty left_margin; 	
 	public COSSProperty top_margin; 	
 	public COSSProperty right_margin; 	
@@ -34,7 +39,6 @@ public class CachedProperties {
 		valign 					= s.getProperty(selector_and_id, "vertical_alignment");
 		outline_color 			= s.getProperty(selector_and_id, "outline_color");
 		base_color 				= s.getProperty(selector_and_id, "base_color");
-		text_color 				= s.getProperty(selector_and_id, "text_color");
 		outline_size 			= s.getProperty(selector_and_id, "outline_size");
 		symbol_size 			= s.getProperty(selector_and_id, "symbol_size");
 		symbol_x_margin			= s.getProperty(selector_and_id, "symbol_x_margin");

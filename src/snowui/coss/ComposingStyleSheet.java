@@ -2,6 +2,12 @@ package snowui.coss;
 
 import java.util.HashMap;
 
+import snowui.coss.enums.*;
+import static snowui.coss.enums.Color.*;
+import static snowui.coss.enums.Constant.*;
+import static snowui.coss.enums.PredicateKey.*;
+import static snowui.coss.enums.StylePropertyType.*;
+
 import disaethia.io.nbt.NBTCompound;
 import disaethia.io.nbt.NBTList;
 
@@ -28,6 +34,13 @@ public class ComposingStyleSheet {
 					sheet.setProperty(type, properties.get(j).getName(),  properties.get(j).getString().get());
 				}
 			}
+			
+			if (c_info.get("predicates") != null) {
+				NBTCompound predicates = c_info.get("predicates").getCompound();
+				for (int j = 0; j < predicates.length(); j++) {
+					sheet.setPredicate(type, predicates.get(j).getName(),  predicates.get(j).getString().get());
+				}
+			}
 		}
 	}
 	
@@ -36,7 +49,7 @@ public class ComposingStyleSheet {
 	public static void setDefaults(ComposingStyleSheet sheet) {
 
 		// sheet.setup default style
-		sheet.setProperty("default", "color", 				"#292f45");
+		sheet.setProperty("default", "base_color", 			"#292f45");
 		sheet.setProperty("default", "outline_color", 		"BLACK");
 
 		sheet.setProperty("default", "left_margin", 		"1");
@@ -59,6 +72,8 @@ public class ComposingStyleSheet {
 		// -- Default Elements -- //
 		
 		sheet.setProperty("text", "color", 					"#FFFFFF");	
+		
+		addpredicate hover blah blah
 		
 	}
 	
@@ -92,6 +107,14 @@ public class ComposingStyleSheet {
 		getType(type).properties().put(property, COSSProperty.from(value));
 	}
 	
+	public void setPredicate(String type, String predicate, String value) {
+		setPredicate(type, PredicateKey.valueOf(predicate), value.equals("true"));
+	}
+	
+	public void setPredicate(String type, PredicateKey predicate, boolean value) {
+		getType(type).predicates().set(predicate, value);
+	}
+	
 	public void addContains(String type, String contained_type) {
 		getType(type).contains().add(contained_type);
 	}
@@ -114,6 +137,8 @@ public class ComposingStyleSheet {
 	 * Useful for searching through contained styles. */
 	private COSSProperty getPropertyNoDefault(String type, String property) {
 
+		TODO: check predicates
+		
 		// Type doesn't exist, so check for fallbacks ('<') and if none are found, fallback to 'default'.
 		if (sheet.get(type) == null) {
 			int fallback_cutoff = type.lastIndexOf('.');

@@ -13,11 +13,16 @@ import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
 import frost3d.interfaces.F3DCanvas;
 import frost3d.interfaces.F3DWindow;
+import frost3d.utility.Rectangle;
+import snowui.coss.ComposingStyleSheet;
+import snowui.elements.GUIElement;
 
 public class GUIInstance {
 	
-	static final boolean SHOW_FPS = true;
+	// -- ++  ...  ++ -- //
 	
+	static final boolean SHOW_FPS = false;
+	// TODO move to color
 	public static final Vector4f TRANSPARENT_WHITE 	= new Vector4f(1, 1, 1, 0.25f);
 	public static final Vector4f TRANSLUCENT_WHITE 	= new Vector4f(1, 1, 1, 0.5f);
 	public static final Vector4f TRANSPARENT_RED 	= new Vector4f(1, 0, 0, 0.25f);
@@ -31,8 +36,11 @@ public class GUIInstance {
 
 	public static final Vector4f BLACK75 			= new Vector4f(0,0,0,0.75f);
 	
+	// -- ++  ...  ++ -- //
+	
 	int width = -1;
 	int height = -1;
+	Rectangle gui_bounds = new Rectangle(0, 0, width, height);
 	
 	public void size(int width, int height) {
 		if (this.width != width || this.height != height) {
@@ -48,55 +56,76 @@ public class GUIInstance {
 			text.anti_aliasing_enabled(true);
 			canvas.textrenderer(text);
 			
+			gui_bounds = new Rectangle(0, 0, width, height);
+			
 			//canvas.clear_color(0, 0, 0, 1);
 		}
+	}
+	
+
+	public Rectangle size() {
+		return gui_bounds;
 	}
 	
 	SimpleTextRenderer text;
 	SimpleCanvas canvas;
 	F3DWindow window;
 	Input input;
+	
+	public SimpleCanvas canvas() { return canvas; }
+
 	 
 	public GUIInstance(F3DWindow window, Input input) {
 		
 		this.input = input;
 		
-		
 		Shaders.bind("gui");
 		
 	}
 	
-	public void render() {
-		
-		//if (SHOW_FPS) frame_start_time = System.currentTimeMillis();
-		
+	// -- ++  ...  ++ -- //
+	
+	GUIElement root;
+	
+	public void root(GUIElement r) {
+		root = r;
+	}
+	
+	ComposingStyleSheet style = new ComposingStyleSheet();
+	public ComposingStyleSheet style() { return style; }
+	
+	public void render() {		
 		
 		int xx = input.mouseX();
 		
 		// Rendering Tests //
-			canvas.color(new Vector4f(1,1,1,1));
-			canvas.text(xx, 10, 0, "Text A");
-			
-			canvas.color(new Vector4f(1,1,0,1));
-			canvas.rect(20, 20, 50, 50, 1);
-			
-			canvas.color(new Vector4f(1,0,0,1));
-			canvas.text(10, 40, 2, "Text B (red)");
-			
-			canvas.color(new Vector4f(1,0,1,1));
-			canvas.rect(50, 25, 60, 60, 3);
-			
-			//canvas.color(new Vector4f(1,1,1,1));
-			//canvas.rect(70, 70, 170, 170, 4, khronos);
-			
-			canvas.color(new Vector4f(1,1,0.5f,1));
-			Icons.icon(canvas, xx, 60, 5, "home", 30);
-			
-			drawFPS();
+//		canvas.color(new Vector4f(1,1,1,1));
+//		canvas.text(xx, 10, 0, "Text A");
+//		
+//		canvas.color(new Vector4f(1,1,0,1));
+//		canvas.rect(20, 20, 50, 50, 1);
+//		
+//		canvas.color(new Vector4f(1,0,0,1));
+//		canvas.text(10, 40, 2, "Text B (red)");
+//		
+//		canvas.color(new Vector4f(1,0,1,1));
+//		canvas.rect(50, 25, 60, 60, 3);
+		
+		//canvas.color(new Vector4f(1,1,1,1));
+		//canvas.rect(70, 70, 170, 170, 4, khronos);
+		
+		GUIElement.tick(this, root);
+		
+		canvas.color(new Vector4f(1,1,0.5f,1));
+		Icons.icon(canvas, xx, 60, 5, "home", 30);
+		
+		drawFPS();
 	
-			canvas.draw_frame();
+		canvas.draw_frame();
 
 	}
+	
+	// -- ++  ...  ++ -- //
 	
 	public long 	frame_start_time 		= 0;
 	int[] 			frametimes 				= new int[60];
@@ -142,6 +171,13 @@ public class GUIInstance {
 			yy += size.y + m*3;
 		}
 	}
+
+
+	public boolean hasInput() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 	//todo maybe the frametime of the gui alone is a useful metric but the round trip is prolly good enough for now
 

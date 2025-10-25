@@ -6,6 +6,7 @@ import frost3d.Shaders;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
+import snowui.elements.base.GUIText;
 
 public class DEMO_GUI {
 
@@ -21,6 +22,8 @@ public class DEMO_GUI {
 		Shaders.init();
 		
 		GUIInstance gui = new GUIInstance(window, window.input());
+		
+		gui.root(new GUIText("Hello, "));
 		
 		while (!window.should_close()) {
 			gui.size(window.width, window.height);
