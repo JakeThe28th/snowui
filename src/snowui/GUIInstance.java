@@ -62,6 +62,10 @@ public class GUIInstance {
 		}
 	}
 	
+	public Vector2i sizeof(String str) {
+		return text.size(str);
+	}
+	
 
 	public Rectangle size() {
 		return gui_bounds;

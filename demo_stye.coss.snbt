@@ -1,0 +1,39 @@
+{
+    horizontal_margins: {  properties: { left_margin: "3",  right_margin: "3",   },  },
+    vertical_margins:   {  properties: { top_margin:  "3",  bottom_margin: "3",  },  },
+	should_flex:		{  properties: { max_height: "flex", max_width: "flex", },  },
+	center_text: {
+		contains: ["should_flex"],
+		properties: {
+			horizontal_alignment: "middle",
+		},
+	},
+
+    button: {
+        predicates: {
+            "HOVER=true": "red",
+            "DOWN=true": "blue",
+        },            
+        properties: {  
+			base_color: "css_rgba(0, 0, 0, 0.5)", 
+			outline_color: "css_rgba(0, 0, 0, 0.0)", 
+			list_spacing: "5",
+			},
+		contains: [] 
+    },
+
+    red: {       
+        properties: {  
+			base_color: "RED", 
+			},
+		contains: [] 
+    },
+
+    blue: {       
+        properties: {  
+			base_color: "BLUE", 
+			},
+		contains: [] 
+    },
+    
+}

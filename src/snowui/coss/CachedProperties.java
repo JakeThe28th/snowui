@@ -26,25 +26,25 @@ public class CachedProperties {
 	public COSSProperty list_spacing;
 	public COSSProperty horizontal_indent;
 	public COSSProperty preview_color;
-	public CachedProperties(ComposingStyleSheet s, String selector_and_id) {
-		left_margin 			= s.getProperty(selector_and_id, "left_margin");
-		top_margin 				= s.getProperty(selector_and_id, "top_margin");
-		right_margin 			= s.getProperty(selector_and_id, "right_margin");
-		bottom_margin 			= s.getProperty(selector_and_id, "bottom_margin");
-		min_height 				= s.getProperty(selector_and_id, "min_height");
-		max_height 				= s.getProperty(selector_and_id, "max_height");
-		min_width 				= s.getProperty(selector_and_id, "min_width");
-		max_width 				= s.getProperty(selector_and_id, "max_width");
-		halign 					= s.getProperty(selector_and_id, "horizontal_alignment");
-		valign 					= s.getProperty(selector_and_id, "vertical_alignment");
-		outline_color 			= s.getProperty(selector_and_id, "outline_color");
-		base_color 				= s.getProperty(selector_and_id, "base_color");
-		outline_size 			= s.getProperty(selector_and_id, "outline_size");
-		symbol_size 			= s.getProperty(selector_and_id, "symbol_size");
-		symbol_x_margin			= s.getProperty(selector_and_id, "symbol_x_margin");
-		list_spacing 			= s.getProperty(selector_and_id, "list_spacing");
-		horizontal_indent 		= s.getProperty(selector_and_id, "horizontal_indent");
-		preview_color 			= s.getProperty(selector_and_id, "preview_color");
+	public CachedProperties(ComposingStyleSheet s, String type, COSSPredicate predicate) {
+		left_margin 			= s.getProperty(type, "left_margin", predicate);
+		top_margin 				= s.getProperty(type, "top_margin", predicate);
+		right_margin 			= s.getProperty(type, "right_margin", predicate);
+		bottom_margin 			= s.getProperty(type, "bottom_margin", predicate);
+		min_height 				= s.getProperty(type, "min_height", predicate);
+		max_height 				= s.getProperty(type, "max_height", predicate);
+		min_width 				= s.getProperty(type, "min_width", predicate);
+		max_width 				= s.getProperty(type, "max_width", predicate);
+		halign 					= s.getProperty(type, "horizontal_alignment", predicate);
+		valign 					= s.getProperty(type, "vertical_alignment", predicate);
+		outline_color 			= s.getProperty(type, "outline_color", predicate);
+		base_color 				= s.getProperty(type, "base_color", predicate);
+		outline_size 			= s.getProperty(type, "outline_size", predicate);
+		symbol_size 			= s.getProperty(type, "symbol_size", predicate);
+		symbol_x_margin			= s.getProperty(type, "symbol_x_margin", predicate);
+		list_spacing 			= s.getProperty(type, "list_spacing", predicate);
+		horizontal_indent 		= s.getProperty(type, "horizontal_indent", predicate);
+		preview_color 			= s.getProperty(type, "preview_color", predicate);
 	}
 
 }

@@ -1,9 +1,8 @@
 package snowui.utility;
 
 import snowui.coss.CachedProperties;
-import static snowui.coss.StyleEnums.Constant.*;
-import static snowui.coss.StyleEnums.StylePropertyType.*;
-
+import static snowui.coss.enums.Constant.*;
+import static snowui.coss.enums.StylePropertyType.*;
 import frost3d.utility.Rectangle;
 import frost3d.utility.Utility;
 

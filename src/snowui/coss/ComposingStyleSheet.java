@@ -72,8 +72,13 @@ public class ComposingStyleSheet {
 		// -- Default Elements -- //
 		
 		sheet.setProperty("text", "color", 					"#FFFFFF");	
+				
+		sheet.setProperty("hover", "base_color", 			"#00f742");
+		sheet.setProperty("down", "base_color", 			"#1f1645");
 		
-		addpredicate hover blah blah
+		sheet.setPredicate("default", "HOVER=true", "hover");
+		sheet.setPredicate("default", "DOWN=true", "down");
+
 		
 	}
 	
@@ -100,19 +105,19 @@ public class ComposingStyleSheet {
 	}
 
 	public boolean hasProperty(String type, String property) {
-		return getProperty(type, property) != null;
+		return getProperty(type, property, null) != null;
 	}
 
 	public void setProperty(String type, String property, String value) {		
 		getType(type).properties().put(property, COSSProperty.from(value));
 	}
 	
-	public void setPredicate(String type, String predicate, String value) {
-		setPredicate(type, PredicateKey.valueOf(predicate), value.equals("true"));
+	public void setPredicate(String type, String predicates, String target_type) {
+		setPredicate(type, COSSPredicate.from(predicates), target_type);
 	}
 	
-	public void setPredicate(String type, PredicateKey predicate, boolean value) {
-		getType(type).predicates().set(predicate, value);
+	public void setPredicate(String type, COSSPredicate predicates, String target_type) {
+		getType(type).predicates().put(target_type, predicates);
 	}
 	
 	public void addContains(String type, String contained_type) {
@@ -127,23 +132,21 @@ public class ComposingStyleSheet {
 	 * @param property
 	 * @return
 	 */
-	public COSSProperty getProperty(String type, String property) {
-				   COSSProperty result = getPropertyNoDefault(type, property);
-		if (result == null) result = getPropertyNoDefault("default", property);
+	public COSSProperty getProperty(String type, String property, COSSPredicate predicate) {
+				   COSSProperty result = getPropertyNoDefault(type, property, predicate);
+		if (result == null) result = getPropertyNoDefault("default", property, predicate);
 					 return result;
 	}
 	
 	/** Same as getProperty(), but returns 'null' rather than defaulting. 
 	 * Useful for searching through contained styles. */
-	private COSSProperty getPropertyNoDefault(String type, String property) {
-
-		TODO: check predicates
+	private COSSProperty getPropertyNoDefault(String type, String property, COSSPredicate predicate) {
 		
 		// Type doesn't exist, so check for fallbacks ('<') and if none are found, fallback to 'default'.
 		if (sheet.get(type) == null) {
 			int fallback_cutoff = type.lastIndexOf('.');
 			if (fallback_cutoff == -1) return null;
-			if (fallback_cutoff >= 0) return getPropertyNoDefault(type.substring(0, fallback_cutoff), property);
+			if (fallback_cutoff >= 0) return getPropertyNoDefault(type.substring(0, fallback_cutoff), property, predicate);
 		}
 		
 		HashMap<String, COSSProperty> properties_of_this_type = sheet.get(type).properties();
@@ -155,7 +158,7 @@ public class ComposingStyleSheet {
 			for (String contained_type : type_info.contains()) {
 				if (contained_type.equals(type)) continue;
 				
-				result = getPropertyNoDefault(contained_type, property);
+				result = getPropertyNoDefault(contained_type, property, predicate);
 				if (result != null) return result;
 			}
 		}
