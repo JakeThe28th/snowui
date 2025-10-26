@@ -22,4 +22,12 @@ public record COSSType(
 			new HashMap<String, COSSPredicate>()
 			); 
 	}
+
+	public String getPredicateTargetType(COSSPredicate predicate) {
+		for (String target : predicates().keySet()) {
+			if (predicates().get(target).equals(predicate)) return target;
+		}
+		return null;
+	}
+	
 }

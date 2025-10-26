@@ -138,7 +138,6 @@ public class ComposingStyleSheet {
 				   COSSProperty result = getPropertyNoDefault(type, property, predicate);
 		if (result == null) result = getPropertyNoDefault("default", property, predicate);
 		if (result == null) result = getPropertyNoDefault("default", property, null);
-		Log.send(result.toString() + "er" + predicate.toString());
 					 return result;
 	}
 	
@@ -154,17 +153,9 @@ public class ComposingStyleSheet {
 		}
 		
 		// Check for predicates
-		if (predicate != null)
-		for (String predicate_target : sheet.get(type).predicates().keySet()) {
-			Log.send(sheet.get(type).predicates().get(predicate_target).toString() + " VS " + predicate.toString());
-			if (sheet.get(type).predicates().get(predicate_target).equals(predicate)) {
-				Log.send(predicate_target);
-				return getPropertyNoDefault(predicate_target, property, predicate);
-			}
-		}
-		
-		Log.send("No matching predicate, " + type + "\\" + property);
-		
+		String target = sheet.get(type).getPredicateTargetType(predicate);
+		if (target != null) return getPropertyNoDefault(target, property, predicate);
+				
 		HashMap<String, COSSProperty> properties_of_this_type = sheet.get(type).properties();
 
 		// If the property is null, check the contained types for the same property,
