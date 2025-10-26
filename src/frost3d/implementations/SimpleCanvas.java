@@ -36,15 +36,20 @@ public class SimpleCanvas implements F3DCanvas {
 		private Rectangle current_scissor;
 		
 		public void textrenderer(F3DTextRenderer v) { this.textrenderer = v; }
-
+		public F3DTextRenderer textrenderer() { return this.textrenderer; }
+		
 		public void framebuffer	(Framebuffer v) { this.framebuffer 	= v; }
 		public Framebuffer framebuffer	() { return this.framebuffer; }
 
 		public void size		(int w, int h) { 
 			this.width = w;
 			this.height = h;
+			gui_bounds = new Rectangle(0, 0, width, height);
 			world_transform(new Matrix4f().ortho(0, width, height, 0, -1024f, 1024f));
 			}
+		
+		Rectangle gui_bounds = new Rectangle(0, 0, width, height);
+		public Rectangle size() { return gui_bounds; }
 		
 		// -- ++ (  frequently changed state  ) ++ -- //
 

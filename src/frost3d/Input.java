@@ -9,8 +9,11 @@ import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import org.lwjgl.glfw.GLFW;
 
 public class Input {
+	
+	boolean has_input_this_frame = false;
 
 	public void clearKeys() {
+		has_input_this_frame = false;
 		// Events
 		current_keys = new Key[1024];
 		current_mouse_buttons = new MouseButton[8];
@@ -36,6 +39,7 @@ public class Input {
 		
 		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
 		glfwSetKeyCallback(current_window, (_, key, scancode, action, mods) -> {
+			has_input_this_frame = true;
 			setKeyWithScancode(key, scancode, action, mods);
 			last_key = new Key(key, scancode, action, mods);
 			
@@ -53,10 +57,12 @@ public class Input {
 		});
 		
 		glfwSetCursorPosCallback(current_window, (_, xpos, ypos) -> {
+			has_input_this_frame = true;
 			setMousePos(xpos, ypos);
 		});
 		
 		glfwSetMouseButtonCallback(current_window, (_, button, action, mods) -> {
+			has_input_this_frame = true;
 			setMouseButton(button, action, mods);
 			
 			if (action == GLFW.GLFW_PRESS) setMouseButtonDown(button, true);
@@ -64,14 +70,17 @@ public class Input {
 		});
 		
 		glfwSetScrollCallback(current_window, (_, xoffset, yoffset) -> {
+			has_input_this_frame = true;
 			setMouseScroll(xoffset, yoffset);
 		});
 
 		glfwSetCharCallback(current_window, (_, codepoint) -> {
-			 input_string += (char) codepoint;
+			has_input_this_frame = true;
+			input_string += (char) codepoint;
 		});
 		
 		GLFW.glfwSetWindowIconifyCallback(current_window, (_, iconified) -> {
+			has_input_this_frame = true;
 			is_iconified = iconified;
 		});
 	}
@@ -130,5 +139,7 @@ public class Input {
 
 	public double scrollX() { return mouse_scroll_x; }
 	public double scrollY() { return mouse_scroll_y; }
+
+	public boolean hasInputThisFrame() { return has_input_this_frame; }
 
 }

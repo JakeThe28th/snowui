@@ -10,6 +10,7 @@ import frost3d.utility.Rectangle;
 public interface F3DCanvas {
 	
 	public void textrenderer(F3DTextRenderer v);
+	public F3DTextRenderer textrenderer();
 
 	public void framebuffer	(Framebuffer f);
 	public void size		(int w, int h);
@@ -49,6 +50,5 @@ public interface F3DCanvas {
 
 	public int width();
 	public int height();
-
 
 }

@@ -8,6 +8,14 @@ public class COSSPredicate {
 
 	EnumMap<PredicateKey, Boolean> state = new EnumMap<>(PredicateKey.class);
 	
+	public COSSPredicate() { }
+	
+	public COSSPredicate(COSSPredicate other) {
+		for (PredicateKey p : other.state.keySet()) {
+			set(p, other.state.get(p));
+		}
+	}
+
 	public void set(PredicateKey key, boolean value) {
 		state.put(key, value);
 	}

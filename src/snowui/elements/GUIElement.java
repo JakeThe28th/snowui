@@ -48,7 +48,7 @@ public abstract class GUIElement {
 		e.triggerDequeueState();
 		e.triggerCacheStyle(gui);
 		e.triggerRecalculateSize(gui);
-		e.triggerUpdateDrawInfo(gui, gui.size());
+		e.triggerUpdateDrawInfo(gui, gui.canvas().size());
 		e.triggerTickAnimation(gui);
 		e.triggerDraw(gui, 0);
 	}
@@ -72,7 +72,7 @@ public abstract class GUIElement {
 			this.style = null;
 		}
 		state = next_state;
-		next_state = new COSSPredicate();
+		next_state = new COSSPredicate(state);
 	}
 	
 	public void cacheStyle(GUIInstance gui) {
@@ -95,7 +95,7 @@ public abstract class GUIElement {
 
 	private boolean triggerUpdateState(GUIInstance gui) {
 		if (gui.hasInput()) {
-			
+						
 			set(PredicateKey.BOUNDED, false);
 			set(PredicateKey.HOVERED, false);
 			set(PredicateKey.PRESSED, false);

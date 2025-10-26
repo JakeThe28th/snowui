@@ -23,6 +23,7 @@ public class Shaders {
 	// TODO ^^^ //
 	
 	public static final String CORE = "core";
+	public static final String GUI = "gui";
 	public static final String MONOCOLORED_TEXTURED_UNSHADED = "monocolored_textured_unshaded";
 	public static final String SCREEN = "screen";
 
