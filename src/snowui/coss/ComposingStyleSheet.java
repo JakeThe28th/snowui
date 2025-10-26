@@ -10,6 +10,7 @@ import static snowui.coss.enums.StylePropertyType.*;
 
 import disaethia.io.nbt.NBTCompound;
 import disaethia.io.nbt.NBTList;
+import frost3d.utility.Log;
 
 public class ComposingStyleSheet {
 	
@@ -79,7 +80,8 @@ public class ComposingStyleSheet {
 		sheet.setPredicate("default", "HOVERED=true", "hover");
 		sheet.setPredicate("default", "DOWN=true", "down");
 
-		
+		sheet.setProperty("hover", "horizontal_alignment",	"middle"); 		// Left, right, middle
+
 	}
 	
 	// -- ++  ...  ++ -- //
@@ -135,6 +137,8 @@ public class ComposingStyleSheet {
 	public COSSProperty getProperty(String type, String property, COSSPredicate predicate) {
 				   COSSProperty result = getPropertyNoDefault(type, property, predicate);
 		if (result == null) result = getPropertyNoDefault("default", property, predicate);
+		if (result == null) result = getPropertyNoDefault("default", property, null);
+		Log.send(result.toString() + "er" + predicate.toString());
 					 return result;
 	}
 	
@@ -142,12 +146,24 @@ public class ComposingStyleSheet {
 	 * Useful for searching through contained styles. */
 	private COSSProperty getPropertyNoDefault(String type, String property, COSSPredicate predicate) {
 		
-		// Type doesn't exist, so check for fallbacks ('<') and if none are found, fallback to 'default'.
+		// Type doesn't exist, so check for fallbacks ('.') and if none are found, fallback to 'default'.
 		if (sheet.get(type) == null) {
 			int fallback_cutoff = type.lastIndexOf('.');
 			if (fallback_cutoff == -1) return null;
 			if (fallback_cutoff >= 0) return getPropertyNoDefault(type.substring(0, fallback_cutoff), property, predicate);
 		}
+		
+		// Check for predicates
+		if (predicate != null)
+		for (String predicate_target : sheet.get(type).predicates().keySet()) {
+			Log.send(sheet.get(type).predicates().get(predicate_target).toString() + " VS " + predicate.toString());
+			if (sheet.get(type).predicates().get(predicate_target).equals(predicate)) {
+				Log.send(predicate_target);
+				return getPropertyNoDefault(predicate_target, property, predicate);
+			}
+		}
+		
+		Log.send("No matching predicate, " + type + "\\" + property);
 		
 		HashMap<String, COSSProperty> properties_of_this_type = sheet.get(type).properties();
 

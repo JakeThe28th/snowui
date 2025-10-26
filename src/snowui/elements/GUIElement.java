@@ -54,12 +54,12 @@ public abstract class GUIElement {
 	}
 	
 	public abstract void recalculateSize(GUIInstance gui);
-	public abstract void updateState(GUIInstance gui);
+	public 			void updateState(GUIInstance gui) {};
 	/** Opportunity to set up drawing information. <br>
 	 *  Notably, this method is responsible for updating
 	 *  sub-elements drawing information itself. */
 	public abstract void updateDrawInfo(GUIInstance gui, Rectangle bounds);
-	public abstract void tickAnimation(GUIInstance gui);
+	public 		 	void tickAnimation(GUIInstance gui) {};
 	public abstract void draw(GUIInstance gui, int depth);
 	
 	public void set(PredicateKey key, boolean value) {

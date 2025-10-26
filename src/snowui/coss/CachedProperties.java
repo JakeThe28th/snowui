@@ -40,11 +40,6 @@ public class CachedProperties {
 		outline_color 			= s.getProperty(type, "outline_color", predicate);
 		base_color 				= s.getProperty(type, "base_color", predicate);
 		outline_size 			= s.getProperty(type, "outline_size", predicate);
-		symbol_size 			= s.getProperty(type, "symbol_size", predicate);
-		symbol_x_margin			= s.getProperty(type, "symbol_x_margin", predicate);
-		list_spacing 			= s.getProperty(type, "list_spacing", predicate);
-		horizontal_indent 		= s.getProperty(type, "horizontal_indent", predicate);
-		preview_color 			= s.getProperty(type, "preview_color", predicate);
 	}
 
 }

@@ -50,4 +50,13 @@ public class COSSPredicate {
 		return set;
 	}
 	
+	@Override
+	public String toString() {
+		String ret = "";
+		for (PredicateKey key : state.keySet()) {
+			ret += "{" + key + "=" + state.get(key) + "}; ";
+		}
+		return ret;
+	}
+	
 }

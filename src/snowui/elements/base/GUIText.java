@@ -24,30 +24,14 @@ public class GUIText extends GUIElement {
 	}
 
 	@Override
-	public void updateState(GUIInstance gui) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void updateDrawInfo(GUIInstance gui, Rectangle bounds) {
 		hover_rectangle = Margin.calculate(style(), bounds, unpadded_width, unpadded_height);
-	}
-
-	@Override
-	public void tickAnimation(GUIInstance gui) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void draw(GUIInstance gui, int depth) {
 		gui.canvas().color(style().base_color.color());
 		gui.canvas().text(hover_rectangle.left(), hover_rectangle.top(), depth, text);
-	}
-	
-	@Override
-	public void onMouseHover() {
 	}
 	
 }

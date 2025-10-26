@@ -22,7 +22,7 @@ public class GUIInstance {
 	
 	// -- ++  ...  ++ -- //
 	
-	static final boolean SHOW_FPS = false;
+	static final boolean SHOW_FPS = true;
 	// TODO move to color
 	public static final Vector4f TRANSPARENT_WHITE 	= new Vector4f(1, 1, 1, 0.25f);
 	public static final Vector4f TRANSLUCENT_WHITE 	= new Vector4f(1, 1, 1, 0.5f);
