@@ -12,6 +12,11 @@ public class COSSPredicate {
 		state.put(key, value);
 	}
 	
+	public boolean get(PredicateKey key) {
+		if (!state.containsKey(key)) return false;
+		return state.get(key);
+	}
+	
 	/** Two predicates match if all the values they have are the same,
 	 *  all values they don't share may differ. */
 	public boolean matches(COSSPredicate me, COSSPredicate other) {
@@ -20,6 +25,12 @@ public class COSSPredicate {
 			if (other.state.get(p) != me.state.get(p)) return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof COSSPredicate) return matches(this, (COSSPredicate) other);
+		return false;
 	}
 
 	/** EX: "HOVER=true, DOWN=true" */

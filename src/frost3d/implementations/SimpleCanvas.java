@@ -95,6 +95,10 @@ public class SimpleCanvas implements F3DCanvas {
 		}
 		
 		// -- ** Drawing API ** -- //
+		
+		public void rect(Rectangle bounds, int depth) {
+			Shapes.rect(this, bounds.left(), bounds.top(), bounds.right(), bounds.bottom(), depth);
+		}
 
 		public void rect(int left, int top, int right, int bottom, int depth) {
 			Shapes.rect(this, left, top, right, bottom, depth);

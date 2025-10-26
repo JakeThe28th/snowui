@@ -13,6 +13,7 @@ import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
 import frost3d.interfaces.F3DCanvas;
 import frost3d.interfaces.F3DWindow;
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.coss.ComposingStyleSheet;
 import snowui.elements.GUIElement;
@@ -179,7 +180,11 @@ public class GUIInstance {
 
 	public boolean hasInput() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
+	}
+
+	public Vector2i mouspos() {
+		return new Vector2i(input.mouseX(), input.mouseY());
 	}
 
 	

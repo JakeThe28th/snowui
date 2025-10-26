@@ -3,12 +3,14 @@ package snowui.utility;
 import snowui.coss.CachedProperties;
 import static snowui.coss.enums.Constant.*;
 import static snowui.coss.enums.StylePropertyType.*;
+
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import frost3d.utility.Utility;
 
 public class Margin {
 		
-	public Rectangle calculate(CachedProperties info, Rectangle bounds, int target_width, int target_height) {
+	public static Rectangle calculate(CachedProperties info, Rectangle bounds, int target_width, int target_height) {
 
 		int left_limit 		= bounds.left();
 		int top_limit 		= bounds.top();
@@ -40,7 +42,7 @@ public class Margin {
 			else if (info.max_height.constant() == CONTAINER){  maximum_height = info.unpadh(bottom_limit-top_limit); }
 		
 			int internal_height  = Utility.clamp(target_height, minimum_height, maximum_height);
-			
+
 		/* Horizontal Alignment; Ignoring margins, 
 		 * If left aligned,  
 		 * 		'left'  should be 0 and 

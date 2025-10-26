@@ -2,9 +2,11 @@ package snowui.elements.base;
 
 import org.joml.Vector2i;
 
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.GUIElement;
+import snowui.utility.Margin;
 
 public class GUIText extends GUIElement {
 	
@@ -17,14 +19,19 @@ public class GUIText extends GUIElement {
 	@Override
 	public void recalculateSize(GUIInstance gui) {
 		Vector2i size = gui.sizeof(text);
-		this.unpadded_height = size.x;
+		this.unpadded_width = size.x;
 		this.unpadded_height = size.y;
 	}
 
 	@Override
-	public void updateDrawInfo(GUIInstance gui, Rectangle bounds) {
+	public void updateState(GUIInstance gui) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void updateDrawInfo(GUIInstance gui, Rectangle bounds) {
+		hover_rectangle = Margin.calculate(style(), bounds, unpadded_width, unpadded_height);
 	}
 
 	@Override
@@ -35,8 +42,12 @@ public class GUIText extends GUIElement {
 
 	@Override
 	public void draw(GUIInstance gui, int depth) {
-		gui.canvas().color(style.base_color.color());
-		gui.canvas().text(bounds.left(), bounds.top(), depth, text);
+		gui.canvas().color(style().base_color.color());
+		gui.canvas().text(hover_rectangle.left(), hover_rectangle.top(), depth, text);
+	}
+	
+	@Override
+	public void onMouseHover() {
 	}
 	
 }

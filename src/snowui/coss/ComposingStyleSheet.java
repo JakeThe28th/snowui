@@ -76,7 +76,7 @@ public class ComposingStyleSheet {
 		sheet.setProperty("hover", "base_color", 			"#00f742");
 		sheet.setProperty("down", "base_color", 			"#1f1645");
 		
-		sheet.setPredicate("default", "HOVER=true", "hover");
+		sheet.setPredicate("default", "HOVERED=true", "hover");
 		sheet.setPredicate("default", "DOWN=true", "down");
 
 		

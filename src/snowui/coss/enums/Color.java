@@ -10,6 +10,7 @@ public enum Color {
 	GREEN(new Vector4f(0,1,0,1)),
 	BLUE(new Vector4f(0,0,1,1)),
 	
+	DESBLUE(new Vector4f(0.5f,0.5f,1,1)),
 	DESYELLOW(new Vector4f(1f,1f,.5f,1)),
 	
 	TRANSPARENT_WHITE(new Vector4f(1,1,1,.5f)),

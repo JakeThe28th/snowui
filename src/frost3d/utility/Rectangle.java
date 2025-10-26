@@ -1,9 +1,15 @@
 package frost3d.utility;
 
+import org.joml.Vector2i;
+
 public record Rectangle(int left, int top, int right, int bottom) {
 	
 	public boolean contains(int x, int y) {
 		return (x > left && x < right) && (y > top && y < bottom);
+	}
+	
+	public boolean contains(Vector2i p) {
+		return contains(p.x, p.y);
 	}
 
 	public int height() 				{ return bottom - top; }
