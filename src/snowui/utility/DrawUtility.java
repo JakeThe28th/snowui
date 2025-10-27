@@ -3,7 +3,6 @@ package snowui.utility;
 import org.joml.Vector2i;
 
 import frost3d.interfaces.F3DCanvas;
-import frost3d.utility.Log;
 import snowui.coss.enums.Color;
 
 public class DrawUtility {

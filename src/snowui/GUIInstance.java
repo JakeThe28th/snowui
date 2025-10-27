@@ -3,11 +3,7 @@ package snowui;
 import java.util.ArrayList;
 
 import org.joml.Vector2i;
-import org.joml.Vector4f;
-
 import frost3d.Input;
-import frost3d.Shaders;
-import frost3d.conveniences.Icons;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
 import frost3d.interfaces.F3DWindow;

@@ -4,7 +4,6 @@ import snowui.coss.CachedProperties;
 import static snowui.coss.enums.Constant.*;
 import static snowui.coss.enums.StylePropertyType.*;
 
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import frost3d.utility.Utility;
 

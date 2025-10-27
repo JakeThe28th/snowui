@@ -1,9 +1,7 @@
 package averificare;
 
-import org.joml.Matrix4f;
 import frost3d.GLState;
 import frost3d.Shaders;
-import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
 import snowui.elements.base.GUIText;

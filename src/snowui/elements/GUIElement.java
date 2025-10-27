@@ -2,7 +2,6 @@ package snowui.elements;
 
 import java.util.ArrayList;
 
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;

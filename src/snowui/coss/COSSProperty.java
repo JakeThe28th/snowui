@@ -4,9 +4,6 @@ import org.joml.Vector4f;
 
 import frost3d.utility.Utility;
 import snowui.coss.enums.*;
-import static snowui.coss.enums.Color.*;
-import static snowui.coss.enums.Constant.*;
-import static snowui.coss.enums.PredicateKey.*;
 import static snowui.coss.enums.StylePropertyType.*;
 
 import java.util.HashMap;

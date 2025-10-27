@@ -2,15 +2,8 @@ package snowui.coss;
 
 import java.util.HashMap;
 
-import snowui.coss.enums.*;
-import static snowui.coss.enums.Color.*;
-import static snowui.coss.enums.Constant.*;
-import static snowui.coss.enums.PredicateKey.*;
-import static snowui.coss.enums.StylePropertyType.*;
-
 import disaethia.io.nbt.NBTCompound;
 import disaethia.io.nbt.NBTList;
-import frost3d.utility.Log;
 
 public class ComposingStyleSheet {
 	
