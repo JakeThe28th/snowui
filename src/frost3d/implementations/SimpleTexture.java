@@ -34,7 +34,11 @@ public class SimpleTexture implements GLTexture {
 	}
 	
 	public SimpleTexture(BufferedImage image) {
-		this(bufferedImageToTextureData(image), image.getWidth(), image.getHeight());
+		this(image, false);
+	}
+	
+	public SimpleTexture(BufferedImage image, boolean nearest) {
+		this(bufferedImageToTextureData(image), image.getWidth(), image.getHeight(), nearest);
 	}
 	
 	private static byte[] bufferedImageToTextureData(BufferedImage image) {
@@ -55,6 +59,10 @@ public class SimpleTexture implements GLTexture {
 	}
 
 	public SimpleTexture(byte[] gldata, int width, int height) {
+		this(gldata, width, height, false);
+	}
+	
+	public SimpleTexture(byte[] gldata, int width, int height, boolean nearest) {
 		
 		// https://learnopengl.com/Getting-started/Textures
 		texture = glGenTextures();
@@ -63,8 +71,14 @@ public class SimpleTexture implements GLTexture {
 		// set the texture wrapping/filtering options (on the currently bound texture object)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		
+		if (!nearest) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		} else {
+			texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		}
 		
 		// add the image data to the texture
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, toByteBuffer(gldata));

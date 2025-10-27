@@ -8,8 +8,13 @@ public class Log {
 	
 	static String log = "";
 	
+	public static boolean print_log = true;
+	
 	private static void internal_log(String msg) {
 		log += msg + "\n";
+		
+		if (!print_log) return;
+		
 		try {
 			Files.writeString(Paths.get("latest.log"), log);
 		} catch (IOException e) {

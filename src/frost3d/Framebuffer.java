@@ -18,6 +18,7 @@ import static org.lwjgl.opengl.GL30.glGenFramebuffers;
 import java.util.HashMap;
 
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL40;
 
 import frost3d.implementations.SimpleMesh;
 import frost3d.implementations.SimpleTexture;
@@ -38,6 +39,10 @@ public class Framebuffer {
 	HashMap<String, SimpleMesh> mesh_queue = new HashMap<String, SimpleMesh>();
 	
 	public Framebuffer(int width, int height) { 
+		this(width, height, true);
+	}
+	
+	public Framebuffer(int width, int height, boolean has_alpha) { 
 		this.width =  width;
 		this.height = height;
 		
@@ -47,7 +52,9 @@ public class Framebuffer {
 		// Make an empty RGBA texture to render to
 		this.color_texture = new SimpleTexture(); // The texture is bound upon creation, no need to call bind().
 			// Empty texture data. 
-			SimpleTexture.texImage2D(GL_TEXTURE_2D, width, height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+			int image_type = GL40.GL_RGBA;
+			if (!has_alpha) image_type = GL40.GL_RGB;
+			SimpleTexture.texImage2D(GL_TEXTURE_2D, width, height, image_type, GL_UNSIGNED_BYTE, 0);
 			// Attach the texture to the Framebuffer
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture.gltexture(), 0);
 			

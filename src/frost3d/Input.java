@@ -142,4 +142,14 @@ public class Input {
 
 	public boolean hasInputThisFrame() { return has_input_this_frame; }
 
+	
+	/** NOTE: Uses keys, not scancodes ... */
+	public boolean keyPressed(int key) {
+		return action(GLFW.glfwGetKeyScancode(key)) == GLFW.GLFW_PRESS;
+	}
+
+	public boolean keyDown(int key) {
+		return down_keys[GLFW.glfwGetKeyScancode(key)];
+	}
+
 }
