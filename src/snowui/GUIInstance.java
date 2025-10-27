@@ -9,11 +9,13 @@ import frost3d.implementations.SimpleTextRenderer;
 import frost3d.interfaces.F3DWindow;
 import snowui.coss.ComposingStyleSheet;
 import snowui.elements.GUIElement;
+import snowui.utility.DebugElementTree;
 import snowui.utility.FPSCounter;
 
 public class GUIInstance {
 		
 	static final boolean SHOW_FPS = true;
+	static final boolean DEBUG = true;
 	FPSCounter fps = new FPSCounter();
 	
 	public void size(int width, int height) {
@@ -59,6 +61,7 @@ public class GUIInstance {
 	public void render() {
 		GUIElement.tick(this, root);
 		if (SHOW_FPS) fps.drawFPS(canvas);
+		if (DEBUG) DebugElementTree.drawTree(canvas, root);
 		canvas.draw_frame();
 	}
 	
