@@ -6,12 +6,15 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
-import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 
 public abstract class GUIElement {
 	
 	ArrayList<GUIElement> sub_elements = new ArrayList<>();
+	
+	public ArrayList<GUIElement> sub_elements() {
+		return sub_elements;
+	}
 	
 	protected void registerSubElement(GUIElement e) {
 		sub_elements.add(e);
@@ -69,9 +72,10 @@ public abstract class GUIElement {
 		if (!next_state.equals(state)) {
 			should_recalculate_size = true;
 			this.style = null;
+			state = next_state;
+			next_state = new COSSPredicate(state);
 		}
-		state = next_state;
-		next_state = new COSSPredicate(state);
+		
 	}
 	
 	public void cacheStyle(GUIInstance gui) {
@@ -106,8 +110,8 @@ public abstract class GUIElement {
 
 			if (hover_rectangle != null && hover_rectangle.contains(gui.mouspos())) {
 				
-				gui.canvas().color(Color.DESBLUE.val());
-				gui.canvas().rect(hover_rectangle, 10);
+//				gui.canvas().color(Color.DESBLUE.val());
+//				gui.canvas().rect(hover_rectangle, 10);
 				
 				set(PredicateKey.BOUNDED, true);
 				
@@ -171,6 +175,10 @@ public abstract class GUIElement {
 	private void triggerDequeueState() {
 		for (GUIElement e : sub_elements) { e.triggerDequeueState(); }
 		dequeueState();
+	}
+
+	public String listStyles() {
+		return identifier;
 	}
 	
 }
