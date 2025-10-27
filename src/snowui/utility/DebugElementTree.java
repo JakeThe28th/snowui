@@ -3,7 +3,6 @@ package snowui.utility;
 import java.util.ArrayList;
 
 import frost3d.interfaces.F3DCanvas;
-import frost3d.utility.Log;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
 

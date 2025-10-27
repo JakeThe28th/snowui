@@ -25,7 +25,7 @@ public record COSSType(
 
 	public String getPredicateTargetType(COSSPredicate predicate) {
 		for (String target : predicates().keySet()) {
-			if (predicates().get(target).equals(predicate)) return target;
+			if (predicates().get(target).matches(predicate)) return target;
 		}
 		return null;
 	}

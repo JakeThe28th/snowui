@@ -1,6 +1,7 @@
 package snowui.coss;
 
 import java.util.EnumMap;
+import java.util.Set;
 
 import snowui.coss.enums.PredicateKey;
 
@@ -11,8 +12,8 @@ public class COSSPredicate {
 	public COSSPredicate() { }
 	
 	public COSSPredicate(COSSPredicate other) {
-		for (PredicateKey p : other.state.keySet()) {
-			set(p, other.state.get(p));
+		for (PredicateKey p : other.keySet()) {
+			set(p, other.get(p));
 		}
 	}
 
@@ -35,9 +36,27 @@ public class COSSPredicate {
 		return true;
 	}
 	
+	/** Two predicates match if all the values they have are the same,
+	 *  all values they don't share may differ. */
+	public boolean matches(Object other) {
+		if (other instanceof COSSPredicate) return matches(this, (COSSPredicate) other);
+		return false;	}
+	
+	/** Two predicates strictly_matches if all the values they have are the same,
+	 *  and they both contain the same values. */
+	private boolean strictly_matches(COSSPredicate me, COSSPredicate other) {
+		for (PredicateKey p : other.state.keySet()) {
+			if (other.state.get(p) != me.state.get(p)) return false;
+		}
+		for (PredicateKey p : state.keySet()) {
+			if (other.state.get(p) != me.state.get(p)) return false;
+		}
+		return true;
+	}
+	
 	@Override
 	public boolean equals(Object other) {
-		if (other instanceof COSSPredicate) return matches(this, (COSSPredicate) other);
+		if (other instanceof COSSPredicate) return strictly_matches(this, (COSSPredicate) other);
 		return false;
 	}
 
@@ -65,6 +84,11 @@ public class COSSPredicate {
 			ret += "{" + key + "=" + state.get(key) + "}; ";
 		}
 		return ret;
+	}
+
+	public Set<PredicateKey> keySet() {
+		//Log.send(Arrays.toString(state.keySet().toArray()));
+		return state.keySet();
 	}
 	
 }

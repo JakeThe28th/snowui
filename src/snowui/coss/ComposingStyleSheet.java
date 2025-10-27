@@ -128,7 +128,7 @@ public class ComposingStyleSheet {
 	 * @return
 	 */
 	public COSSProperty getProperty(String type, String property, COSSPredicate predicate) {
-				   COSSProperty result = getPropertyNoDefault(type, property, predicate);
+			   COSSProperty result = getPropertyNoDefault(type, property, predicate);
 		if (result == null) result = getPropertyNoDefault("default", property, predicate);
 		if (result == null) result = getPropertyNoDefault("default", property, null);
 					 return result;
@@ -144,7 +144,7 @@ public class ComposingStyleSheet {
 			if (fallback_cutoff == -1) return null;
 			if (fallback_cutoff >= 0) return getPropertyNoDefault(type.substring(0, fallback_cutoff), property, predicate);
 		}
-		
+
 		// Check for predicates
 		String target = sheet.get(type).getPredicateTargetType(predicate);
 		if (target != null) return getPropertyNoDefault(target, property, predicate);

@@ -9,7 +9,7 @@ import snowui.elements.base.GUIText;
 public class DEMO_GUI {
 
 	public static void main(String[] args) {
-
+		
 		GLState.initializeGLFW();
 		
 		// Create window ...
