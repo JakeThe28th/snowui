@@ -23,11 +23,18 @@ public record COSSType(
 			); 
 	}
 
+	/** Returns the type name corresponding to the predicate with the most matching values. */
 	public String getPredicateTargetType(COSSPredicate predicate) {
-		for (String target : predicates().keySet()) {
-			if (predicates().get(target).matches(predicate)) return target;
+		int max_match = 0;
+		String target = null;
+		for (String current_key : predicates().keySet()) {
+			COSSPredicate current = predicates().get(current_key);
+			if (current.match_count(predicate) > max_match && predicate.matches(predicate)) {
+				target = current_key;
+				max_match = current.match_count(predicate);
+			}
 		}
-		return null;
+		return target;
 	}
 	
 }

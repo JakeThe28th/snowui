@@ -1,6 +1,7 @@
 package snowui.coss;
 
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import snowui.coss.enums.PredicateKey;
@@ -25,6 +26,24 @@ public class COSSPredicate {
 		if (!state.containsKey(key)) return false;
 		return state.get(key);
 	}
+	
+	/** Returns the number of values that are shared between the two predicates */
+	public int match_count(COSSPredicate me, COSSPredicate other) {
+		int count = 0;
+		HashSet<PredicateKey> keys = new HashSet<>(other.state.keySet());
+							  keys.         addAll(me   .state.keySet());
+		for (PredicateKey p : keys) {
+			if (me.state.get(p) == null) continue;
+			if (other.state.get(p) == null) continue;
+			if (other.state.get(p) == me.state.get(p)) count++;
+		}
+		return count;
+	}
+	
+	/** Returns the number of values that are shared between the two predicates */
+	public int match_count(Object other) {
+		if (other instanceof COSSPredicate) return match_count(this, (COSSPredicate) other);
+		return 0;	}
 	
 	/** Two predicates match if all the values they have are the same,
 	 *  all values they don't share may differ. */
