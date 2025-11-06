@@ -63,7 +63,7 @@ public abstract class GUIElement {
 	}
 	
 	public abstract void recalculateSize(GUIInstance gui);
-	public 			void updateState(GUIInstance gui) {};
+	public 		 boolean updateState(GUIInstance gui) { return false; };
 	/** Opportunity to set up drawing information. <br>
 	 *  Notably, this method is responsible for updating
 	 *  sub-elements drawing information itself. */
@@ -73,6 +73,10 @@ public abstract class GUIElement {
 	
 	public void set(PredicateKey key, boolean value) {
 		next_state.set(key, value);
+	}
+	
+	public boolean get(PredicateKey key) {
+		return state.get(key);
 	}
 	
 	private void dequeueState() {
@@ -93,11 +97,11 @@ public abstract class GUIElement {
 	// -- == ... == -- //
 	
 	/* -- Callbacks --*/
-	public void onMousePress() 		 { }
-	public void onMouseDown() 		 { }
-	public void onMouseRelease() 	 { }
-	public void onMouseHover() 		 { }
-	public void onMouseDoubleClick() { }
+	public void onClick			() 	{ }
+	public void onHold			()  { }
+	public void onRelease		()  { }
+	public void onHover			()  { }
+	public void onDoubleClick	()  { }
 	
 	/* It should be possible to update an aspect
 	 * of an element without forcing all sub-elements
@@ -121,38 +125,35 @@ public abstract class GUIElement {
 	}
 
 	private final boolean triggerUpdateState(GUIInstance gui) {
-		if (gui.hasInput()) {
-						
+		if (gui.hasInput() && !get(PredicateKey.DISABLED)) {	
+			// Reset all of the properties that this method touches
 			set(PredicateKey.BOUNDED, 	false);
 			set(PredicateKey.HOVERED, 	false);
 			set(PredicateKey.PRESSED, 	false);
 			set(PredicateKey.RELEASED, 	false);
 			set(PredicateKey.DOWN, 		false);
 			
+			// Checking this later lets us not trigger events if a sub-element is hovered
 			boolean overridden = false;
 			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui); }
 
 			if (hover_rectangle != null && hover_rectangle.contains(gui.mouspos())) {
-				
-//				gui.canvas().color(Color.DESBLUE.val());
-//				gui.canvas().rect(hover_rectangle, 10);
-				
+				// (PredicateKey.BOUNDED should be set regardless of if a sub-element is hovered, though)
 				set(PredicateKey.BOUNDED, true);
-				
 				if (overridden == false) {
-				
 					set(PredicateKey.HOVERED, true);
-					
-					onMouseHover();
-					
-					return true;
-
+					onHover();
+					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); onClick   (); }
+					if (gui.primary_click_down()) 		{ set(PredicateKey.DOWN,     true); onHold    (); }
+					if (gui.primary_click_released()) 	{ set(PredicateKey.RELEASED, true); onRelease (); }
 				}
-				
 			}
 			
-			updateState(gui);
-
+			// Element-specific state code can check PredicateKey.HOVERED.
+			// In some cases, like dragging a slider, it might want to
+			// keep overriding super-elements even when not hovered, so
+			// we can't just put it in the if statement up there.
+			overridden = overridden || updateState(gui);
 			return overridden;
 		}
 		return false;

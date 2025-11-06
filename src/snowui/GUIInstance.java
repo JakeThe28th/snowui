@@ -3,6 +3,9 @@ package snowui;
 import java.util.ArrayList;
 
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
+import static org.lwjgl.glfw.GLFW.*;
+
 import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
@@ -35,11 +38,17 @@ public class GUIInstance {
 	public SimpleTextRenderer 	textrenderer() { return text; }
 	public SimpleCanvas 		canvas() { return canvas; }
 
+	// TODO: Add tab navigation support (maybe by hiding and moving the mouse around?)
+
 	Input input;
-	public Vector2i mouspos() 	{ return new Vector2i(input.mouseX(), input.mouseY()); }
-	public int 		mx() 		{ return input.mouseX(); }
-	public int 		my() 		{ return input.mouseY(); }
-	public boolean hasInput() 	{ return input.hasInputThisFrame(); }
+	public Vector2i mouspos	() 	{ return new Vector2i(input.mouseX(), input.mouseY()); }
+	public int 		mx		() 	{ return input.mouseX(); }
+	public int 		my		() 	{ return input.mouseY(); }
+	public boolean  hasInput() 	{ return input.hasInputThisFrame(); }
+	
+	public boolean 	primary_click_pressed () { return input.mouseButtonPressed  (GLFW_MOUSE_BUTTON_LEFT); }
+	public boolean 	primary_click_down	  () { return input.mouseButtonDown	    (GLFW_MOUSE_BUTTON_LEFT); }
+	public boolean 	primary_click_released() { return input.mouseButtonReleased (GLFW_MOUSE_BUTTON_LEFT); }
 
 	
 	public GUIInstance(F3DWindow window, Input input) {
