@@ -1,7 +1,7 @@
 package averificare;
 
 import frost3d.GLState;
-import frost3d.Shaders;
+import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
 import snowui.elements.base.GUIText;
@@ -13,11 +13,11 @@ public class DEMO_GUI {
 		GLState.initializeGLFW();
 		
 		// Create window ...
-		SimpleWindow window = new SimpleWindow(300, 600, "GUI Test");
+		SimpleWindow window = new SimpleWindow(4*300, 3*300, "GUI Test");
 		//window.setVsync(false);
 		
 		// Create core shaders (needs to be done after window cuz context)
-		Shaders.init();
+		BuiltinShaders.init();
 		
 		GUIInstance gui = new GUIInstance(window, window.input());
 		
