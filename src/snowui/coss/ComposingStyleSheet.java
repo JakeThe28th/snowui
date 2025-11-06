@@ -72,9 +72,7 @@ public class ComposingStyleSheet {
 		
 		sheet.setPredicate("default", "HOVERED=true", "hover");
 		sheet.setPredicate("default", "DOWN=true", "down");
-
-		sheet.setProperty("hover", "horizontal_alignment",	"middle"); 		// Left, right, middle
-
+		
 	}
 	
 	// -- ++  ...  ++ -- //

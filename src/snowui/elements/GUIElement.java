@@ -10,6 +10,11 @@ import snowui.coss.enums.PredicateKey;
 
 public abstract class GUIElement {
 	
+
+	public String listStyles() {
+		return identifier;
+	}
+	
 	ArrayList<GUIElement> sub_elements = new ArrayList<>();
 	
 	public ArrayList<GUIElement> sub_elements() {
@@ -38,6 +43,8 @@ public abstract class GUIElement {
 	protected boolean should_recalculate_size = true;
 	
 	protected Rectangle hover_rectangle;
+	
+	public Rectangle hover_rectangle() { return hover_rectangle; }
 
 	protected int unpadded_width = 0;
 	protected int unpadded_height = 0;
@@ -70,6 +77,7 @@ public abstract class GUIElement {
 	
 	private void dequeueState() {
 		if (!next_state.equals(state)) {
+			log_update();
 			should_recalculate_size = true;
 			this.style = null;
 			state = next_state;
@@ -95,15 +103,31 @@ public abstract class GUIElement {
 	 * of an element without forcing all sub-elements
 	 * to unnecessarily update. This code provides
 	 * the logic needed for that... vvv */
+	
+	/** @see snowui.elements.GUIElement#last_update_elapsed_time() */
+	private long last_update_time = 0;
+	
+	/** Used in the debug view to ensure element's aren't updating unexpectedly often.<br>
+	 *  This only tracks updates initiated via the triggerX methods, and by dequeueState().<br>
+	 *  <br>
+	 *  But, elements shouldn't be updating outside of those methods, so it should detect everything.<br> */
+	public long last_update_elapsed_time() {
+		return System.currentTimeMillis() - last_update_time;
+	}
+	
+	/** @see snowui.elements.GUIElement#last_update_elapsed_time() */
+	public void log_update() {
+		last_update_time = System.currentTimeMillis();
+	}
 
-	private boolean triggerUpdateState(GUIInstance gui) {
+	private final boolean triggerUpdateState(GUIInstance gui) {
 		if (gui.hasInput()) {
 						
-			set(PredicateKey.BOUNDED, false);
-			set(PredicateKey.HOVERED, false);
-			set(PredicateKey.PRESSED, false);
-			set(PredicateKey.RELEASED, false);
-			set(PredicateKey.DOWN, false);
+			set(PredicateKey.BOUNDED, 	false);
+			set(PredicateKey.HOVERED, 	false);
+			set(PredicateKey.PRESSED, 	false);
+			set(PredicateKey.RELEASED, 	false);
+			set(PredicateKey.DOWN, 		false);
 			
 			boolean overridden = false;
 			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui); }
@@ -134,16 +158,18 @@ public abstract class GUIElement {
 		return false;
 	}
 	
-	private void triggerCacheStyle(GUIInstance gui) {
+	private final void triggerCacheStyle(GUIInstance gui) {
 		for (GUIElement e : sub_elements) { e.triggerCacheStyle(gui); }
 		if (style == null) {
+			log_update();
 			cacheStyle(gui);
 			should_update = true;
 		}
 	}
 	
-	private void triggerUpdateDrawInfo(GUIInstance gui, Rectangle bounds) {
+	private final void triggerUpdateDrawInfo(GUIInstance gui, Rectangle bounds) {
 		if (should_update) {
+			log_update();
 			updateDrawInfo(gui, bounds);
 			should_update = false; 
 		} else {
@@ -153,32 +179,29 @@ public abstract class GUIElement {
 		}
 	}
 
-	private void triggerTickAnimation(GUIInstance gui) {
+	private final void triggerTickAnimation(GUIInstance gui) {
 		for (GUIElement e : sub_elements) { e.triggerTickAnimation(gui); }
 		tickAnimation(gui);
 	}
 	
-	private void triggerDraw(GUIInstance gui, int depth) {
+	private final void triggerDraw(GUIInstance gui, int depth) {
 		for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth); }
 		draw(gui, depth);
 	}
 	
-	private void triggerRecalculateSize(GUIInstance gui) {
+	private final void triggerRecalculateSize(GUIInstance gui) {
 		for (GUIElement e : sub_elements) { e.triggerRecalculateSize(gui); }
 		if (should_recalculate_size) {
+			log_update();
 			recalculateSize(gui);
 			should_update = true;
 			should_recalculate_size = false;
 		}
 	}
 	
-	private void triggerDequeueState() {
+	private final void triggerDequeueState() {
 		for (GUIElement e : sub_elements) { e.triggerDequeueState(); }
 		dequeueState();
 	}
 
-	public String listStyles() {
-		return identifier;
-	}
-	
 }
