@@ -9,6 +9,8 @@ import snowui.utility.Margin;
 
 public class GUIText extends GUIElement {
 	
+	{ identifier("text"); }
+	
 	String text = null;
 	
 	public GUIText(String text) {

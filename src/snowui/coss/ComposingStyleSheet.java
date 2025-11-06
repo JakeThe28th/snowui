@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import disaethia.io.nbt.NBTCompound;
 import disaethia.io.nbt.NBTList;
+import frost3d.utility.Log;
 
 public class ComposingStyleSheet {
 	
@@ -42,37 +43,38 @@ public class ComposingStyleSheet {
 	
 	public static void setDefaults(ComposingStyleSheet sheet) {
 
-		// sheet.setup default style
-		sheet.setProperty("default", "base_color", 			"#292f45");
-		sheet.setProperty("default", "outline_color", 		"BLACK");
+		sheet.setProperty("default", "base_color", 				"#686e82");
+		sheet.setProperty("default", "outline_color", 			"BLACK");
 
-		sheet.setProperty("default", "left_margin", 		"1");
-		sheet.setProperty("default", "right_margin", 		"1");
-		sheet.setProperty("default", "top_margin", 			"1");
-		sheet.setProperty("default", "bottom_margin", 		"1");
+		sheet.setProperty("default", "left_margin", 			"1");
+		sheet.setProperty("default", "right_margin", 			"1");
+		sheet.setProperty("default", "top_margin", 				"1");
+		sheet.setProperty("default", "bottom_margin", 			"1");
 		
-		sheet.setProperty("default", "max_width", 			"flex"); 		// flex, container, or [number]px (EX: 10px)
-		sheet.setProperty("default", "min_width", 			"flex"); 		// flex, container, or [number]px (EX: 10px)
-		sheet.setProperty("default", "max_height", 			"flex"); 		// flex, container, or [number]px (EX: 10px)
-		sheet.setProperty("default", "min_height", 			"flex"); 		// flex, container, or [number]px (EX: 10px)
+		sheet.setProperty("default", "max_width", 				"flex"); // flex, container, or [number]px (EX: 10px)
+		sheet.setProperty("default", "min_width", 				"flex"); // flex, container, or [number]px (EX: 10px)
+		sheet.setProperty("default", "max_height", 				"flex"); // flex, container, or [number]px (EX: 10px)
+		sheet.setProperty("default", "min_height", 				"flex"); // flex, container, or [number]px (EX: 10px)
 		
-		sheet.setProperty("default", "horizontal_alignment",	"left"); 		// Left, right, middle
-		sheet.setProperty("default", "vertical_alignment", 		"top");			// Top, bottom, middle
+		sheet.setProperty("default", "horizontal_alignment",	"left"); // Left, right, middle
+		sheet.setProperty("default", "vertical_alignment", 		"top");	 // Top, bottom, middle
 
 		sheet.setProperty("default", "font_size", 				"8");
-		sheet.setProperty("default", "outline_size", 			"1");
+		sheet.setProperty("default", "outline_size", 			"2");
 		sheet.setProperty("default", "symbol_size", 			"8");
+		
+		// -- Predicates -- //
+		
+		sheet.setPredicate("default", "HOVERED=true", 				"hover");
+		sheet.setPredicate("default", "HOVERED=true, DOWN=true", 	"down");
+		
+		sheet.setProperty("hover", 	  "base_color", 				"BLACK");
+		sheet.setProperty("down", 	  "base_color", 				"#3c0ffa");
 		
 		// -- Default Elements -- //
 		
-		sheet.setProperty("text", "color", 					"#FFFFFF");	
-				
-		sheet.setProperty("hover", "base_color", 			"#00f742");
-		sheet.setProperty("down", "base_color", 			"#3c0ffa");
-		
-		sheet.setPredicate("default", "HOVERED=true", "hover");
-		sheet.setPredicate("default", "HOVERED=true, DOWN=true", "down");
-		
+		sheet.setProperty("text", 	  "base_color", 				"BLACK");	
+
 	}
 	
 	// -- ++  ...  ++ -- //
@@ -146,7 +148,7 @@ public class ComposingStyleSheet {
 		// Check for predicates
 		String target = sheet.get(type).getPredicateTargetType(predicate);
 		if (target != null) return getPropertyNoDefault(target, property, predicate);
-				
+			
 		HashMap<String, COSSProperty> properties_of_this_type = sheet.get(type).properties();
 
 		// If the property is null, check the contained types for the same property,

@@ -10,11 +10,6 @@ import snowui.coss.enums.PredicateKey;
 
 public abstract class GUIElement {
 	
-
-	public String listStyles() {
-		return identifier;
-	}
-	
 	ArrayList<GUIElement> sub_elements = new ArrayList<>();
 	
 	public ArrayList<GUIElement> sub_elements() {
@@ -38,6 +33,12 @@ public abstract class GUIElement {
 	public CachedProperties style() 		{ return style; }
 	
 	String 					identifier 		= "none";
+	
+	public void identifier(String i) 		{ identifier = i; }
+
+	public String listStyles() {
+		return identifier;
+	}
 	
 	protected boolean should_update = true;
 	protected boolean should_recalculate_size = true;
