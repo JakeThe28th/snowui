@@ -24,7 +24,7 @@ public class CachedProperties {
 	public COSSProperty symbol_size;
 	public COSSProperty symbol_x_margin;
 	public COSSProperty list_spacing;
-	public COSSProperty horizontal_indent;
+	public COSSProperty list_indent;
 	public COSSProperty preview_color;
 	public CachedProperties(ComposingStyleSheet s, String type, COSSPredicate predicate) {
 		left_margin 			= s.getProperty(type, "left_margin", predicate);
@@ -40,6 +40,9 @@ public class CachedProperties {
 		outline_color 			= s.getProperty(type, "outline_color", predicate);
 		base_color 				= s.getProperty(type, "base_color", predicate);
 		outline_size 			= s.getProperty(type, "outline_size", predicate);
+		list_spacing 			= s.getProperty(type, "list_spacing", predicate);
+		list_indent 			= s.getProperty(type, "list_indent", predicate);
+
 	}
 
 }

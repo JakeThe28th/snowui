@@ -63,6 +63,9 @@ public class ComposingStyleSheet {
 		sheet.setProperty("default", "outline_size", 			"2");
 		sheet.setProperty("default", "symbol_size", 			"8");
 		
+		sheet.setProperty("default", "list_spacing", 			"0");
+		sheet.setProperty("default", "list_indent", 			"0");
+
 		// -- Predicates -- //
 		
 		sheet.setPredicate("default", "HOVERED=true", 				"hover");
