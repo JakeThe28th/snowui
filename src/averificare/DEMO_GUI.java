@@ -11,6 +11,9 @@ public class DEMO_GUI {
 
 	public static void main(String[] args) {
 		
+		// note: list updates cuz its style containd the default style base color whch changes on hover and
+		// click even tho its invisible
+		
 		GLState.initializeGLFW();
 		
 		// Create window ...
@@ -44,13 +47,14 @@ public class DEMO_GUI {
 		
 		for (int i = 0; i < 5; i++) {
 			list.add(new GUIText("Hello, " + i));
+			if (i==2) list.get(i).identifier("none");
 		}
 		
 		list.identifier("demo_list");
 		gui.style().setProperty("demo_list", "list_indent", "16");
 		
 		gui.style().setProperty("demo_horizontal_list", "list_spacing", "36");
-
+		
 		
 		gui.root(list);
 		
