@@ -25,14 +25,14 @@ public class GUIText extends GUIElement {
 	}
 
 	@Override
-	public void updateDrawInfo(GUIInstance gui, Rectangle bounds) {
-		hover_rectangle = Margin.calculate(style(), bounds, unpadded_width, unpadded_height);
+	public void updateDrawInfo(GUIInstance gui) {
+		hover_rectangle(Margin.calculate(style(), this.limit_rectangle(), unpadded_width, unpadded_height));
 	}
 
 	@Override
 	public void draw(GUIInstance gui, int depth) {
 		gui.canvas().color(style().base_color.color());
-		gui.canvas().text(hover_rectangle.left(), hover_rectangle.top(), depth, text);
+		gui.canvas().text(hover_rectangle().left(), hover_rectangle().top(), depth, text);
 	}
 	
 }
