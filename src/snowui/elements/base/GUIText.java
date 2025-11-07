@@ -31,7 +31,7 @@ public class GUIText extends GUIElement {
 
 	@Override
 	public void draw(GUIInstance gui, int depth) {
-		gui.canvas().color(style().base_color.color());
+		gui.canvas().color(style().base_color().color());
 		gui.canvas().text(hover_rectangle().left(), hover_rectangle().top(), depth, text);
 	}
 	

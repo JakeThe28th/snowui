@@ -10,6 +10,10 @@ import snowui.utility.GUIUtility;
 
 public class GUIList extends GUIElement {
 	
+	{ identifier("list"); }
+	
+	//TODO: wrapping
+	
 	boolean vertical = true;
 	boolean wrap = false;
 	
@@ -65,9 +69,9 @@ public class GUIList extends GUIElement {
 		} else {
 			if (vertical) {
 				this.unpadded_height = GUIUtility.combined_height(elements);
-				this.unpadded_width = GUIUtility.max_width(elements) + style().list_indent.pixels();
+				this.unpadded_width = GUIUtility.max_width(elements) + style().list_indent().pixels();
 			} else {
-				this.unpadded_height = GUIUtility.max_height(elements) + style().list_indent.pixels();
+				this.unpadded_height = GUIUtility.max_height(elements) + style().list_indent().pixels();
 				this.unpadded_width = GUIUtility.combined_width(elements);
 			}
 		}
@@ -83,9 +87,9 @@ public class GUIList extends GUIElement {
 		int bottom 	= bounds.bottom();
 		
 		if (vertical) {
-			left += style().list_indent.pixels();
+			left += style().list_indent().pixels();
 		} else {
-			top += style().list_indent.pixels();
+			top += style().list_indent().pixels();
 		}
 				
 		for (GUIElement element : elements) {
@@ -98,10 +102,10 @@ public class GUIList extends GUIElement {
 			
 			if (vertical) {
 				top+=element.height();
-				top+=style().list_spacing.pixels();
+				top+=style().list_spacing().pixels();
 			} else {
 				left+=element.width();
-				left+=style().list_spacing.pixels();
+				left+=style().list_spacing().pixels();
 			}
 		}
 		

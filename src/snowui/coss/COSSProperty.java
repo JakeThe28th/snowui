@@ -30,7 +30,7 @@ public record COSSProperty (
 		public static COSSProperty from(String value) {
 			if (value.equals("true"))  { return new COSSProperty(BOOLEAN,  true); }
 			if (value.equals("false")) { return new COSSProperty(BOOLEAN, false); }
-			
+
 			if (value.endsWith("px")) {
 				String substring = value.substring(0, value.length()-2);
 				return new COSSProperty(PIXELS, Integer.valueOf(substring));
