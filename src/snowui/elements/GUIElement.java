@@ -10,7 +10,9 @@ import snowui.coss.enums.PredicateKey;
 
 public abstract class GUIElement {
 	
-	ArrayList<GUIElement> sub_elements = new ArrayList<>();
+	public static final int ELEMENT_ADD_DEPTH = 16;
+
+	protected ArrayList<GUIElement> sub_elements = new ArrayList<>();
 	
 	public ArrayList<GUIElement> sub_elements() {
 		return sub_elements;
@@ -43,10 +45,18 @@ public abstract class GUIElement {
 	protected boolean should_update = true;
 	protected boolean should_recalculate_size = true;
 	
-	protected Rectangle hover_rectangle;
+	private   Rectangle hover_rectangle;
+	public 	  Rectangle hover_rectangle() 						{ return hover_rectangle; 		}
+	public 	  void 	 	hover_rectangle(Rectangle rectangle) 	{ 		 hover_rectangle = rectangle; 	}
+		
+	/** Defines the bounding box that updateDrawInfo() stays within */
+	private   Rectangle limit_rectangle;
+	/** Defines the bounding box that updateDrawInfo() stays within */
+	public 	  Rectangle limit_rectangle() 						{ return limit_rectangle; 		}
+	/** Defines the bounding box that updateDrawInfo() stays within */
+	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{ 		 limit_rectangle = rectangle; 	}
 	
-	public Rectangle hover_rectangle() { return hover_rectangle; }
-
+	
 	protected int unpadded_width = 0;
 	protected int unpadded_height = 0;
 	
@@ -54,11 +64,12 @@ public abstract class GUIElement {
 	public int height() { return style.padh(unpadded_height); }
 
 	public static void tick(GUIInstance gui, GUIElement e) {
+		e.limit_rectangle(gui.canvas().size());	// (Since this is only run on the root element)
 		e.triggerUpdateState(gui);
 		e.triggerDequeueState();
 		e.triggerCacheStyle(gui);
 		e.triggerRecalculateSize(gui);
-		e.triggerUpdateDrawInfo(gui, gui.canvas().size());
+		e.triggerUpdateDrawInfo(gui);
 		e.triggerTickAnimation(gui);
 		e.triggerDraw(gui, 0);
 	}
@@ -68,7 +79,7 @@ public abstract class GUIElement {
 	/** Opportunity to set up drawing information. <br>
 	 *  Notably, this method is responsible for updating
 	 *  sub-elements drawing information itself. */
-	public abstract void updateDrawInfo(GUIInstance gui, Rectangle bounds);
+	public abstract void updateDrawInfo(GUIInstance gui);
 	public 		 	void tickAnimation(GUIInstance gui) {};
 	public abstract void draw(GUIInstance gui, int depth);
 	
@@ -169,16 +180,13 @@ public abstract class GUIElement {
 		}
 	}
 	
-	private final void triggerUpdateDrawInfo(GUIInstance gui, Rectangle bounds) {
+	private final void triggerUpdateDrawInfo(GUIInstance gui) {
 		if (should_update) {
 			log_update();
-			updateDrawInfo(gui, bounds);
+			updateDrawInfo(gui);
 			should_update = false; 
-		} else {
-			/** Calling updateDrawInfo() itself updates all sub-elements,
-			 *  so only recurse if we're not calling it. */
-			for (GUIElement e : sub_elements) { e.triggerUpdateDrawInfo(gui, bounds); }
 		}
+		for (GUIElement e : sub_elements) { e.triggerUpdateDrawInfo(gui); }
 	}
 
 	private final void triggerTickAnimation(GUIInstance gui) {
@@ -187,7 +195,7 @@ public abstract class GUIElement {
 	}
 	
 	private final void triggerDraw(GUIInstance gui, int depth) {
-		for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth); }
+		for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
 		draw(gui, depth);
 	}
 	
