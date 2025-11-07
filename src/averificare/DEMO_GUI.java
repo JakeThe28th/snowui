@@ -4,6 +4,7 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
+import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIText;
 
 public class DEMO_GUI {
@@ -21,7 +22,33 @@ public class DEMO_GUI {
 		
 		GUIInstance gui = new GUIInstance(window, window.input());
 		
-		gui.root(new GUIText("Hello, "));
+		GUIList list = new GUIList();
+		for (int i = 0; i < 5; i++) {
+			list.add(new GUIText("Hello, " + i));
+		}
+		
+		GUIList sub_list_1 = new GUIList();
+		for (int i = 0; i < 3; i++) {
+			sub_list_1.add(new GUIText("mine crafting, " + i));
+		}
+		list.add(sub_list_1);
+		sub_list_1.identifier("demo_list");
+		
+		GUIList sub_list_2 = new GUIList();
+		sub_list_2.horizontalify();
+		for (int i = 0; i < 3; i++) {
+			sub_list_2.add(new GUIText("flint & stel, " + i));
+		}
+		list.add(sub_list_2);
+		
+		for (int i = 0; i < 5; i++) {
+			list.add(new GUIText("Hello, " + i));
+		}
+		
+		list.identifier("demo_list");
+		gui.style().setProperty("demo_list", "list_indent", "16");
+		
+		gui.root(list);
 		
 		while (!window.should_close()) {
 			gui.size(window.width, window.height);
