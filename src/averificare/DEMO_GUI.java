@@ -40,6 +40,7 @@ public class DEMO_GUI {
 			sub_list_2.add(new GUIText("flint & stel, " + i));
 		}
 		list.add(sub_list_2);
+		sub_list_2.identifier("demo_horizontal_list");
 		
 		for (int i = 0; i < 5; i++) {
 			list.add(new GUIText("Hello, " + i));
@@ -47,6 +48,9 @@ public class DEMO_GUI {
 		
 		list.identifier("demo_list");
 		gui.style().setProperty("demo_list", "list_indent", "16");
+		
+		gui.style().setProperty("demo_horizontal_list", "list_spacing", "36");
+
 		
 		gui.root(list);
 		
