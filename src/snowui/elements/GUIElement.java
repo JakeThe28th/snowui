@@ -2,6 +2,7 @@ package snowui.elements;
 
 import java.util.ArrayList;
 
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
@@ -44,6 +45,7 @@ public abstract class GUIElement {
 	
 	protected boolean should_update = true;
 	protected boolean should_recalculate_size = true;
+	protected boolean should_cache_style = true;
 	
 	private   Rectangle hover_rectangle;
 	public 	  Rectangle hover_rectangle() 						{ return hover_rectangle; 		}
@@ -54,7 +56,12 @@ public abstract class GUIElement {
 	/** Defines the bounding box that updateDrawInfo() stays within */
 	public 	  Rectangle limit_rectangle() 						{ return limit_rectangle; 		}
 	/** Defines the bounding box that updateDrawInfo() stays within */
-	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{ 		 limit_rectangle = rectangle; 	}
+	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{   
+		if (!rectangle.equals(limit_rectangle)) { 
+			should_update = true; 
+		}
+		limit_rectangle = rectangle; 
+	}
 	
 	
 	protected int unpadded_width = 0;
@@ -93,17 +100,19 @@ public abstract class GUIElement {
 	
 	private void dequeueState() {
 		if (!next_state.equals(state)) {
-			log_update();
-			should_recalculate_size = true;
-			this.style = null;
+			log_state_update();
+			should_cache_style = true;
 			state = next_state;
 			next_state = new COSSPredicate(state);
 		}
 		
 	}
 	
-	public void cacheStyle(GUIInstance gui) {
+	public boolean cacheStyle(GUIInstance gui) {
+		should_cache_style = false;
+		CachedProperties old_style = style;
 		style = new CachedProperties(gui.style(), identifier, state);
+		return !style.equals(old_style);
 	}
 	
 	// -- == ... == -- //
@@ -120,21 +129,17 @@ public abstract class GUIElement {
 	 * to unnecessarily update. This code provides
 	 * the logic needed for that... vvv */
 	
-	/** @see snowui.elements.GUIElement#last_update_elapsed_time() */
 	private long last_update_time = 0;
+	public 	void log_update() 					 { last_update_time = System.currentTimeMillis(); }
+	public 	long last_update_elapsed_time() 	 { return System.currentTimeMillis() - last_update_time; }
 	
-	/** Used in the debug view to ensure element's aren't updating unexpectedly often.<br>
-	 *  This only tracks updates initiated via the triggerX methods, and by dequeueState().<br>
-	 *  <br>
-	 *  But, elements shouldn't be updating outside of those methods, so it should detect everything.<br> */
-	public long last_update_elapsed_time() {
-		return System.currentTimeMillis() - last_update_time;
-	}
-	
-	/** @see snowui.elements.GUIElement#last_update_elapsed_time() */
-	public void log_update() {
-		last_update_time = System.currentTimeMillis();
-	}
+	private long last_draw_update_time = 0;
+	public 	void log_draw_update() 				 { last_draw_update_time = System.currentTimeMillis(); }	
+	public 	long last_draw_update_elapsed_time() { return System.currentTimeMillis() - last_draw_update_time; }
+
+	private long last_state_update_time = 0;
+	public 	void log_state_update() 				 { last_state_update_time = System.currentTimeMillis(); }	
+	public 	long last_state_update_elapsed_time() { return System.currentTimeMillis() - last_state_update_time; }
 
 	private final boolean triggerUpdateState(GUIInstance gui) {
 		if (gui.hasInput() && !get(PredicateKey.DISABLED)) {	
@@ -173,16 +178,18 @@ public abstract class GUIElement {
 	
 	private final void triggerCacheStyle(GUIInstance gui) {
 		for (GUIElement e : sub_elements) { e.triggerCacheStyle(gui); }
-		if (style == null) {
-			log_update();
-			cacheStyle(gui);
-			should_update = true;
+		if (should_cache_style) {
+			if (cacheStyle(gui)) {
+				log_update();
+				should_update = true;
+				should_recalculate_size = true;
+			}
 		}
 	}
 	
 	private final void triggerUpdateDrawInfo(GUIInstance gui) {
 		if (should_update) {
-			log_update();
+			log_draw_update();
 			updateDrawInfo(gui);
 			should_update = false; 
 		}

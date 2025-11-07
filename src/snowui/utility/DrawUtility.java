@@ -27,6 +27,7 @@ public class DrawUtility {
 		int hh = 0;
 		
 		for (String str : strings) {
+			if (str.startsWith("§")) str = str.substring(2);
 			int ts = canvas.textrenderer().size(str).x;
 			ww = (ww < ts) ? ts : ww;
 			hh += canvas.textrenderer().size(str).y + m*3;
@@ -43,6 +44,8 @@ public class DrawUtility {
 			canvas.color(Color.BLACK25.val());
 			canvas.rect(xx, yy, xx+size.x+(m*2), yy+size.y+(m*2), depth);
 			canvas.color(Color.WHITE.val());
+			if (str.startsWith("§`")) canvas.color(Color.DESYELLOW.val());
+			if (str.startsWith("§")) str = str.substring(2);
 			canvas.text(xx+m, yy+m, depth+1, str);
 			yy += size.y + m*3;
 		}
