@@ -8,6 +8,7 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.GUIElement;
 import snowui.utility.GUIUtility;
+import snowui.utility.Margin;
 
 public class GUIList extends GUIElement {
 	
@@ -132,7 +133,11 @@ public class GUIList extends GUIElement {
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
+		
 		Rectangle bounds = this.padded_limit_rectangle();
+		if (!wrap) {
+			bounds = Margin.calculate(style(), bounds, unpadded_width, unpadded_height);
+		}
 		
 		int left 	= bounds.left();
 		int top 	= bounds.top();
@@ -187,7 +192,7 @@ public class GUIList extends GUIElement {
 			
 		}
 		
-		this.hover_rectangle(this.padded_limit_rectangle());
+		this.hover_rectangle(bounds);
 	}
 
 	@Override
