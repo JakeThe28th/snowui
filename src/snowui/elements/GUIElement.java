@@ -53,14 +53,30 @@ public abstract class GUIElement {
 		
 	/** Defines the bounding box that updateDrawInfo() stays within */
 	private   Rectangle limit_rectangle;
+	private   Rectangle padded_limit_rectangle;
+
 	/** Defines the bounding box that updateDrawInfo() stays within */
 	public 	  Rectangle limit_rectangle() 						{ return limit_rectangle; 		}
+	public 	  Rectangle padded_limit_rectangle() 				{ return padded_limit_rectangle; 		}
 	/** Defines the bounding box that updateDrawInfo() stays within */
 	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{   
+		boolean limit_changed = false;
 		if (!rectangle.equals(limit_rectangle)) { 
-			should_update = true; 
+			should_update = true;
+			limit_changed = true;
 		}
 		limit_rectangle = rectangle; 
+		if (style() != null) set_padded_limit_rectangle();
+		if (limit_changed) onLimitRectangleChange();
+	}
+
+	private void set_padded_limit_rectangle() {
+		padded_limit_rectangle = new Rectangle(
+				limit_rectangle.left() + style().left_margin().pixels(),
+				limit_rectangle.top() + style().top_margin().pixels(),
+				limit_rectangle.right() - style().right_margin().pixels(),
+				limit_rectangle.bottom() - style().bottom_margin().pixels()
+				);
 	}
 	
 	
@@ -117,12 +133,15 @@ public abstract class GUIElement {
 	
 	// -- == ... == -- //
 	
-	/* -- Callbacks --*/
+	/* -- Callbacks -- */
 	public void onClick			() 	{ }
 	public void onHold			()  { }
 	public void onRelease		()  { }
 	public void onHover			()  { }
 	public void onDoubleClick	()  { }
+	
+	/* -- Internal callbacks -- */
+	protected void onLimitRectangleChange() { }
 	
 	/* It should be possible to update an aspect
 	 * of an element without forcing all sub-elements
@@ -138,8 +157,12 @@ public abstract class GUIElement {
 	public 	long last_draw_update_elapsed_time() { return System.currentTimeMillis() - last_draw_update_time; }
 
 	private long last_state_update_time = 0;
-	public 	void log_state_update() 				 { last_state_update_time = System.currentTimeMillis(); }	
+	public 	void log_state_update() 			 { last_state_update_time = System.currentTimeMillis(); }	
 	public 	long last_state_update_elapsed_time() { return System.currentTimeMillis() - last_state_update_time; }
+	
+	private long last_element_update_time = 0;
+	public 	void log_element_update() 				{ last_element_update_time = System.currentTimeMillis(); }	
+	public 	long last_element_update_elapsed_time() { return System.currentTimeMillis() - last_element_update_time; }
 
 	private final boolean triggerUpdateState(GUIInstance gui) {
 		if (gui.hasInput() && !get(PredicateKey.DISABLED)) {	
@@ -183,10 +206,11 @@ public abstract class GUIElement {
 				log_update();
 				should_update = true;
 				should_recalculate_size = true;
+				if (limit_rectangle != null) set_padded_limit_rectangle();
 			}
 		}
 	}
-	
+
 	private final void triggerUpdateDrawInfo(GUIInstance gui) {
 		if (should_update) {
 			log_draw_update();

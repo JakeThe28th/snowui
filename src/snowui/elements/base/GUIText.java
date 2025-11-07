@@ -26,7 +26,7 @@ public class GUIText extends GUIElement {
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		hover_rectangle(Margin.calculate(style(), this.limit_rectangle(), unpadded_width, unpadded_height));
+		hover_rectangle(Margin.calculate(style(), this.padded_limit_rectangle(), unpadded_width, unpadded_height));
 	}
 
 	@Override

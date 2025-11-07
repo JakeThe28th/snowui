@@ -39,10 +39,11 @@ public class DEMO_GUI {
 		
 		GUIList sub_list_2 = new GUIList();
 		sub_list_2.horizontalify();
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 30; i++) {
 			sub_list_2.add(new GUIText("flint & stel, " + i));
 		}
 		list.add(sub_list_2);
+		sub_list_2.wrap(true);
 		sub_list_2.identifier("demo_horizontal_list");
 		
 		for (int i = 0; i < 5; i++) {

@@ -30,4 +30,32 @@ public class GUIUtility {
 		return width;
 	}
 
+	public static int wrapped_height(ArrayList<GUIElement> elements, int spacing, int width) {
+		int result_height = 0;
+		
+		int xx = 0;
+		int max_height = 0;
+
+		for (GUIElement element : elements) {
+			if ((xx + element.width()) > width) {
+				xx = 0;
+				result_height += max_height;
+				max_height = 0;
+			}
+			if (element.height() > max_height) max_height = element.height();
+			xx += element.width();
+			xx += spacing;
+		}
+		result_height += max_height;
+		
+		return result_height;
+	}
+	
+
+	public static int wrapped_width(ArrayList<GUIElement> elements, int spacing, int height) {
+		// TODO
+		return 37;
+	}
+
+
 }
