@@ -43,6 +43,14 @@ public abstract class GUIElement {
 		return identifier;
 	}
 	
+	public boolean is_on_screen() {
+		if (scissor_rectangle() != null && hover_rectangle() != null) {
+			return scissor_rectangle().intersects(hover_rectangle());
+		} else {
+			return true;
+		}
+	}
+	
 	protected boolean should_update = true;
 	protected boolean should_recalculate_size = true;
 	protected boolean should_cache_style = true;
@@ -79,6 +87,14 @@ public abstract class GUIElement {
 				);
 	}
 	
+	private   Rectangle scissor_rectangle;
+	public 	  Rectangle scissor_rectangle() 					{ return scissor_rectangle; 		}
+	public 	  void 	 	scissor_rectangle_recursive(Rectangle rectangle) { 		 
+		scissor_rectangle = rectangle; 	
+		for (GUIElement e : sub_elements) {
+			e.scissor_rectangle_recursive(rectangle);
+		}
+	}
 	
 	protected int unpadded_width = 0;
 	protected int unpadded_height = 0;
@@ -177,7 +193,12 @@ public abstract class GUIElement {
 			boolean overridden = false;
 			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui); }
 
-			if (hover_rectangle != null && hover_rectangle.contains(gui.mouspos())) {
+			Rectangle _hover_rectangle = hover_rectangle;
+			if (_hover_rectangle != null && scissor_rectangle() != null) { 
+				_hover_rectangle = _hover_rectangle.constrain_to(scissor_rectangle());
+			}
+			
+			if (_hover_rectangle != null && _hover_rectangle.contains(gui.mouspos())) {
 				// (PredicateKey.BOUNDED should be set regardless of if a sub-element is hovered, though)
 				set(PredicateKey.BOUNDED, true);
 				if (overridden == false) {
@@ -212,7 +233,7 @@ public abstract class GUIElement {
 	}
 
 	private final void triggerUpdateDrawInfo(GUIInstance gui) {
-		if (should_update) {
+		if (should_update && is_on_screen()) {
 			log_draw_update();
 			updateDrawInfo(gui);
 			should_update = false; 
@@ -227,7 +248,7 @@ public abstract class GUIElement {
 	
 	private final void triggerDraw(GUIInstance gui, int depth) {
 		for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
-		draw(gui, depth);
+		if (is_on_screen()) draw(gui, depth);
 	}
 	
 	private final void triggerRecalculateSize(GUIInstance gui) {
