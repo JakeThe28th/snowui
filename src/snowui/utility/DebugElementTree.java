@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.joml.Vector4f;
 
+import frost3d.implementations.SimpleCanvas;
 import frost3d.interfaces.F3DCanvas;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
@@ -38,6 +39,7 @@ public class DebugElementTree {
 		state.add("§`Last draw update: " + f.format(hovered.last_draw_update_elapsed_time()/1000f) + " seconds ago");
 		state.add("§`Last state update: " + f.format(hovered.last_state_update_elapsed_time()/1000f) + " seconds ago");
 		state.add("§`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
+		state.add("Render Queue Items: " + ((SimpleCanvas) canvas).queue_size());
 
 		// Draw that ^^^ debug info
 		
