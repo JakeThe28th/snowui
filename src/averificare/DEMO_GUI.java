@@ -11,8 +11,7 @@ public class DEMO_GUI {
 
 	public static void main(String[] args) {
 		
-		// note: list updates cuz its style containd the default style base color whch changes on hover and
-		// click even tho its invisible
+		
 		
 		GLState.initializeGLFW();
 		

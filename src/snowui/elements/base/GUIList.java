@@ -179,7 +179,7 @@ public class GUIList extends GUIElement {
 					right = left+element.width();
 				}
 			}
-
+			
 			element.limit_rectangle(new Rectangle(left, top, right, bottom));
 			
 			if (vertical) {
