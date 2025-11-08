@@ -44,8 +44,8 @@ public abstract class GUIElement {
 	}
 	
 	public boolean is_on_screen() {
-		if (scissor_rectangle() != null && hover_rectangle() != null) {
-			return scissor_rectangle().intersects(hover_rectangle());
+		if (scissor_rectangle() != null && limit_rectangle() != null) {
+			return scissor_rectangle().intersects(limit_rectangle());
 		} else {
 			return true;
 		}
@@ -105,11 +105,11 @@ public abstract class GUIElement {
 	public static void tick(GUIInstance gui, GUIElement e) {
 		e.limit_rectangle(gui.canvas().size());	// (Since this is only run on the root element)
 		e.triggerUpdateState(gui);
+		e.triggerTickAnimation(gui);
 		e.triggerDequeueState();
 		e.triggerCacheStyle(gui);
 		e.triggerRecalculateSize(gui);
 		e.triggerUpdateDrawInfo(gui);
-		e.triggerTickAnimation(gui);
 		e.triggerDraw(gui, 0);
 	}
 	
@@ -155,6 +155,10 @@ public abstract class GUIElement {
 	public void onRelease		()  { }
 	public void onHover			()  { }
 	public void onDoubleClick	()  { }
+	
+	public void onClick			(GUIInstance gui) 	{ }
+	public void onHold			(GUIInstance gui)  { }
+	public void onRelease		(GUIInstance gui)  { }
 	
 	/* -- Internal callbacks -- */
 	protected void onLimitRectangleChange() { }
@@ -204,9 +208,9 @@ public abstract class GUIElement {
 				if (overridden == false) {
 					set(PredicateKey.HOVERED, true);
 					onHover();
-					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); onClick   (); }
-					if (gui.primary_click_down()) 		{ set(PredicateKey.DOWN,     true); onHold    (); }
-					if (gui.primary_click_released()) 	{ set(PredicateKey.RELEASED, true); onRelease (); }
+					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); onClick   (); onClick(gui)	; }
+					if (gui.primary_click_down()) 		{ set(PredicateKey.DOWN,     true); onHold    (); onHold(gui)	; }
+					if (gui.primary_click_released()) 	{ set(PredicateKey.RELEASED, true); onRelease (); onRelease(gui); }
 				}
 			}
 			
@@ -247,8 +251,8 @@ public abstract class GUIElement {
 	}
 	
 	private final void triggerDraw(GUIInstance gui, int depth) {
-		for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
 		if (is_on_screen()) draw(gui, depth);
+		for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
 	}
 	
 	private final void triggerRecalculateSize(GUIInstance gui) {

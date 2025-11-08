@@ -65,6 +65,10 @@ public class ComposingStyleSheet {
 		
 		sheet.setProperty("default", "list_spacing", 			"0");
 		sheet.setProperty("default", "list_indent", 			"0");
+		
+		// Symbol size, scroll bar size, etc
+		sheet.setProperty("default", "size", 					"32");
+
 
 		// -- Predicates -- //
 		
@@ -76,7 +80,10 @@ public class ComposingStyleSheet {
 		
 		// -- Default Elements -- //
 		
-		sheet.setProperty("text", 	  "base_color", 				"BLACK");	
+		sheet.setProperty("text", 	  		"base_color", 			"BLACK");	
+		
+		sheet.setProperty("scrollbar", 		"base_color", 			"#1b1f24");
+		sheet.setProperty("scroll_handle", 	"base_color", 			"#6097f0");
 
 	}
 	

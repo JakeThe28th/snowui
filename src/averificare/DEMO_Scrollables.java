@@ -4,6 +4,7 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
+import snowui.elements.base.GUIClickableRectangle;
 import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIScrollable;
 import snowui.elements.base.GUIText;
@@ -38,7 +39,9 @@ public class DEMO_Scrollables {
 		list.add(sub_list_1);		
 		list.add(sub_list_2);
 		
-		for (int i = 0; i < 5; i++) 	{ list.add(new GUIText("Hello, " + i)); }
+		list.add(new GUIClickableRectangle());
+		
+		for (int i = 0; i < 60; i++) 	{ list.add(new GUIText("Hello, " + i)); }
 		
 		list.get(2).identifier("none");
 		

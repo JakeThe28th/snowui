@@ -15,7 +15,8 @@ public record CachedProperties(
 		COSSProperty base_color, 	
 		COSSProperty outline_size,
 		COSSProperty list_spacing,
-		COSSProperty list_indent
+		COSSProperty list_indent,
+		COSSProperty size
 		) {
 	
 	public int padw(int w)   { return left_margin.integer() + w + right_margin.integer(); }
@@ -39,7 +40,8 @@ public record CachedProperties(
 		s.getProperty(type, "base_color", predicate),
 		s.getProperty(type, "outline_size", predicate),
 		s.getProperty(type, "list_spacing", predicate),
-		s.getProperty(type, "list_indent", predicate)
+		s.getProperty(type, "list_indent", predicate),
+		s.getProperty(type, "size", predicate)
 		);
 
 	}
