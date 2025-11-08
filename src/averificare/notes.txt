@@ -1,0 +1,35 @@
+TODO:
+			 Sliders
+			 Icons
+			 Rounded Rectangles
+			 	- maybe, draw the outsides of the corners as stencils
+			 	  and then just draw a normal rectangle?
+			 			  
+			 	  would need to add a new draw mode (for stenciling)
+			 	  which would just draw to the stencil buffer or something
+			 	  
+			 	  
+			 	  actually no
+			 	  
+			 	  in the shader, i'll add uniforms with a multiplier for x and y, and
+			 	  then multiply the texture coordinate by that, and then check the 
+			 	  distance from the corner texture coordinate to discard the fragment
+			 	  
+			 	  the shader gets recompiled when rounded corners are enabled/disabled,
+			 	  so if they're off, the shader won't have them at all
+			 	  
+			 	  maybe make a custom shader class extending glshader program with
+			 	  	set fade min max X
+			 	  	set rounded corners true false
+			 	  	etc?
+			 	  			
+			also,
+			 clickableDot and clickableRectangle to allow for
+			 scroll bar and slider dot styling
+			 	  
+			 	 https://gamedev.stackexchange.com/questions/190025/why-does-my-stencil-buffer-allow-pixels-through
+			 		 
+			 		https://stackoverflow.com/questions/48246302/writing-to-the-opengl-stencil-buffer
+		
+		// note: list updates cuz its style containd the default style base color whch changes on hover and
+		// click even tho its invisible
