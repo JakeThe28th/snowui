@@ -21,6 +21,10 @@ public class GUIInstance {
 	static final boolean DEBUG = true;
 	FPSCounter fps = new FPSCounter();
 	
+	// only works if DEBUG is true
+	// i'm like 99% sure
+	boolean show_debug = true;
+	
 	public void size(int width, int height) {
 		if (canvas == null || canvas.width() != width || canvas.height() != height) {
 			canvas = new SimpleCanvas();
@@ -68,9 +72,14 @@ public class GUIInstance {
 	public ComposingStyleSheet style() { return style; }
 	
 	public void render() {
+		
+		if (input.keyPressed(GLFW_KEY_LEFT_ALT)) {
+			show_debug = !show_debug;
+		}
+		
 		GUIElement.tick(this, root);
 		if (SHOW_FPS) fps.drawFPS(canvas);
-		if (DEBUG) DebugElementTree.drawTree(canvas, root);
+		if (DEBUG) if (show_debug) DebugElementTree.drawTree(canvas, root);
 		canvas.draw_frame();
 	}
 	
