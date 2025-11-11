@@ -3,7 +3,6 @@ package snowui.elements.base;
 import java.util.ArrayList;
 import java.util.function.Predicate;
 
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.GUIElement;
