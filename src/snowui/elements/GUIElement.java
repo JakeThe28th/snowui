@@ -237,6 +237,8 @@ public abstract class GUIElement {
 			set(PredicateKey.RELEASED, 	false);
 			set(PredicateKey.DOWN, 		false);
 			
+			if (!is_on_screen()) return false;
+			
 			// Checking this later lets us not trigger events if a sub-element is hovered
 			boolean overridden = false;
 			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui); }
