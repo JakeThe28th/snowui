@@ -10,9 +10,18 @@ public class GUIScrollable extends GUIElement {
 	
 	private GUIScrollable scroll_this() { return this; }
 	
+	{ identifier("scroll_area"); }
+	
 	private class GUIScrollBar extends GUIElement {
 		
-		GUIClickableRectangle scroll_handle = new GUIClickableRectangle();
+		GUIClickableRectangle scroll_handle = new GUIClickableRectangle() {
+			@Override public void onClick(GUIInstance gui) {
+				mouse_x_offset = scroll_handle.padded_limit_rectangle().left() - gui.mx();
+				mouse_y_offset = scroll_handle.padded_limit_rectangle().top() - gui.my();
+
+				scrolling = true;
+			}
+		};
 		
 		{
 			registerSubElement(scroll_handle);
@@ -25,7 +34,7 @@ public class GUIScrollable extends GUIElement {
 		float content_size;
 		float screen_size;
 
-		public void scroll_amount(int amt)  { scroll_amount = amt; this.should_update = true; }
+		public void scroll_amount(float amt) { scroll_amount = amt; this.should_update = true; onScroll(); }
 		public void content_size (int size) { content_size = size; this.should_update = true; }
 		public void screen_size  (int size) { screen_size = size; this.should_update = true; }
 		
@@ -48,17 +57,18 @@ public class GUIScrollable extends GUIElement {
 			float screen_size_normmalized = screen_size / content_size;
 			float scroll_amount_normmalized = scroll_amount / content_size;
 
+			Rectangle limit;
+			
 			if (vertical) {
-				Rectangle limit = new Rectangle(0, 0, b.width(), (int) (screen_size_normmalized * b.height()));
+				limit = new Rectangle(0, 0, b.width(), (int) (screen_size_normmalized * b.height()));
 				limit = limit.offset(0, (int) (scroll_amount_normmalized * b.height()));
-				limit = limit.offset(b.left(), b.top());
-				scroll_handle.limit_rectangle(limit);
 			} else {
-				Rectangle limit = new Rectangle(0, 0, (int) (screen_size_normmalized * b.width()), b.height());
+				limit = new Rectangle(0, 0, (int) (screen_size_normmalized * b.width()), b.height());
 				limit = limit.offset((int) (scroll_amount_normmalized * b.width()), 0);
-				limit = limit.offset(b.left(), b.top());
-				scroll_handle.limit_rectangle(limit);
 			}
+			
+			limit = limit.offset(b.left(), b.top());
+			scroll_handle.limit_rectangle(limit);
 		}
 
 		@Override
@@ -87,21 +97,62 @@ public class GUIScrollable extends GUIElement {
 					mouse_amount_normalized = padded_limit_rectangle().normalized(mx, 0).x;
 				}
 				
-				scroll_amount = mouse_amount_normalized * content_size;
+				scroll_amount(mouse_amount_normalized * content_size);
 				
-				if (scroll_amount < 0) scroll_amount = 0;
-				if (scroll_amount > content_size - screen_size) scroll_amount = content_size - screen_size;
 			}
+			if (vertical) scroll_amount(scroll_amount - gui.scroll().y);
+			if (!vertical) scroll_amount(scroll_amount - gui.scroll().x);
+			
+			limit_scroll_amount();
+		}
+		
+		private void limit_scroll_amount() {
+			if (scroll_amount < 0) scroll_amount(0);
+			if (scroll_amount > content_size - screen_size) scroll_amount(content_size - screen_size);
 		}
 		
 		@Override public void onClick(GUIInstance gui) {
-			mouse_x_offset = scroll_handle.padded_limit_rectangle().left() - gui.mx();
-			mouse_y_offset = scroll_handle.padded_limit_rectangle().top() - gui.my();
-
-			scrolling = true;
+			if (scroll_handle.limit_rectangle().contains(gui.mouspos())) {
+				scroll_handle.onClick(gui);
+			} else {
+				scroll_towards_mouse(gui);
+			}
 		}
 		
+		@Override public void onHold(GUIInstance gui) {
+			if (scroll_handle.limit_rectangle().contains(gui.mouspos())) {
+				// N/A
+			} else if (time_since_clicked() > GUIInstance.INPUT_REPEAT_TIME) {
+				should_update = true;
+				scroll_towards_mouse(gui);
+			}
+		}
+
+		private void scroll_towards_mouse(GUIInstance gui) {
+			
+			Rectangle b = padded_limit_rectangle();
+			
+			float screen_size_normmalized = screen_size / content_size;
+			float scroll_amount_normmalized = scroll_amount / content_size;
+			
+			float mouse_normalized = 0;
+			if (vertical) mouse_normalized = (gui.my() - b.top()) / (float) b.height();
+			if (!vertical) mouse_normalized = (gui.mx() - b.left()) / (float) b.width();
+			
+			if (mouse_normalized > scroll_amount_normmalized + screen_size_normmalized) {
+				page_down();
+			} else if (mouse_normalized < scroll_amount_normmalized) {
+				page_up();
+			}
+			
+			limit_scroll_amount();
+		}
+		
+		public void page_up() 	{ scroll_amount(scroll_amount -= screen_size);  }
+		public void page_down() { scroll_amount(scroll_amount += screen_size);  }
 		public int scroll_amount_pixels() { return (int) scroll_amount; }
+		
+		public void onScroll() { }
 
 	}
 	
@@ -110,8 +161,14 @@ public class GUIScrollable extends GUIElement {
 
 	GUIElement root;
 	
-	GUIScrollBar horizontal_scrollbar = new GUIScrollBar().horizontalify();
-	GUIScrollBar vertical_scrollbar = new GUIScrollBar();
+	GUIScrollBar horizontal_scrollbar = new GUIScrollBar() {
+		@Override public void onScroll() {scroll_this().should_update = true; }
+	}.horizontalify() ;
+	
+	GUIScrollBar vertical_scrollbar = new GUIScrollBar() {
+		@Override public void onScroll() {scroll_this().should_update = true; }
+	};
+	
 	
 	{
 		registerSubElement(horizontal_scrollbar);
@@ -154,7 +211,6 @@ public class GUIScrollable extends GUIElement {
 		
 		int scrollbar_width = horizontal_scrollbar.style().size().pixels();
 		int scrollbar_height = vertical_scrollbar.style().size().pixels();
-		
 		boolean scrolling_y = false;
 		boolean scrolling_x = false;
 

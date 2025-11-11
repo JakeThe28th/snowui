@@ -171,6 +171,28 @@ public abstract class GUIElement {
 	
 	// -- == ... == -- //
 	
+	private void triggerOnClick(GUIInstance gui) {
+		last_click_time = System.currentTimeMillis();
+		onClick(); 
+		onClick(gui);
+	}
+
+	private void triggerOnHold(GUIInstance gui) {
+		onHold(); 
+		onHold(gui);
+	}
+	
+	private void triggerOnRelease(GUIInstance gui) {
+		onRelease(); 
+		onRelease(gui);
+	}
+	
+	long last_click_time = 0;
+
+	public int time_since_clicked() {
+		return (int) (System.currentTimeMillis() - last_click_time);
+	}
+	
 	/* -- Callbacks -- */
 	public void onClick			() 	{ }
 	public void onHold			()  { }
@@ -230,9 +252,9 @@ public abstract class GUIElement {
 				if (overridden == false) {
 					set(PredicateKey.HOVERED, true);
 					onHover();
-					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); onClick   (); onClick(gui)	; }
-					if (gui.primary_click_down()) 		{ set(PredicateKey.DOWN,     true); onHold    (); onHold(gui)	; }
-					if (gui.primary_click_released()) 	{ set(PredicateKey.RELEASED, true); onRelease (); onRelease(gui); }
+					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); triggerOnClick(gui); }
+					if (gui.primary_click_down()) 		{ set(PredicateKey.DOWN,     true); triggerOnHold(gui); }
+					if (gui.primary_click_released()) 	{ set(PredicateKey.RELEASED, true); triggerOnRelease(gui);; }
 				}
 			}
 			
@@ -242,8 +264,13 @@ public abstract class GUIElement {
 			// we can't just put it in the if statement up there.
 			overridden = overridden || updateState(gui);
 			return overridden;
+		} else {
+			boolean overridden = false;
+			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui); }
+			if (!overridden && get(PredicateKey.DOWN)) { triggerOnHold(gui); }
+			return overridden;
 		}
-		return false;
+	//	return false;
 	}
 	
 	private final void triggerCacheStyle(GUIInstance gui) {

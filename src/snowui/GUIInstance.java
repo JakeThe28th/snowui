@@ -2,6 +2,7 @@ package snowui;
 
 import java.util.ArrayList;
 
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,6 +21,9 @@ public class GUIInstance {
 	static final boolean SHOW_FPS = true;
 	static final boolean DEBUG = true;
 	FPSCounter fps = new FPSCounter();
+	
+	public static final int INPUT_REPEAT_TIME = 500;
+
 	
 	// only works if DEBUG is true
 	// i'm like 99% sure
@@ -54,6 +58,15 @@ public class GUIInstance {
 	public boolean 	primary_click_down	  () { return input.mouseButtonDown	    (GLFW_MOUSE_BUTTON_LEFT); }
 	public boolean 	primary_click_released() { return input.mouseButtonReleased (GLFW_MOUSE_BUTTON_LEFT); }
 
+	public static final float SCROLL_SCALE = 25;
+	
+	public Vector2f scroll() { 
+		if (input.keyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+			return new Vector2f((float) input.scrollY() * SCROLL_SCALE, (float) input.scrollX() * SCROLL_SCALE); 
+		} else {
+			return new Vector2f((float) input.scrollX() * SCROLL_SCALE, (float) input.scrollY() * SCROLL_SCALE); 
+		}
+	}
 	
 	public GUIInstance(F3DWindow window, Input input) {
 		this.input = input;

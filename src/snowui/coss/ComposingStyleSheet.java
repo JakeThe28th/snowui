@@ -86,7 +86,9 @@ public class ComposingStyleSheet {
 		sheet.setProperty("scroll_handle", 	"base_color", 			"#6097f0");
 
 
-		
+		sheet.setProperty("scroll_area", "horizontal_alignment",	"right"); // Left, right, middle
+		sheet.setProperty("scroll_area", "vertical_alignment",	"bottom"); // Left, right, middle
+
 		// TODO
 //		sheet.setProperty("scrollbar", "left_margin", 			"3");
 //		sheet.setProperty("scrollbar", "right_margin", 			"3");
@@ -97,6 +99,8 @@ public class ComposingStyleSheet {
 		sheet.setProperty("scroll_handle", "right_margin", 			"5");
 		sheet.setProperty("scroll_handle", "top_margin", 			"5");
 		sheet.setProperty("scroll_handle", "bottom_margin", 		"5");
+		
+		sheet.setProperty("scrollbar", "size", 		"20");
 	}
 	
 	// -- ++  ...  ++ -- //
