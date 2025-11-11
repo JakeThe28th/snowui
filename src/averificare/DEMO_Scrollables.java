@@ -1,5 +1,7 @@
 package averificare;
 
+import org.lwjgl.glfw.GLFW;
+
 import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
@@ -18,6 +20,7 @@ public class DEMO_Scrollables {
 		// Create window ...
 		SimpleWindow window = new SimpleWindow(4*300, 3*300, "GUI Test");
 		//window.setVsync(false);
+		boolean vsync = false;
 		
 		// Create core shaders (needs to be done after window cuz context)
 		BuiltinShaders.init();
@@ -53,6 +56,9 @@ public class DEMO_Scrollables {
 		gui.root(new GUIScrollable(list));
 		
 		while (!window.should_close()) {
+			if (window.input().keyPressed(GLFW.GLFW_KEY_LEFT_CONTROL) ) { 
+				vsync = !vsync; window.setVsync(vsync);
+			}
 			gui.size(window.width, window.height);
 			gui.render();
 			window.tick();
