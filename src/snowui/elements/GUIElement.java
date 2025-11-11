@@ -69,14 +69,36 @@ public abstract class GUIElement {
 	/** Defines the bounding box that updateDrawInfo() stays within */
 	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{   
 		boolean limit_changed = false;
+		boolean was_on_screen = false; // <-- value doesn't matter since 
+									   // it's always overridden before it's used
 		if (!rectangle.equals(limit_rectangle)) { 
 			should_update = true;
 			limit_changed = true;
+			was_on_screen = is_on_screen();
 		}
 		limit_rectangle = rectangle; 
 		if (style() != null) set_padded_limit_rectangle();
 		if (limit_changed) onLimitRectangleChange();
+		if (limit_changed && was_on_screen && !is_on_screen()) {
+			// triggerUpdateDrawInfo doesn't update
+			// if !is_on_screen(), so set all sub-elements
+			// to be also not on-screen by forcing their
+			// limit rectangles equal to this element's.
+			
+			// (but it'd be wasteful to do this even 
+			// when the on/off screen status isn't
+			// changing, so [was_on_screen] is checked)
+			limit_rectangle_recursive(limit_rectangle());
+		}
 	}
+	
+	public 	  void 	 	limit_rectangle_recursive(Rectangle rectangle) { 		 
+		limit_rectangle = rectangle; 	
+		for (GUIElement e : sub_elements) {
+			e.limit_rectangle_recursive(rectangle);
+		}
+	}
+	
 
 	private void set_padded_limit_rectangle() {
 		padded_limit_rectangle = new Rectangle(

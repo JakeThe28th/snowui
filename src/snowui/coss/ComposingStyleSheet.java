@@ -67,7 +67,7 @@ public class ComposingStyleSheet {
 		sheet.setProperty("default", "list_indent", 			"0");
 		
 		// Symbol size, scroll bar size, etc
-		sheet.setProperty("default", "size", 					"32");
+		sheet.setProperty("default", "size", 					"16");
 
 
 		// -- Predicates -- //
@@ -85,6 +85,18 @@ public class ComposingStyleSheet {
 		sheet.setProperty("scrollbar", 		"base_color", 			"#1b1f24");
 		sheet.setProperty("scroll_handle", 	"base_color", 			"#6097f0");
 
+
+		
+		// TODO
+//		sheet.setProperty("scrollbar", "left_margin", 			"3");
+//		sheet.setProperty("scrollbar", "right_margin", 			"3");
+//		sheet.setProperty("scrollbar", "top_margin", 			"3");
+//		sheet.setProperty("scrollbar", "bottom_margin", 		"3");
+		
+		sheet.setProperty("scroll_handle", "left_margin", 			"5");
+		sheet.setProperty("scroll_handle", "right_margin", 			"5");
+		sheet.setProperty("scroll_handle", "top_margin", 			"5");
+		sheet.setProperty("scroll_handle", "bottom_margin", 		"5");
 	}
 	
 	// -- ++  ...  ++ -- //
