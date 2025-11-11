@@ -227,11 +227,13 @@ public class GUIScrollable extends GUIElement {
 		}
 		
 		root.scissor_rectangle_recursive(area_rectangle);
-
+		
 		root.limit_rectangle(
-			area_rectangle.offset(
-				-horizontal_scrollbar.scroll_amount_pixels(), 
-				-vertical_scrollbar.scroll_amount_pixels()
+			new Rectangle(
+					 area_rectangle.left() 	- horizontal_scrollbar	.scroll_amount_pixels(),
+					 area_rectangle.top() 	- vertical_scrollbar	.scroll_amount_pixels(),
+					(area_rectangle.left() 	- horizontal_scrollbar	.scroll_amount_pixels()) + root.width(),
+					(area_rectangle.top() 	- vertical_scrollbar	.scroll_amount_pixels()) + root.height()
 			));
 		
 	}
