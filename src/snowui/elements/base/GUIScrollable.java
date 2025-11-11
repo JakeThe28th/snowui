@@ -295,14 +295,6 @@ public class GUIScrollable extends GUIElement {
 	}
 
 	@Override
-	public void draw(GUIInstance gui, int depth) {
-		// TODO Auto-generated method stub
-		// TODO set scissor
-	}
+	public void draw(GUIInstance gui, int depth) { }
 	
-	@Override
-	public void tickAnimation(GUIInstance gui) {
-		//scroll_y--;
-		//
-	}
 }

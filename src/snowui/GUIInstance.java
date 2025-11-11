@@ -11,6 +11,8 @@ import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
 import frost3d.interfaces.F3DWindow;
+import frost3d.utility.Log;
+import frost3d.utility.Rectangle;
 import snowui.coss.ComposingStyleSheet;
 import snowui.elements.GUIElement;
 import snowui.utility.DebugElementTree;
@@ -45,6 +47,15 @@ public class GUIInstance {
 	
 	public SimpleTextRenderer 	textrenderer() { return text; }
 	public SimpleCanvas 		canvas() { return canvas; }
+	
+	public void push_scissor(Rectangle rectangle) {
+		canvas.push_scissor(rectangle);
+	}
+	
+	public void pop_scissor() {
+		canvas.pop_scissor();
+	}
+
 
 	// TODO: Add tab navigation support (maybe by hiding and moving the mouse around?)
 

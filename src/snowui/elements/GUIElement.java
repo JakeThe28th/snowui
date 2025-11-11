@@ -300,7 +300,11 @@ public abstract class GUIElement {
 	}
 	
 	private final void triggerDraw(GUIInstance gui, int depth) {
-		if (is_on_screen()) draw(gui, depth);
+		if (is_on_screen()) {
+			if (scissor_rectangle() != null) gui.push_scissor(scissor_rectangle());
+			draw(gui, depth);
+			if (scissor_rectangle() != null) gui.pop_scissor();
+		}
 		for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
 	}
 	
