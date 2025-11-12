@@ -4,9 +4,11 @@ import org.lwjgl.glfw.GLFW;
 
 import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
+import frost3d.enums.IconType;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
 import snowui.elements.base.GUIClickableRectangle;
+import snowui.elements.base.GUIIcon;
 import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIScrollable;
 import snowui.elements.base.GUIText;
@@ -52,6 +54,8 @@ public class DEMO_Scrollables {
 		gui.style().setProperty("demo_horizontal_list", "list_spacing", 	"36");
 		gui.style().setProperty("demo_list", 			"min_width", 		"container");
 		gui.style().setProperty("demo_list", 			"max_width", 		"container");
+		
+		sub_list_2.set(new GUIIcon(IconType.GENERIC_HOME), 3);
 		
 		gui.root(new GUIScrollable(list));
 		

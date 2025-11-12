@@ -81,9 +81,15 @@ public class ComposingStyleSheet {
 		// -- Default Elements -- //
 		
 		sheet.setProperty("text", 	  		"base_color", 			"BLACK");	
-		
+		sheet.setProperty("text", 	  		"size", 				"18");	
+
 		sheet.setProperty("scrollbar", 		"base_color", 			"#1b1f24");
 		sheet.setProperty("scroll_handle", 	"base_color", 			"#6097f0");
+		
+		sheet.setProperty("slider_handle", 	"base_color", 			"#6097f0");
+		sheet.setProperty("slider_handle", 	"size", 				"18");
+		sheet.setProperty("slider", 	"size", 					"8");
+
 
 
 //		sheet.setProperty("scroll_area", "horizontal_alignment",	"right"); // Left, right, middle
