@@ -10,6 +10,8 @@ import static org.lwjgl.glfw.GLFW.*;
 import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
+import frost3d.implementations.VectorIconRenderer;
+import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
 import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
@@ -37,14 +39,22 @@ public class GUIInstance {
 			canvas.framebuffer(null);
 			canvas.size(width, height);
 			canvas.textrenderer(text);
+			canvas.iconrenderer(icons);
 			//canvas.clear_color(0, 0, 0, 1);
 		}
 	}
 	
 	F3DWindow 					window;
+	F3DIconRenderer				icons;
 	SimpleTextRenderer 			text;
 	SimpleCanvas 				canvas;
 	
+	public void font_size(int new_size) {
+		textrenderer().font_size(new_size);
+		iconrenderer().size(new_size);
+	}
+	
+	public F3DIconRenderer 		iconrenderer() { return icons; }
 	public SimpleTextRenderer 	textrenderer() { return text; }
 	public SimpleCanvas 		canvas() { return canvas; }
 	
@@ -55,7 +65,6 @@ public class GUIInstance {
 	public void pop_scissor() {
 		canvas.pop_scissor();
 	}
-
 
 	// TODO: Add tab navigation support (maybe by hiding and moving the mouse around?)
 
@@ -83,6 +92,7 @@ public class GUIInstance {
 		this.input = input;
 		this.text = new SimpleTextRenderer();
 		text.anti_aliasing_enabled(true);
+		this.icons = new VectorIconRenderer();
 	}
 	
 	// -- ++  ...  ++ -- //
