@@ -22,8 +22,8 @@ public class GUIIcon extends GUIElement {
 
 	@Override
 	public void recalculateSize(GUIInstance gui) {
-		this.unpadded_width = gui.canvas().iconrenderer().size();;
-		this.unpadded_height = gui.canvas().iconrenderer().size();;
+		this.unpadded_width = style().size().pixels();
+		this.unpadded_height = style().size().pixels();
 	}
 
 	@Override
