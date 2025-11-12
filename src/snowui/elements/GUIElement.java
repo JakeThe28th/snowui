@@ -2,6 +2,7 @@ package snowui.elements;
 
 import java.util.ArrayList;
 
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
@@ -43,6 +44,7 @@ public abstract class GUIElement {
 	}
 	
 	public boolean is_on_screen() {
+		if (get(PredicateKey.HIDDEN)) return false;
 		if (scissor_rectangle() != null && limit_rectangle() != null) {
 			return scissor_rectangle().intersects(limit_rectangle());
 		} else {
@@ -265,6 +267,7 @@ public abstract class GUIElement {
 				// (PredicateKey.BOUNDED should be set regardless of if a sub-element is hovered, though)
 				set(PredicateKey.BOUNDED, true);
 				if (overridden == false) {
+					overridden = true;
 					set(PredicateKey.HOVERED, true);
 					onHover();
 					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); triggerOnPress(gui); }

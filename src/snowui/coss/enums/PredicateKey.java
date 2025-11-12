@@ -10,4 +10,5 @@ public enum PredicateKey {
 	LADEN, // Has sub-elements
 	DISABLED , // Doesn't have input
 	BOUNDED, // Inclusive hover (old hover)
+	HIDDEN,
 }
