@@ -14,7 +14,7 @@ public class GUIScrollable extends GUIElement {
 	private class GUIScrollBar extends GUIElement {
 		
 		GUIClickableRectangle scroll_handle = new GUIClickableRectangle() {
-			@Override public void onClick(GUIInstance gui) {
+			@Override public void onPress(GUIInstance gui) {
 				mouse_x_offset = scroll_handle.padded_limit_rectangle().left() - gui.mx();
 				mouse_y_offset = scroll_handle.padded_limit_rectangle().top() - gui.my();
 
@@ -110,9 +110,9 @@ public class GUIScrollable extends GUIElement {
 			if (scroll_amount > content_size - screen_size) scroll_amount(content_size - screen_size);
 		}
 		
-		@Override public void onClick(GUIInstance gui) {
+		@Override public void onPress(GUIInstance gui) {
 			if (scroll_handle.limit_rectangle().contains(gui.mouspos())) {
-				scroll_handle.onClick(gui);
+				scroll_handle.onPress(gui);
 			} else {
 				scroll_towards_mouse(gui);
 			}
@@ -121,7 +121,7 @@ public class GUIScrollable extends GUIElement {
 		@Override public void onHold(GUIInstance gui) {
 			if (scroll_handle.limit_rectangle().contains(gui.mouspos())) {
 				// N/A
-			} else if (time_since_clicked() > GUIInstance.INPUT_REPEAT_TIME) {
+			} else if (time_since_pressed() > GUIInstance.INPUT_REPEAT_TIME) {
 				should_update = true;
 				scroll_towards_mouse(gui);
 			}

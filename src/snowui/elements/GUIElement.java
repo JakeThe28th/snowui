@@ -2,7 +2,6 @@ package snowui.elements;
 
 import java.util.ArrayList;
 
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
@@ -171,10 +170,16 @@ public abstract class GUIElement {
 	
 	// -- == ... == -- //
 	
-	private void triggerOnClick(GUIInstance gui) {
-		last_click_time = System.currentTimeMillis();
-		onClick(); 
-		onClick(gui);
+	private void triggerOnSingleClick(GUIInstance gui) {
+		onSingleClick(); 
+		onSingleClick(gui);
+	}
+	
+	private void triggerOnPress(GUIInstance gui) {
+		gui.last_pressed_element(this);
+		last_press_time = System.currentTimeMillis();
+		onPress(); 
+		onPress(gui);
 	}
 
 	private void triggerOnHold(GUIInstance gui) {
@@ -185,24 +190,32 @@ public abstract class GUIElement {
 	private void triggerOnRelease(GUIInstance gui) {
 		onRelease(); 
 		onRelease(gui);
+		
+		if (gui.last_pressed_element() == this) {
+			triggerOnSingleClick(gui);
+		}
+		
 	}
 	
-	long last_click_time = 0;
+	long last_press_time = 0;
 
-	public int time_since_clicked() {
-		return (int) (System.currentTimeMillis() - last_click_time);
+	public int time_since_pressed() {
+		return (int) (System.currentTimeMillis() - last_press_time);
 	}
 	
 	/* -- Callbacks -- */
-	public void onClick			() 	{ }
+	public void onPress			() 	{ }
 	public void onHold			()  { }
 	public void onRelease		()  { }
 	public void onHover			()  { }
+	public void onSingleClick	()  { }
 	public void onDoubleClick	()  { }
 	
-	public void onClick			(GUIInstance gui) 	{ }
+	public void onPress			(GUIInstance gui)  { }
 	public void onHold			(GUIInstance gui)  { }
 	public void onRelease		(GUIInstance gui)  { }
+	public void onSingleClick	(GUIInstance gui)  { }
+	public void onDoubleClick	(GUIInstance gui)  { }
 	
 	/* -- Internal callbacks -- */
 	protected void onLimitRectangleChange() { }
@@ -236,7 +249,7 @@ public abstract class GUIElement {
 			set(PredicateKey.PRESSED, 	false);
 			set(PredicateKey.RELEASED, 	false);
 			set(PredicateKey.DOWN, 		false);
-			
+
 			if (!is_on_screen()) return false;
 			
 			// Checking this later lets us not trigger events if a sub-element is hovered
@@ -254,7 +267,7 @@ public abstract class GUIElement {
 				if (overridden == false) {
 					set(PredicateKey.HOVERED, true);
 					onHover();
-					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); triggerOnClick(gui); }
+					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); triggerOnPress(gui); }
 					if (gui.primary_click_down()) 		{ set(PredicateKey.DOWN,     true); triggerOnHold(gui); }
 					if (gui.primary_click_released()) 	{ set(PredicateKey.RELEASED, true); triggerOnRelease(gui);; }
 				}

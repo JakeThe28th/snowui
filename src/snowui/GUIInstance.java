@@ -97,6 +97,16 @@ public class GUIInstance {
 	
 	// -- ++  ...  ++ -- //
 	
+	GUIElement last_pressed_element;
+	
+	public void last_pressed_element(GUIElement element) {
+		last_pressed_element = element;
+	}
+	
+	public GUIElement last_pressed_element() {
+		return last_pressed_element;
+	}
+	
 	GUIElement root;
 	public void root(GUIElement r) { root = r; }
 	
