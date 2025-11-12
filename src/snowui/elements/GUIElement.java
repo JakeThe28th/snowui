@@ -131,11 +131,12 @@ public abstract class GUIElement {
 		e.triggerTickAnimation(gui);
 		e.triggerDequeueState();
 		e.triggerCacheStyle(gui);
+		e.checkIfSubelementsWillRecalculatesize();
 		e.triggerRecalculateSize(gui);
 		e.triggerUpdateDrawInfo(gui);
 		e.triggerDraw(gui, 0);
 	}
-	
+
 	public abstract void recalculateSize(GUIInstance gui);
 	public 		 boolean updateState(GUIInstance gui) { return false; };
 	/** Opportunity to set up drawing information. <br>
@@ -322,8 +323,8 @@ public abstract class GUIElement {
 			if (scissor_rectangle() != null) gui.push_scissor(scissor_rectangle());
 			draw(gui, depth);
 			if (scissor_rectangle() != null) gui.pop_scissor();
+			for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
 		}
-		for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
 	}
 	
 	private final void triggerRecalculateSize(GUIInstance gui) {
@@ -339,6 +340,18 @@ public abstract class GUIElement {
 	private final void triggerDequeueState() {
 		for (GUIElement e : sub_elements) { e.triggerDequeueState(); }
 		dequeueState();
+	}
+	
+	/** Not really the same as the other methods
+	 *  in this area, but it recursively acts on
+	 *  sub-elements, so I'm putting it here. */
+	private void checkIfSubelementsWillRecalculatesize() {
+		boolean will = false;
+		for (GUIElement e : sub_elements) { 
+			e.checkIfSubelementsWillRecalculatesize(); 
+			will = will || e.should_recalculate_size;
+		}
+		if (will) this.should_recalculate_size = true;
 	}
 
 }
