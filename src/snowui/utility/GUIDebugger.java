@@ -17,7 +17,7 @@ import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
 import snowui.elements.interfaces.Droppable;
 
-public class DebugElementTree {
+public class GUIDebugger {
 	
 	public static interface IDCDataConverter {
 		public String dataToString(int d);
@@ -79,11 +79,12 @@ public class DebugElementTree {
 		public void advance() { 
 			if (self_channel_count > 0) {
 				int other = (int) (System.nanoTime()-this.last_advance_nanotime);
+				this.last_advance_nanotime = System.nanoTime();
 				for (int i = 1; i < channels; i++) {
 					other -= data[index][i];
 				}
+				if (other < 0) other = 0;
 				add(other, -1);
-				this.last_advance_nanotime = System.nanoTime();
 			}
 			index++; 
 			if (index >= size) index = 0; 
@@ -100,7 +101,7 @@ public class DebugElementTree {
 			int lineheight = canvas.textrenderer().size(channel_names[0]).y;
 			int m = 5;
 			int sep = 2;
-			int lines = 3;
+			int lines = 4;
 			int namex = x;
 			int namey = y -= ( (lineheight*lines) + ((m*2)*lines) + (sep*lines-1));
 			for (int channel = channels-1; channel >= 0; channel--) {
@@ -204,7 +205,7 @@ public class DebugElementTree {
 	static boolean show_drop_areas = false;
 	static DebugState current_debug_state = DebugState.FRAMETIME_CHART;
 	
-	public static IntegerDataChart framechart = new IntegerDataChart(60*4, 9);
+	public static IntegerDataChart framechart = new IntegerDataChart(60*4, 10);
 	static int framechart_size = 60*4;
 	static int framechart_advance = 2;
 	static float framechart_y_scale = 1f/10000f;
@@ -234,6 +235,8 @@ public class DebugElementTree {
 		}
 		
 		if (!show_debug) return;
+		
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_ALT)) {
 			if (input.keyPressed(GLFW.GLFW_KEY_1)) {
@@ -338,6 +341,8 @@ public class DebugElementTree {
 		add(elements, e);
 		DrawUtility.drawStrings(canvas, canvas.width()-5, canvas.height()-5, 1000, elements);
 		
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(9, "Draw (Debugger)");
+		
 	}
 
 	private static float flash_opacity() {
@@ -350,5 +355,14 @@ public class DebugElementTree {
 			if (sub.state().get(PredicateKey.BOUNDED)) add(elements, sub);
 		}
 	}
+	
+	public static void endprofile(int channel, String name) {
+		framechart.endprofile(channel, name);
+	}
+
+	public static void startprofile() {
+		framechart.startprofile();
+	}
+
 
 }

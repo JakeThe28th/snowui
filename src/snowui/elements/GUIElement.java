@@ -8,7 +8,7 @@ import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
 import snowui.coss.enums.PredicateKey;
-import snowui.utility.DebugElementTree;
+import snowui.utility.GUIDebugger;
 
 public abstract class GUIElement {
 	
@@ -128,40 +128,30 @@ public abstract class GUIElement {
 
 	public static void tick(GUIInstance gui, GUIElement e, Rectangle limit) {
 		e.limit_rectangle(limit);	// (Since this is only run on the root element)
-		long time;
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerUpdateState(gui);
-		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 0);
-		DebugElementTree.framechart.name(0, "Update state");
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(0, "Update state");
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerTickAnimation(gui);
-		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 1);
-		DebugElementTree.framechart.name(1, "Tick animations");
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(1, "Tick animation");
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerDequeueState();
-		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 2);
-		DebugElementTree.framechart.name(2, "Dequeue state");
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(2, "Dequeue state");
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerCacheStyle(gui);
-		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 3);
-		DebugElementTree.framechart.name(3, "Cache style");
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(3, "Cache style");
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.checkIfSubelementsWillRecalculatesize();
-		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 4);
-		DebugElementTree.framechart.name(4, "Check if ...");
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(4, "Check if ...");
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerRecalculateSize(gui);
-		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 5);
-		DebugElementTree.framechart.name(5, "Recalculate size");
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(5, "Recalculate size");
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerUpdateDrawInfo(gui);
-		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 6);
-		DebugElementTree.framechart.name(6, "Update draw info");
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(6, "Update drawing info");
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerDraw(gui, 0);
-		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 7);
-		DebugElementTree.framechart.name(7, "Draw");
-		time = System.nanoTime();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(7, "Draw (element)");
 	}
 	
 	public static void tickFloating(GUIInstance gui, GUIElement e, int x, int y, int depth) {

@@ -19,7 +19,7 @@ import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
 import snowui.elements.base.GUIText;
 import snowui.elements.interfaces.Droppable;
-import snowui.utility.DebugElementTree;
+import snowui.utility.GUIDebugger;
 import snowui.utility.FPSCounter;
 import snowui.utility.GUIUtility;
 
@@ -123,13 +123,17 @@ public class GUIInstance {
 	public ComposingStyleSheet style() { return style; }
 	
 	public void render() {
-		
+
 		dragAndDropSupport();
 		
-		GUIElement.tick(this, root, canvas().size());
+		GUIElement.tick(this, root, canvas().size());		
 		if (SHOW_FPS) fps.drawFPS(canvas);
-		if (DEBUG) DebugElementTree.drawTree(this, root, input);
+		if (DEBUG) GUIDebugger.drawTree(this, root, input);
+		
+		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		canvas.draw_frame();
+		if (GUIInstance.DEBUG) GUIDebugger.endprofile(8, "Draw (canvas)");
+
 	}
 	
 	// -- ++  ...  ++ -- //
