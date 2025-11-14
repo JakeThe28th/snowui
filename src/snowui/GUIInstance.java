@@ -13,25 +13,27 @@ import frost3d.implementations.SimpleTextRenderer;
 import frost3d.implementations.VectorIconRenderer;
 import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.coss.ComposingStyleSheet;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
+import snowui.elements.base.GUIText;
+import snowui.elements.interfaces.Droppable;
 import snowui.utility.DebugElementTree;
 import snowui.utility.FPSCounter;
+import snowui.utility.GUIUtility;
 
 public class GUIInstance {
 		
 	static final boolean SHOW_FPS = true;
-	static final boolean DEBUG = true;
+	public static final boolean DEBUG = true;
 	FPSCounter fps = new FPSCounter();
 	
 	public static final int INPUT_REPEAT_TIME = 500;
 
-	
-	// only works if DEBUG is true
-	// i'm like 99% sure
-	boolean show_debug = true;
+	public int PREVIEW_DEPTH() {
+		return 900;
+	}
 	
 	public void size(int width, int height) {
 		if (canvas == null || canvas.width() != width || canvas.height() != height) {
@@ -96,6 +98,11 @@ public class GUIInstance {
 	}
 	
 	// -- ++  ...  ++ -- //
+
+	public GUIElement current_hovered_element() {
+		// TODO: work with windows/menus etc
+		return GUIUtility.getHoveredElement(root);
+	}
 	
 	GUIElement last_pressed_element;
 	
@@ -117,14 +124,32 @@ public class GUIInstance {
 	
 	public void render() {
 		
-		if (input.keyPressed(GLFW_KEY_LEFT_ALT)) {
-			show_debug = !show_debug;
-		}
+		dragAndDropSupport();
 		
-		GUIElement.tick(this, root);
+		GUIElement.tick(this, root, canvas().size());
 		if (SHOW_FPS) fps.drawFPS(canvas);
-		if (DEBUG) if (show_debug) DebugElementTree.drawTree(canvas, root);
+		if (DEBUG) DebugElementTree.drawTree(this, root, input);
 		canvas.draw_frame();
 	}
 	
+	// -- ++  ...  ++ -- //
+	
+	GUIElement held_element = new GUIText("test");
+	
+	private void dragAndDropSupport() {
+		if (  held_element 				== 		   null) 		return;
+		if (!(current_hovered_element() instanceof Droppable)) 	return;
+		
+		GUIElement.tickFloating(this, held_element, mx(), my(), 1000);
+		
+		Droppable target =  ((Droppable) current_hovered_element());
+		if (target.canDropHere(this, held_element)) {
+			target.dropPreview(this, held_element);
+			if (primary_click_released()) {
+				target.drop(this, held_element);
+				held_element = null;
+			}
+		}
+	}
+
 }

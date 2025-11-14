@@ -45,6 +45,8 @@ public class ComposingStyleSheet {
 
 		sheet.setProperty("default", "base_color", 				"#686e82");
 		sheet.setProperty("default", "outline_color", 			"BLACK");
+		sheet.setProperty("default", "preview_color", 			"css_rgba(187, 161, 255, 0.5)");
+
 
 		sheet.setProperty("default", "left_margin", 			"1");
 		sheet.setProperty("default", "right_margin", 			"1");

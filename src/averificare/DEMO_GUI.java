@@ -55,7 +55,6 @@ public class DEMO_GUI {
 		
 		gui.style().setProperty("demo_horizontal_list", "list_spacing", "36");
 		
-		
 		// Wrapping testing
 //		gui.style().setProperty("demo_list", "min_width", "container");
 //		gui.style().setProperty("demo_list", "max_width", "container");

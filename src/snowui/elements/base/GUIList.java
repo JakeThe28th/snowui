@@ -5,11 +5,13 @@ import java.util.function.Predicate;
 
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.Color;
 import snowui.elements.GUIElement;
+import snowui.elements.interfaces.Droppable;
 import snowui.utility.GUIUtility;
 import snowui.utility.Margin;
 
-public class GUIList extends GUIElement {
+public class GUIList extends GUIElement implements Droppable {
 	
 	{ identifier("list"); }
 	
@@ -94,7 +96,6 @@ public class GUIList extends GUIElement {
 			}
 		}
 	}
-	
 
 	@Override
 	protected void onLimitRectangleChange() { 
@@ -129,9 +130,13 @@ public class GUIList extends GUIElement {
 			}
 		}
 	}
+	
+	ArrayList<Rectangle> drop_points = new ArrayList<Rectangle>();
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
+		
+		drop_points.clear();
 		
 		Rectangle bounds = this.padded_limit_rectangle();
 		if (!wrap) {
@@ -189,17 +194,60 @@ public class GUIList extends GUIElement {
 				left+=style().list_spacing().pixels();
 			}
 			
+			if (!wrap) {
+				if (vertical) {
+					drop_points.add(new Rectangle(left, bottom, right, top));
+				} else {
+					drop_points.add(new Rectangle(right, top, left, bottom));
+				}
+			}
+			
 		}
 		
 		this.hover_rectangle(bounds);
 	}
 
+	@Override public void draw(GUIInstance gui, int depth) { }
+
 	@Override
-	public void draw(GUIInstance gui, int depth) {
-		
+	public boolean canDropHere(GUIInstance gui, GUIElement element) {
+		for (Rectangle r : drop_points) {
+			if (r.contains(gui.mouspos())) return true;
+		}
+		return false;
 	}
 
-		
+	@Override
+	public void drop(GUIInstance gui, GUIElement element) {
+		for (int i = 0; i < drop_points.size(); i++) {
+			Rectangle r = drop_points.get(i);
+			if (r.contains(gui.mouspos())) {
+				add(element, i);
+			}
+		}
+	}
+
+	@Override
+	public void dropPreview(GUIInstance gui, GUIElement element) {
+		for (Rectangle r : drop_points) {
+			if (r.contains(gui.mouspos())) {
+				gui.canvas().color(style().preview_color().color());
+				gui.canvas().rect(r, gui.PREVIEW_DEPTH());
+			}
+		}
+	}
+
+	@Override
+	public void DEBUG_draw_drop_areas(GUIInstance gui, GUIElement element, int depth) {		
+		for (Rectangle r : drop_points) {
+			if (r.contains(gui.mouspos())) {
+				gui.canvas().color(Color.DESBLUE.val());
+			} else {
+				gui.canvas().color(Color.DESYELLOW.val());
+			}
+			gui.canvas().rect(r, depth);
+		}
+	}	
 
 }
 

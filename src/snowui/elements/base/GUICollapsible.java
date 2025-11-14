@@ -1,6 +1,7 @@
 package snowui.elements.base;
 
 import frost3d.enums.IconType;
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
@@ -38,6 +39,7 @@ public class GUICollapsible extends GUIElement {
 	public GUICollapsible hidden(GUIElement element) {
 		if (hidden != null) this.removeSubElement(hidden);
 		hidden = element;
+		should_update = true;
 		this.registerSubElement(element);
 		return this;
 	}

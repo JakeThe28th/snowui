@@ -6,6 +6,7 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.enums.IconType;
 import frost3d.implementations.SimpleWindow;
+import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.elements.base.GUICollapsible;
 import snowui.elements.base.GUIIcon;
@@ -33,7 +34,8 @@ public class DEMO_Collapsibles {
 		for (int i = 0; i < 10; i++) {
 			GUICollapsible collapse	= new GUICollapsible()
 					.root(new GUIText("Roots"))
-					.hidden(new GUIText("snoozie"));
+					.hidden(new GUIText("snoozie"))
+					.collapsed(true);
 			list.add(collapse);
 		}
 		

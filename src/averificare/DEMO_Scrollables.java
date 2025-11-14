@@ -6,6 +6,7 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.enums.IconType;
 import frost3d.implementations.SimpleWindow;
+import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.elements.base.GUIClickableRectangle;
 import snowui.elements.base.GUIIcon;
@@ -46,7 +47,8 @@ public class DEMO_Scrollables {
 		
 		list.add(new GUIClickableRectangle());
 		
-		for (int i = 0; i < 60; i++) 	{ list.add(new GUIText("Hello, " + i)); }
+		String add = "YYncnXdN1EABf35H6ZIKnyI3HsfMNGno0ugPD23RtXagc0VIOXxXcd2kDam88oVYeGcTphicxMD76muVWljSVp6ab6JqZ6z2I3uEKutsN20dGXh7kDSaxV5F2FIiW3Td";
+		for (int i = 0; i < 60; i++) 	{ list.add(new GUIText("Hello, "+add + i)); }
 		
 		list.get(2).identifier("none");
 		
@@ -54,6 +56,9 @@ public class DEMO_Scrollables {
 		gui.style().setProperty("demo_horizontal_list", "list_spacing", 	"36");
 		gui.style().setProperty("demo_list", 			"min_width", 		"container");
 		gui.style().setProperty("demo_list", 			"max_width", 		"container");
+
+		gui.style().setProperty("demo_list", "list_spacing", "5");
+
 		
 		sub_list_2.set(new GUIIcon(IconType.GENERIC_HOME), 3);
 		
