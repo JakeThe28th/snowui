@@ -8,6 +8,7 @@ import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
 import snowui.coss.enums.PredicateKey;
+import snowui.utility.DebugElementTree;
 
 public abstract class GUIElement {
 	
@@ -125,16 +126,48 @@ public abstract class GUIElement {
 	public int width() { return style.padw(unpadded_width); }
 	public int height() { return style.padh(unpadded_height); }
 
-	public static void tick(GUIInstance gui, GUIElement e) {
-		e.limit_rectangle(gui.canvas().size());	// (Since this is only run on the root element)
+	public static void tick(GUIInstance gui, GUIElement e, Rectangle limit) {
+		e.limit_rectangle(limit);	// (Since this is only run on the root element)
+		long time;
+		time = System.nanoTime();
 		e.triggerUpdateState(gui);
+		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 0);
+		DebugElementTree.framechart.name(0, "Update state");
+		time = System.nanoTime();
 		e.triggerTickAnimation(gui);
+		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 1);
+		DebugElementTree.framechart.name(1, "Tick animations");
+		time = System.nanoTime();
 		e.triggerDequeueState();
+		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 2);
+		DebugElementTree.framechart.name(2, "Dequeue state");
+		time = System.nanoTime();
 		e.triggerCacheStyle(gui);
+		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 3);
+		DebugElementTree.framechart.name(3, "Cache style");
+		time = System.nanoTime();
 		e.checkIfSubelementsWillRecalculatesize();
+		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 4);
+		DebugElementTree.framechart.name(4, "Check if ...");
+		time = System.nanoTime();
 		e.triggerRecalculateSize(gui);
+		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 5);
+		DebugElementTree.framechart.name(5, "Recalculate size");
+		time = System.nanoTime();
 		e.triggerUpdateDrawInfo(gui);
+		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 6);
+		DebugElementTree.framechart.name(6, "Update draw info");
+		time = System.nanoTime();
 		e.triggerDraw(gui, 0);
+		DebugElementTree.framechart.add((int) (System.nanoTime()-time), 7);
+		DebugElementTree.framechart.name(7, "Draw");
+		time = System.nanoTime();
+	}
+	
+	public static void tickFloating(GUIInstance gui, GUIElement e, int x, int y, int depth) {
+		e.triggerRecalculateSize(gui);
+		e.triggerCacheStyle(gui);
+		tick(gui, e, new Rectangle(x, y, x + e.width(), y + e.height()));
 	}
 
 	public abstract void recalculateSize(GUIInstance gui);
@@ -310,7 +343,9 @@ public abstract class GUIElement {
 			updateDrawInfo(gui);
 			should_update = false; 
 		}
-		for (GUIElement e : sub_elements) { e.triggerUpdateDrawInfo(gui); }
+		if (is_on_screen()) {
+			for (GUIElement e : sub_elements) { e.triggerUpdateDrawInfo(gui); }
+		}
 	}
 
 	private final void triggerTickAnimation(GUIInstance gui) {

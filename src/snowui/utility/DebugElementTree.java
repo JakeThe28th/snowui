@@ -1,56 +1,342 @@
 package snowui.utility;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_ALT;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-
 import org.joml.Vector4f;
+import org.lwjgl.glfw.GLFW;
 
+import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.interfaces.F3DCanvas;
+import snowui.GUIInstance;
+import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
+import snowui.elements.interfaces.Droppable;
 
 public class DebugElementTree {
 	
-	public static void drawTree(F3DCanvas canvas, GUIElement e) {
+	public static interface IDCDataConverter {
+		public String dataToString(int d);
+	}
+	
+	public static class IntegerDataChart {
 		
-		// Hover tree
+		int 		size;
+		int 		channels;
+		int[][] 	data;
+		int 		index = 0;;
+		Vector4f[] 	colors;
+		String[] 	channel_names;
 		
-		ArrayList<String> elements = new ArrayList<String>();
-		add(elements, e);
+		int 		self_channel_count = 1;
 		
-		DrawUtility.drawStrings(canvas, canvas.width()-5, canvas.height()-5, 1000, elements);
+		
+		boolean show_self_channels = true;
+		public boolean show_self_channels() { return show_self_channels; }
+		public void show_self_channels(boolean v) { show_self_channels = v; }
+		
+		int			y_axis_interval = 100;
+		
+		IDCDataConverter data_converter = new IDCDataConverter() {
+			public String dataToString(int d) {
+				return "Data: " + d;
+			}
+		};
+		
+		public IntegerDataChart(int size, int channels) {
+			channels += self_channel_count;
+			this.size = size;
+			this.channels = channels;
+			this.data = new int[size][channels];
+			this.colors = new Vector4f[channels];
+			
+			randomcolors();
+			
+			this.channel_names = new String[channels];
+			for (int i = 0; i < channels; i++) {
+				this.channel_names[i] = "Channel["+(i-self_channel_count)+"]";
+			}
+			if (self_channel_count > 0) this.channel_names[0] = "Other";
+
+		}
+		
+		public void randomcolors() {
+			for (int i = 0; i < channels; i++) {
+				float r = i / ((float) channels);
+				float g = (float) Math.random();
+				float b = (float) Math.random();
+				float sum = r + g + b;
+				this.colors[i] = new Vector4f(r/sum, g/sum, b/sum, 1);
+			}
+		}
+		
+		long last_advance_nanotime = 0;
+
+		public void advance() { 
+			if (self_channel_count > 0) {
+				int other = (int) (System.nanoTime()-this.last_advance_nanotime);
+				for (int i = 1; i < channels; i++) {
+					other -= data[index][i];
+				}
+				add(other, -1);
+				this.last_advance_nanotime = System.nanoTime();
+			}
+			index++; 
+			if (index >= size) index = 0; 
+		}
+		
+		public void add(int n) { add(n, self_channel_count); }
+		public void add(int n, int channel) {
+			data[index][channel+self_channel_count] = n;
+		}
+		
+		public void draw(F3DCanvas canvas, int x, int y, int depth, float scale_y, int advance) {
+			
+			// Color labels
+			int lineheight = canvas.textrenderer().size(channel_names[0]).y;
+			int m = 5;
+			int sep = 2;
+			int lines = 3;
+			int namex = x;
+			int namey = y -= ( (lineheight*lines) + ((m*2)*lines) + (sep*lines-1));
+			for (int channel = channels-1; channel >= 0; channel--) {
+				if ((self_channel_count < 1 || !show_self_channels) && channel == 0) continue;
+				String name = channel_names[channel];
+				int width = canvas.textrenderer().size(name).x;
+				int height = canvas.textrenderer().size(name).y;				
+				int color_square_size = height;
+				canvas.color(Color.BLACK75.val());
+				canvas.rect(namex, namey, namex+width+color_square_size+(m*3), namey+height+(m*2), depth + channels+2);
+				canvas.color(colors[channel]);
+				canvas.rect(namex+m, namey+m, namex+m+color_square_size, namey+m+color_square_size, depth + channels+2);
+				canvas.color(Color.WHITE.val());
+				canvas.text(namex+m+color_square_size+m, namey+m, depth + channels+3, name);
+				namex += width + (m*3) + sep + color_square_size;
+				if (namex - x > canvas.width()/3) {
+					namex = x;
+					namey += lineheight + (m*2) + sep;
+				}
+			}
+			y-=m;
+			x+=m;
+			
+			// Graph
+			for (int channel = channels-1; channel >= 0; channel--) {
+				if ((self_channel_count < 1 || !show_self_channels) && channel == 0) continue;
+				canvas.color(colors[channel]);
+				for (int xx = 0; xx < size; xx++) {
+					int yy = y;
+					
+					int prev_data = 0;
+					for (int i = 0; i < channel; i++) {
+						if ((self_channel_count < 1 || !show_self_channels) && i == 0) continue;
+						prev_data += data[wrap(xx + index)][i] * scale_y;
+					}
+					int this_data = (int) (data[wrap(xx + index)][channel] * scale_y);
+					canvas.rect(x + xx*advance, yy-(prev_data+this_data), (x + xx*advance) + advance, yy, depth + channel);
+				}
+			}
+			
+			// Axis labels
+			int yy = 0;
+			for (int mul = 1; mul < 10; mul++) {
+				yy += (y_axis_interval * mul) / scale_y;
+				
+				int y_val = (int) (y - (yy*scale_y));
+				
+				canvas.color(Color.BLACK.val());
+				canvas.rect(x, y_val, x+(size*advance), y_val + 2, depth + channels + 10);
+				
+				String str = data_converter.dataToString(yy);
+				int ww = canvas.textrenderer().size(str).x;
+				int hh = canvas.textrenderer().size(str).y;
+
+				canvas.color(Color.BLACK75.val());
+				canvas.rect(x, y_val, x + ww + (m*2), y_val + hh + (m*2), depth + channels + 10);
+				
+				canvas.color(Color.WHITE.val());
+				canvas.text(x+m, y_val+m, depth + channels + 10, str);
+			}
+			
+		}
+
+		private int wrap(int index) {
+			if (index >= size) index = index - size;
+			return index;
+		}
+
+		public static IntegerDataChart resize(IntegerDataChart chart, int new_size) {
+			IntegerDataChart new_chart = new IntegerDataChart(new_size, chart.channels - chart.self_channel_count);
+			new_chart.colors = chart.colors;
+			new_chart.data_converter = chart.data_converter;
+			new_chart.self_channel_count = chart.self_channel_count;
+			return new_chart;
+		}
+
+		public void name(int channel, String name) {
+			channel_names[channel+self_channel_count] = name;
+		}
+		
+		long profile_start = 0;
+		
+		public void endprofile(int channel, String name) {
+			add((int) (System.nanoTime()-profile_start), channel);
+			name(channel, name);
+		}
+
+		public void startprofile() {
+			profile_start = System.nanoTime();
+		}
+
+				
+	}
+	
+	static enum DebugState {
+		FRAMETIME_CHART,
+		UPDATE_TIMES
+	}
+	
+	static boolean show_hover_overlay = false;
+	static boolean show_drop_areas = false;
+	static DebugState current_debug_state = DebugState.FRAMETIME_CHART;
+	
+	public static IntegerDataChart framechart = new IntegerDataChart(60*4, 9);
+	static int framechart_size = 60*4;
+	static int framechart_advance = 2;
+	static float framechart_y_scale = 1f/10000f;
+	static {
+		framechart.data_converter = new IDCDataConverter() {
+			public String dataToString(int d) {
+				double ms = ((double) d/1E6);
+				NumberFormat f = DecimalFormat.getInstance();
+				f.setMinimumFractionDigits(2);
+				f.setMaximumFractionDigits(2);
+				return ms + "ms (" + f.format(1000/ms) + " fps)";
+			}
+		};
+	}
+	
+	public static boolean show_debug = true;
+	static boolean used_modifier = false;
+	
+	public static void drawTree(GUIInstance gui, GUIElement e, Input input) {
+		
+		if (input.keyReleased(GLFW_KEY_LEFT_ALT) && !used_modifier) {
+			show_debug = !show_debug;
+		}
+		
+		if (!input.keyDown(GLFW.GLFW_KEY_LEFT_ALT)) {
+			used_modifier = false;
+		}
+		
+		if (!show_debug) return;
+		
+		if (input.keyDown(GLFW.GLFW_KEY_LEFT_ALT)) {
+			if (input.keyPressed(GLFW.GLFW_KEY_1)) {
+				current_debug_state = DebugState.values()[0];
+				used_modifier = true;
+			}
+			if (input.keyPressed(GLFW.GLFW_KEY_2)) {
+				current_debug_state = DebugState.values()[1];
+				used_modifier = true;
+			}
+			if (current_debug_state == DebugState.FRAMETIME_CHART) {
+				if (input.keyDown(GLFW.GLFW_KEY_EQUAL)) {
+					framechart_y_scale *= 1.01;
+					if (framechart_y_scale < 1f/1000000f) framechart_y_scale = 1f/100f;
+					used_modifier = true;
+				}
+				if (input.keyDown(GLFW.GLFW_KEY_MINUS)) {
+					framechart_y_scale /= 1.01;
+					if (framechart_y_scale < 1f/1000000f) framechart_y_scale = 1f/100f;
+					used_modifier = true;
+				}
+				if (input.keyPressed(GLFW.GLFW_KEY_0)) {
+					framechart_advance++;
+					if (framechart_advance > 4) framechart_advance = 1;
+					used_modifier = true;
+				}
+				if (input.keyPressed(GLFW.GLFW_KEY_9)) {
+					int old_framechart_size = framechart_size;
+					framechart_size += 30;
+					if (framechart_size >= (gui.canvas().width() / framechart_advance)) {
+						if (old_framechart_size < (gui.canvas().width() / framechart_advance) - 5) {
+							framechart_size = (gui.canvas().width() / framechart_advance) - 5;
+						} else {
+							framechart_size = 30;
+						}
+					}
+					framechart = IntegerDataChart.resize(framechart, framechart_size);
+					used_modifier = true;
+				}
+				if (input.keyPressed(GLFW.GLFW_KEY_8)) {
+					if (framechart.y_axis_interval != 16) {
+						framechart.y_axis_interval = 16;
+					} else {
+						framechart.y_axis_interval = 100;
+					}
+					
+					used_modifier = true;
+				}
+				if (input.keyPressed(GLFW.GLFW_KEY_7)) {
+					framechart.randomcolors();
+					used_modifier = true;
+				}
+				if (input.keyPressed(GLFW.GLFW_KEY_6)) {
+					framechart.show_self_channels(!framechart.show_self_channels());
+					used_modifier = true;
+				}
+			}
+		}
+		
+		F3DCanvas canvas = gui.canvas();
 		
 		// State
 		
 		ArrayList<String> state = new ArrayList<String>();
-		GUIElement hovered = getHoveredElement(e);
+		GUIElement hovered = GUIUtility.getHoveredElement(e);
 		for (PredicateKey key : hovered.state().keySet()) {
 			state.add(key.toString() + " = " + hovered.state().get(key));
 		}
 		
-		// Update time
-		
-		NumberFormat f = DecimalFormat.getInstance();
-		f.setMinimumIntegerDigits(3);
-		f.setMinimumFractionDigits(3);
-		state.add("§`Last updated: " + f.format(hovered.last_update_elapsed_time()/1000f) + " seconds ago");
-		state.add("§`Last draw update: " + f.format(hovered.last_draw_update_elapsed_time()/1000f) + " seconds ago");
-		state.add("§`Last state update: " + f.format(hovered.last_state_update_elapsed_time()/1000f) + " seconds ago");
-		state.add("§`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
-		state.add("Render Queue Items: " + ((SimpleCanvas) canvas).queue_size());
-
-		// Draw that ^^^ debug info
-		
-		DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, state);
-		
 		// Draw a red flashing rectangle over the currently hovered element 
-		
+		if (show_hover_overlay)
 		if (hovered.state().get(PredicateKey.HOVERED)) {
 			canvas.color(new Vector4f(1, 0, 0, flash_opacity()));
 			canvas.rect(hovered.hover_rectangle(), 1000);
 		}
+		
+		// Extras
+		if (show_drop_areas)
+		if (hovered instanceof Droppable) {
+			((Droppable) hovered).DEBUG_draw_drop_areas(gui, null, 1000);
+		}
+		
+		if (current_debug_state == DebugState.FRAMETIME_CHART) {
+			framechart.draw(canvas, 5, canvas.height()-5, 1000, framechart_y_scale, framechart_advance);
+			framechart.advance();
+		}
+
+		if (current_debug_state == DebugState.UPDATE_TIMES) {
+			NumberFormat f = DecimalFormat.getInstance();
+			f.setMinimumIntegerDigits(3);
+			f.setMinimumFractionDigits(3);
+			state.add("§`Last updated: " + f.format(hovered.last_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("§`Last draw update: " + f.format(hovered.last_draw_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("§`Last state update: " + f.format(hovered.last_state_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("§`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("Render Queue Items: " + ((SimpleCanvas) canvas).queue_size());
+			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, state);
+		}
+		
+		// Hover tree
+		ArrayList<String> elements = new ArrayList<String>();
+		add(elements, e);
+		DrawUtility.drawStrings(canvas, canvas.width()-5, canvas.height()-5, 1000, elements);
 		
 	}
 
@@ -64,13 +350,5 @@ public class DebugElementTree {
 			if (sub.state().get(PredicateKey.BOUNDED)) add(elements, sub);
 		}
 	}
-	
-	private static GUIElement getHoveredElement(GUIElement e) {
-		for (GUIElement sub : e.sub_elements()) {
-			if (sub.state().get(PredicateKey.BOUNDED)) return getHoveredElement(sub);
-		}
-		return e;
-	}
-
 
 }
