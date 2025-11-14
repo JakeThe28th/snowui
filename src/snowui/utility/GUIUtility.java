@@ -2,9 +2,19 @@ package snowui.utility;
 
 import java.util.ArrayList;
 
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
 
 public class GUIUtility {
+	
+	public static GUIElement getHoveredElement(GUIElement e) {
+		for (GUIElement sub : e.sub_elements()) {
+			if (sub.state().get(PredicateKey.BOUNDED)) return getHoveredElement(sub);
+		}
+		return e;
+	}
+
+	// -- ++  ...  ++ -- //
 
 	public static int combined_height(ArrayList<GUIElement> elements) {
 		int height = 0;
@@ -56,6 +66,5 @@ public class GUIUtility {
 		// TODO
 		return 37;
 	}
-
 
 }

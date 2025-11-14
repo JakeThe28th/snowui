@@ -41,7 +41,7 @@ public class DrawUtility {
 
 		for (String str : strings) {
 			Vector2i size = canvas.textrenderer().size(str);
-			canvas.color(Color.BLACK25.val());
+			canvas.color(Color.TRANSPARENT_BLACK.val());
 			canvas.rect(xx, yy, xx+size.x+(m*2), yy+size.y+(m*2), depth);
 			canvas.color(Color.WHITE.val());
 			if (str.startsWith("§`")) canvas.color(Color.DESYELLOW.val());
