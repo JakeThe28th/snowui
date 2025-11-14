@@ -206,9 +206,9 @@ public class GUIDebugger {
 	static DebugState current_debug_state = DebugState.FRAMETIME_CHART;
 	
 	public static IntegerDataChart framechart = new IntegerDataChart(60*4, 10);
-	static int framechart_size = 60*4;
-	static int framechart_advance = 2;
-	static float framechart_y_scale = 1f/10000f;
+	static int framechart_size = 60*2;
+	static int framechart_advance = 3;
+	static float framechart_y_scale = 1f/60000f;
 	static {
 		framechart.data_converter = new IDCDataConverter() {
 			public String dataToString(int d) {
