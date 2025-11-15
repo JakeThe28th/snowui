@@ -3,6 +3,7 @@ package snowui.elements.base;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Constant;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
 
 public class GUIScrollable extends GUIElement {
@@ -182,6 +183,12 @@ public class GUIScrollable extends GUIElement {
 	
 	public GUIScrollable(GUIElement root) {
 		root(root);
+		// vvv whether or not to show these is calculated in updateDrawInfo
+		// so, hide them on the first frame (since it doesn't get set in time
+		// to avoid causing errors)
+		// Probably not the best solution but I'll fix it later
+		vertical_scrollbar.set(PredicateKey.HIDDEN, true);
+		horizontal_scrollbar.set(PredicateKey.HIDDEN, true);
 	}
 
 	private void root(GUIElement root) {
@@ -220,7 +227,9 @@ public class GUIScrollable extends GUIElement {
 			if (scrolling_y) screen_width 	-= scrollbar_width;
 			if (scrolling_x) screen_height 	-= scrollbar_height;
 		}
-		
+		vertical_scrollbar.set(PredicateKey.HIDDEN, !scrolling_y);
+		horizontal_scrollbar.set(PredicateKey.HIDDEN, !scrolling_x);
+
 		// Vertical scrollbar
 		Rectangle v_scrollbar = null;
 		if (scrolling_y) {
@@ -236,12 +245,12 @@ public class GUIScrollable extends GUIElement {
 					v_scrollbar = v_scrollbar.internal_int(0, scrollbar_height, v_scrollbar.width(), v_scrollbar.height());
 				}
 			}
+			//vertical_scrollbar.scroll_amount(scroll_y);
+			vertical_scrollbar.content_size(content_height);
+			vertical_scrollbar.screen_size(screen_height);
+			vertical_scrollbar.limit_rectangle(v_scrollbar);
 		}
 
-		//vertical_scrollbar.scroll_amount(scroll_y);
-		vertical_scrollbar.content_size(content_height);
-		vertical_scrollbar.screen_size(screen_height);
-		vertical_scrollbar.limit_rectangle(v_scrollbar);
 		
 		// Horizontal scrollbar
 		Rectangle h_scrollbar = null;
@@ -258,13 +267,12 @@ public class GUIScrollable extends GUIElement {
 					h_scrollbar = h_scrollbar.internal_int(scrollbar_width, 0, h_scrollbar.width(), h_scrollbar.height());
 				}
 			}
+			//horizontal_scrollbar.scroll_amount(scroll_x);
+			horizontal_scrollbar.content_size(content_width);
+			horizontal_scrollbar.screen_size(screen_width);
+			horizontal_scrollbar.limit_rectangle(h_scrollbar);	
 		}
-		
-		//horizontal_scrollbar.scroll_amount(scroll_x);
-		horizontal_scrollbar.content_size(content_width);
-		horizontal_scrollbar.screen_size(screen_width);
-		horizontal_scrollbar.limit_rectangle(h_scrollbar);		
-		
+
 		Rectangle area_rectangle = limit_rectangle().internal_int(0, 0, limit_rectangle().width(), limit_rectangle().height());
 		if (scrolling_y) {
 			if (style().halign().constant() == Constant.RIGHT) {
