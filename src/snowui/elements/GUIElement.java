@@ -380,7 +380,7 @@ public abstract class GUIElement {
 	}
 	
 	private final void triggerDequeueState() {
-		if (is_within_scissor()) {
+		if (is_within_scissor() && (!get(PredicateKey.HIDDEN) || !next_state.get(PredicateKey.HIDDEN))) {
 			for (GUIElement e : sub_elements) { e.triggerDequeueState(); }
 			dequeueState();
 		}
@@ -394,6 +394,7 @@ public abstract class GUIElement {
 
 		boolean will = false;
 		for (GUIElement e : sub_elements) { 
+			if (!e.is_on_screen()) continue;
 			e.checkIfSubelementsWillRecalculatesize(); 
 			will = will || e.should_recalculate_size;
 		}
