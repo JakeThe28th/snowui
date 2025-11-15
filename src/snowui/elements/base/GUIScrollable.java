@@ -34,9 +34,9 @@ public class GUIScrollable extends GUIElement {
 		float content_size;
 		float screen_size;
 
-		public void scroll_amount(float amt) { scroll_amount = amt; this.should_update = true; onScroll(); }
-		public void content_size (int size) { content_size = size; this.should_update = true; }
-		public void screen_size  (int size) { screen_size = size; this.should_update = true; }
+		public void scroll_amount(float amt) { if (scroll_amount == amt) return; scroll_amount = amt; this.should_update(true); onScroll(); }
+		public void content_size (int size) { content_size = size; this.should_update(true); }
+		public void screen_size  (int size) { screen_size = size; this.should_update(true); }
 		
 		public GUIScrollBar horizontalify() {
 			vertical = false;
@@ -85,7 +85,7 @@ public class GUIScrollable extends GUIElement {
 			if (!gui.primary_click_down()) scrolling = false;
 			if (scrolling) {
 				
-				scroll_this().should_update = true;
+				scroll_this().should_update(true);
 				
 				float mouse_amount_normalized = 0;
 				
@@ -123,7 +123,7 @@ public class GUIScrollable extends GUIElement {
 			if (scroll_handle.limit_rectangle().contains(gui.mouspos())) {
 				// N/A
 			} else if (time_since_pressed() > GUIInstance.INPUT_REPEAT_TIME) {
-				should_update = true;
+				should_update(true);
 				scroll_towards_mouse(gui);
 			}
 		}
@@ -162,11 +162,11 @@ public class GUIScrollable extends GUIElement {
 	GUIElement root;
 	
 	GUIScrollBar horizontal_scrollbar = new GUIScrollBar() {
-		@Override public void onScroll() {scroll_this().should_update = true; }
+		@Override public void onScroll() {scroll_this().should_update(true); }
 	}.horizontalify() ;
 	
 	GUIScrollBar vertical_scrollbar = new GUIScrollBar() {
-		@Override public void onScroll() {scroll_this().should_update = true; }
+		@Override public void onScroll() {scroll_this().should_update(true); }
 	};
 	
 	

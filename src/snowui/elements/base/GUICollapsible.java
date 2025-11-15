@@ -18,7 +18,7 @@ public class GUICollapsible extends GUIElement {
 		@Override public void onSingleClick(GUIInstance gui) {
 			collapsed(!collapsed);
 			icon(collapsed ? IconType.GENERIC_ARROW_DOWN : IconType.GENERIC_ARROW_RIGHT);
-			should_update = true;
+			should_update(true);
 		}
 	};
 	
@@ -39,7 +39,7 @@ public class GUICollapsible extends GUIElement {
 	public GUICollapsible hidden(GUIElement element) {
 		if (hidden != null) this.removeSubElement(hidden);
 		hidden = element;
-		should_update = true;
+		should_update(true);
 		this.registerSubElement(element);
 		return this;
 	}
@@ -47,8 +47,8 @@ public class GUICollapsible extends GUIElement {
 	public GUICollapsible collapsed(boolean b) { 
 		this.collapsed = b; 
 		hidden.set(PredicateKey.HIDDEN, b);
-		should_update = true;
-		should_recalculate_size = true;
+		should_update(true);
+		should_recalculate_size(true);
 		return this;
 	}
 

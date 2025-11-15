@@ -58,10 +58,14 @@ public abstract class GUIElement {
 		}
 	}
 	
-	protected boolean should_update = true;
-	protected boolean should_recalculate_size = true;
-	protected boolean should_cache_style = true;
+	private boolean should_update 			= true;
+	private boolean should_recalculate_size = true;
+	private boolean should_cache_style 		= true;
 	
+	protected void should_update			(boolean v) { should_update 			= v; }
+	protected void should_recalculate_size	(boolean v) { should_recalculate_size 	= v; }
+	protected void should_cache_style		(boolean v) { should_cache_style 		= v; }
+
 	private   Rectangle hover_rectangle;
 	public 	  Rectangle hover_rectangle() 						{ return hover_rectangle; 		}
 	public 	  void 	 	hover_rectangle(Rectangle rectangle) 	{ 		 hover_rectangle = rectangle; 	}
@@ -80,7 +84,7 @@ public abstract class GUIElement {
 									   // it's always overridden before it's used
 		Utility._assert(rectangle != null, "limit_rectangle attempted to be set 'null'");
 		if (!rectangle.equals(limit_rectangle)) { 
-			should_update = true;
+			should_update(true);
 			limit_changed = true;
 			was_on_screen = is_on_screen();
 		}
@@ -326,8 +330,8 @@ public abstract class GUIElement {
 		if (should_cache_style) {
 			if (cacheStyle(gui)) {
 				log_update();
-				should_update = true;
-				should_recalculate_size = true;
+				should_update(true);
+				should_recalculate_size(true);
 				if (limit_rectangle != null) set_padded_limit_rectangle();
 			}
 		}
@@ -369,7 +373,7 @@ public abstract class GUIElement {
 			if (should_recalculate_size) {
 				log_update();
 				recalculateSize(gui);
-				should_update = true;
+				should_update(true);
 				should_recalculate_size = false;
 			}
 		}
@@ -393,7 +397,7 @@ public abstract class GUIElement {
 			e.checkIfSubelementsWillRecalculatesize(); 
 			will = will || e.should_recalculate_size;
 		}
-		if (will) this.should_recalculate_size = true;
+		if (will) this.should_recalculate_size(true);
 	}
 
 }

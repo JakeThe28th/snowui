@@ -48,7 +48,7 @@ public class DEMO_Scrollables {
 		list.add(new GUIClickableRectangle());
 		
 		String add = "YYncnXdN1EABf35H6ZIKnyI3HsfMNGno0ugPD23RtXagc0VIOXxXcd2kDam88oVYeGcTphicxMD76muVWljSVp6ab6JqZ6z2I3uEKutsN20dGXh7kDSaxV5F2FIiW3Td";
-		for (int i = 0; i < 60; i++) 	{ list.add(new GUIText("Hello, "+add + i)); }
+		for (int i = 0; i < 100; i++) 	{ list.add(new GUIText("Hello, "+add + i)); }
 		
 		list.get(2).identifier("none");
 		

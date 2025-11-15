@@ -32,8 +32,8 @@ public class GUIList extends GUIElement implements Droppable {
 	
 	public GUIList verticalify() {
 		if (!vertical) {
-			this.should_recalculate_size = true;
-			this.should_update = true;
+			this.should_recalculate_size(true);
+			this.should_update(true);
 		}
 		vertical = true;
 		return this;
@@ -41,8 +41,8 @@ public class GUIList extends GUIElement implements Droppable {
 	
 	public GUIList horizontalify() {
 		if (vertical) {
-			this.should_recalculate_size = true;
-			this.should_update = true;
+			this.should_recalculate_size(true);
+			this.should_update(true);
 		}
 		vertical = false;
 		return this;
@@ -50,8 +50,8 @@ public class GUIList extends GUIElement implements Droppable {
 	
 	public GUIList wrap(boolean b) {
 		if (wrap != b) {
-			this.should_recalculate_size = true;
-			this.should_update = true;
+			this.should_recalculate_size(true);
+			this.should_update(true);
 		}
 		this.wrap = b;
 		return this;
@@ -59,22 +59,22 @@ public class GUIList extends GUIElement implements Droppable {
 	
 	public void add(GUIElement e) {
 		this.elements.add(e);
-		this.should_recalculate_size = true;
+		this.should_recalculate_size(true);
 	}
 	
 	public void add(GUIElement e, int index) {
 		this.elements.add(index, e);
-		this.should_recalculate_size = true;
+		this.should_recalculate_size(true);
 	}
 	
 	public void set(GUIElement e, int index) {
 		this.elements.set(index, e);
-		this.should_recalculate_size = true;
+		this.should_recalculate_size(true);
 	}
 	
 	public void removeIf(Predicate<? super GUIElement> predicate) {
 		this.elements.removeIf(predicate);
-		this.should_recalculate_size = true;
+		this.should_recalculate_size(true);
 	}
 	
 	public int length() 			{ return elements.size();     }
@@ -101,7 +101,7 @@ public class GUIList extends GUIElement implements Droppable {
 	protected void onLimitRectangleChange() { 
 		if (wrap) { 
 			recalculateWrappedListSize(); 
-			should_update = true; // <-- without this, the hover rectangle
+			should_update(true); // <-- without this, the hover rectangle
 								  //     and probably other stuff gets messed up
 		} 
 	}
