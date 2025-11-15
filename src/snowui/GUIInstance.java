@@ -43,6 +43,7 @@ public class GUIInstance {
 			canvas.textrenderer(text);
 			canvas.iconrenderer(icons);
 			//canvas.clear_color(0, 0, 0, 1);
+			if (root != null) root.scissor_rectangle_recursive(canvas.size());
 		}
 	}
 	
