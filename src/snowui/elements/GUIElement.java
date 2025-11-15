@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
+import frost3d.utility.Utility;
 import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
@@ -46,6 +47,10 @@ public abstract class GUIElement {
 	
 	public boolean is_on_screen() {
 		if (get(PredicateKey.HIDDEN)) return false;
+		return is_within_scissor();
+	}
+	
+	public boolean is_within_scissor() {
 		if (scissor_rectangle() != null && limit_rectangle() != null) {
 			return scissor_rectangle().intersects(limit_rectangle());
 		} else {
@@ -73,6 +78,7 @@ public abstract class GUIElement {
 		boolean limit_changed = false;
 		boolean was_on_screen = false; // <-- value doesn't matter since 
 									   // it's always overridden before it's used
+		Utility._assert(rectangle != null, "limit_rectangle attempted to be set 'null'");
 		if (!rectangle.equals(limit_rectangle)) { 
 			should_update = true;
 			limit_changed = true;
@@ -307,6 +313,7 @@ public abstract class GUIElement {
 			overridden = overridden || updateState(gui);
 			return overridden;
 		} else {
+			if (!is_on_screen()) return false;
 			boolean overridden = false;
 			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui); }
 			if (!overridden && get(PredicateKey.DOWN)) { triggerOnHold(gui); }
@@ -316,7 +323,6 @@ public abstract class GUIElement {
 	}
 	
 	private final void triggerCacheStyle(GUIInstance gui) {
-		for (GUIElement e : sub_elements) { e.triggerCacheStyle(gui); }
 		if (should_cache_style) {
 			if (cacheStyle(gui)) {
 				log_update();
@@ -324,6 +330,9 @@ public abstract class GUIElement {
 				should_recalculate_size = true;
 				if (limit_rectangle != null) set_padded_limit_rectangle();
 			}
+		}
+		if (is_on_screen()) {
+			for (GUIElement e : sub_elements) { e.triggerCacheStyle(gui); }
 		}
 	}
 
@@ -339,8 +348,10 @@ public abstract class GUIElement {
 	}
 
 	private final void triggerTickAnimation(GUIInstance gui) {
-		for (GUIElement e : sub_elements) { e.triggerTickAnimation(gui); }
-		tickAnimation(gui);
+		if (is_on_screen()) {
+			for (GUIElement e : sub_elements) { e.triggerTickAnimation(gui); }
+			tickAnimation(gui);
+		}
 	}
 	
 	private final void triggerDraw(GUIInstance gui, int depth) {
@@ -353,24 +364,30 @@ public abstract class GUIElement {
 	}
 	
 	private final void triggerRecalculateSize(GUIInstance gui) {
-		for (GUIElement e : sub_elements) { e.triggerRecalculateSize(gui); }
-		if (should_recalculate_size) {
-			log_update();
-			recalculateSize(gui);
-			should_update = true;
-			should_recalculate_size = false;
+		if (is_on_screen()) {
+			for (GUIElement e : sub_elements) { e.triggerRecalculateSize(gui); }
+			if (should_recalculate_size) {
+				log_update();
+				recalculateSize(gui);
+				should_update = true;
+				should_recalculate_size = false;
+			}
 		}
 	}
 	
 	private final void triggerDequeueState() {
-		for (GUIElement e : sub_elements) { e.triggerDequeueState(); }
-		dequeueState();
+		if (is_within_scissor()) {
+			for (GUIElement e : sub_elements) { e.triggerDequeueState(); }
+			dequeueState();
+		}
 	}
 	
 	/** Not really the same as the other methods
 	 *  in this area, but it recursively acts on
 	 *  sub-elements, so I'm putting it here. */
 	private void checkIfSubelementsWillRecalculatesize() {
+		if (!is_on_screen()) return;
+
 		boolean will = false;
 		for (GUIElement e : sub_elements) { 
 			e.checkIfSubelementsWillRecalculatesize(); 
