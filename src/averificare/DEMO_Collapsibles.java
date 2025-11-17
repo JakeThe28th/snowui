@@ -35,13 +35,15 @@ public class DEMO_Collapsibles {
 			GUICollapsible collapse	= new GUICollapsible()
 					.root(new GUIText("Roots"))
 					.hidden(new GUIText("snoozie"))
-					.collapsed(true);
+					.collapsed(false);
 			list.add(collapse);
 		}
 		
 		GUICollapsible collapse0	= new GUICollapsible()
-				.root(new GUIText("Roots"))
+				.root(new GUIText("Roots (Draggable)"))
 				.hidden(new GUIIcon(IconType.GENERIC_HOME));
+		
+		collapse0.draggable(true);
 		
 		GUICollapsible collapse1	= new GUICollapsible()
 				.root(new GUIText("Roots"))
@@ -50,6 +52,9 @@ public class DEMO_Collapsibles {
 		((GUICollapsible) list.get(5)).hidden(new GUIList(collapse0, collapse1));
 		
 		gui.root(list);
+
+		//gui.style().setProperty("list", "list_spacing", "15");
+
 		
 		while (!window.should_close()) {
 			if (window.input().keyPressed(GLFW.GLFW_KEY_LEFT_CONTROL) ) { 

@@ -111,13 +111,12 @@ public class GUIInstance {
 	public ComposingStyleSheet style() { return style; }
 	
 	public void render() {
-		
 		GUIElement.tick(this, root, canvas().size(), 0);	
+		drag_and_drop_support.tick();
 		
 		if (SHOW_FPS) fps.drawFPS(canvas);
 		if (DEBUG) GUIDebugger.drawTree(this, root, input);
 		
-		drag_and_drop_support.tick();
 		
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		canvas.draw_frame();

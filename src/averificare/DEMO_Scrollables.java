@@ -6,7 +6,6 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.enums.IconType;
 import frost3d.implementations.SimpleWindow;
-import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.elements.base.GUIClickableRectangle;
 import snowui.elements.base.GUIIcon;

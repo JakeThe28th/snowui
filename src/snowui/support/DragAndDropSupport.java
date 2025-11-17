@@ -2,6 +2,7 @@ package snowui.support;
 
 import org.joml.Vector2i;
 
+import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.GUIElement;
 import snowui.elements.interfaces.ElementReceiver;
@@ -19,7 +20,6 @@ public class DragAndDropSupport {
 	public void 		set_drag_start() 				{ drag_start  = new Vector2i(g.mx(), g.my()); }
 	
 	public GUIElement	held = null;
-	private GUIElement held_clone;
 	
 	public boolean should_drag() {
 		if (drag_start == null) return false;
@@ -36,13 +36,16 @@ public class DragAndDropSupport {
 		// Grab
 		if (held == null && drag_target != null && drag_target.draggable() && should_drag()) {
 			held = drag_target;
-			held_clone = (GUIElement) held.clone();
 		}
 		
 		// Set down
 		if (held == null) return;
 		
-		GUIElement.tickFloating(g, held_clone, g.mx(), g.my(), 1000);
+		// (...probably not ideal, but making a copy isn't practical,
+		//     and this doesn't seem to affect performance *too* much, so...)
+		Rectangle limit = held.limit_rectangle();
+		GUIElement.tickFloating(g, held, g.mx(), g.my(), 1000);
+		held.limit_rectangle(limit);
 		
 		if (g.current_hovered_element() instanceof ElementReceiver) {
 			ElementReceiver target =  ((ElementReceiver) g.current_hovered_element());
@@ -58,13 +61,11 @@ public class DragAndDropSupport {
 			} else {
 				if (g.primary_click_released()) { 
 					held = null;
-					held_clone = null;
 				}
 			}
 		} else {
 			if (g.primary_click_released()) { 
 				held = null;
-				held_clone = null;
 			}
 		}
 		

@@ -2,6 +2,7 @@ package snowui.elements;
 
 import java.util.ArrayList;
 
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import frost3d.utility.Utility;
 import snowui.GUIInstance;
@@ -9,9 +10,11 @@ import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
+import snowui.elements.base.GUICollapsible;
+import snowui.elements.base.GUIText;
 import snowui.utility.GUIDebugger;
 
-public abstract class GUIElement implements Cloneable  {
+public abstract class GUIElement {
 	
 	public static final int ELEMENT_ADD_DEPTH = 16;
 	
@@ -96,7 +99,7 @@ public abstract class GUIElement implements Cloneable  {
 	public 	  Rectangle limit_rectangle() 						{ return limit_rectangle; 		}
 	public 	  Rectangle padded_limit_rectangle() 				{ return padded_limit_rectangle; 		}
 	/** Defines the bounding box that updateDrawInfo() stays within */
-	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{   
+	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{  
 		boolean limit_changed = false;
 		boolean was_on_screen = false; // <-- value doesn't matter since 
 									   // it's always overridden before it's used
@@ -429,19 +432,5 @@ public abstract class GUIElement implements Cloneable  {
 	
 	public boolean draggable() { return draggable; }
 	public GUIElement draggable(boolean b) { draggable = b; return this; }
-	
-	/** Returns a shallow copy of this Element.<br>
-	 *  Mutable fields (so, basically just sub_elements...) aren't
-	 *  also cloned, so modifying the returned Element's version
-	 *  will modify the original's. */
-	@Override
-	public GUIElement clone() {
-		try {
-			return (GUIElement) super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 }

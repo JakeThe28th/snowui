@@ -1,7 +1,6 @@
 package snowui.elements.base;
 
 import frost3d.enums.IconType;
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
@@ -17,7 +16,7 @@ public class GUICollapsible extends GUIElement {
 	GUIIcon collapse_icon = new GUIIcon(IconType.GENERIC_ARROW_RIGHT) {
 		@Override public void onSingleClick(GUIInstance gui) {
 			collapsed(!collapsed);
-			icon(collapsed ? IconType.GENERIC_ARROW_DOWN : IconType.GENERIC_ARROW_RIGHT);
+			icon(collapsed ? IconType.GENERIC_ARROW_RIGHT : IconType.GENERIC_ARROW_DOWN);
 			should_update(true);
 		}
 	};
@@ -25,7 +24,7 @@ public class GUICollapsible extends GUIElement {
 	GUIElement root;
 	GUIElement hidden;
 	
-	boolean collapsed = false;
+	boolean collapsed = true;
 	
 	{ this.registerSubElement(collapse_icon); }
 	
@@ -41,6 +40,7 @@ public class GUICollapsible extends GUIElement {
 		hidden = element;
 		should_update(true);
 		this.registerSubElement(element);
+		collapsed(collapsed);
 		return this;
 	}
 	

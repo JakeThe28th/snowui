@@ -62,7 +62,7 @@ public class ComposingStyleSheet {
 		sheet.setProperty("default", "vertical_alignment", 		"top");	 // Top, bottom, middle
 
 		sheet.setProperty("default", "font_size", 				"8");
-		sheet.setProperty("default", "outline_size", 			"1");
+		sheet.setProperty("default", "outline_size", 			"0");
 		sheet.setProperty("default", "outline_margin", 			"3");
 		sheet.setProperty("default", "symbol_size", 			"8");
 		
@@ -80,6 +80,10 @@ public class ComposingStyleSheet {
 		
 		sheet.setProperty("hover", 	  "base_color", 				"BLACK");
 		sheet.setProperty("down", 	  "base_color", 				"#3c0ffa");
+		
+		sheet.setProperty("hover", 	  "outline_size", 				"2");
+		sheet.setProperty("hover", 	  "outline_color", 				"BLUE");
+
 		
 		// -- Default Elements -- //
 		
