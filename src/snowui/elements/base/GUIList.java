@@ -7,11 +7,11 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.elements.GUIElement;
-import snowui.elements.interfaces.Droppable;
+import snowui.elements.interfaces.ElementReceiver;
 import snowui.utility.GUIUtility;
 import snowui.utility.Margin;
 
-public class GUIList extends GUIElement implements Droppable {
+public class GUIList extends GUIElement implements ElementReceiver {
 	
 	{ identifier("list"); }
 	
@@ -59,23 +59,41 @@ public class GUIList extends GUIElement implements Droppable {
 	
 	public void add(GUIElement e) {
 		this.elements.add(e);
+		onRegisterSubElement(e);
 		this.should_recalculate_size(true);
 	}
 	
 	public void add(GUIElement e, int index) {
-		this.elements.add(index, e);
+		if (index == elements.size()) {
+			this.elements.add(e);
+		} else {
+			this.elements.add(index, e);
+		}
+		onRegisterSubElement(e);
 		this.should_recalculate_size(true);
 	}
 	
 	public void set(GUIElement e, int index) {
+		onRemoveSubElement(elements.get(index));
 		this.elements.set(index, e);
+		onRegisterSubElement(e);
 		this.should_recalculate_size(true);
 	}
 	
 	public void removeIf(Predicate<? super GUIElement> predicate) {
 		this.elements.removeIf(predicate);
+		// TODO: call onRemoveSubElement for this eventually
 		this.should_recalculate_size(true);
 	}
+	
+	@Override
+	public void remove(GUIElement subelement) {
+		if (!elements.contains(subelement)) return;
+		onRegisterSubElement(subelement);
+		removeSubElement(subelement);
+		elements.remove(subelement);
+		this.should_recalculate_size(true);
+	}	
 	
 	public int length() 			{ return elements.size();     }
 	public GUIElement get(int index) { return elements.get(index); }
@@ -222,7 +240,7 @@ public class GUIList extends GUIElement implements Droppable {
 		for (int i = 0; i < drop_points.size(); i++) {
 			Rectangle r = drop_points.get(i);
 			if (r.contains(gui.mouspos())) {
-				add(element, i);
+				add(element, i+1);
 			}
 		}
 	}
@@ -247,7 +265,7 @@ public class GUIList extends GUIElement implements Droppable {
 			}
 			gui.canvas().rect(r, depth);
 		}
-	}	
+	}
 
 }
 

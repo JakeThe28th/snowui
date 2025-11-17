@@ -15,10 +15,9 @@ import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
 import frost3d.utility.Rectangle;
 import snowui.coss.ComposingStyleSheet;
-import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
-import snowui.elements.base.GUIText;
-import snowui.elements.interfaces.Droppable;
+import snowui.elements.interfaces.ElementReceiver;
+import snowui.support.DragAndDropSupport;
 import snowui.utility.GUIDebugger;
 import snowui.utility.FPSCounter;
 import snowui.utility.GUIUtility;
@@ -27,7 +26,9 @@ public class GUIInstance {
 		
 	static final boolean SHOW_FPS = true;
 	public static final boolean DEBUG = true;
-	FPSCounter fps = new FPSCounter();
+	
+	public FPSCounter 			fps 		= new FPSCounter();
+	public DragAndDropSupport 	drag_and_drop_support = new DragAndDropSupport(this);
 	
 	public static final int INPUT_REPEAT_TIME = 500;
 
@@ -99,37 +100,24 @@ public class GUIInstance {
 	}
 	
 	// -- ++  ...  ++ -- //
-
-	public GUIElement current_hovered_element() {
-		// TODO: work with windows/menus etc
-		return GUIUtility.getHoveredElement(root);
-	}
-	
-	GUIElement last_pressed_element;
-	
-	public void last_pressed_element(GUIElement element) {
-		last_pressed_element = element;
-	}
-	
-	public GUIElement last_pressed_element() {
-		return last_pressed_element;
-	}
 	
 	GUIElement root;
 	public void root(GUIElement r) { root = r; }
-	
+	public GUIElement root() { return root; }
+
 	ArrayList<GUIElement> windows; // TODO
 	
 	ComposingStyleSheet style = new ComposingStyleSheet();
 	public ComposingStyleSheet style() { return style; }
 	
 	public void render() {
-
-		dragAndDropSupport();
 		
-		GUIElement.tick(this, root, canvas().size());		
+		GUIElement.tick(this, root, canvas().size(), 0);	
+		
 		if (SHOW_FPS) fps.drawFPS(canvas);
 		if (DEBUG) GUIDebugger.drawTree(this, root, input);
+		
+		drag_and_drop_support.tick();
 		
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		canvas.draw_frame();
@@ -137,24 +125,21 @@ public class GUIInstance {
 
 	}
 	
-	// -- ++  ...  ++ -- //
-	
-	GUIElement held_element = new GUIText("test");
-	
-	private void dragAndDropSupport() {
-		if (  held_element 				== 		   null) 		return;
-		if (!(current_hovered_element() instanceof Droppable)) 	return;
-		
-		GUIElement.tickFloating(this, held_element, mx(), my(), 1000);
-		
-		Droppable target =  ((Droppable) current_hovered_element());
-		if (target.canDropHere(this, held_element)) {
-			target.dropPreview(this, held_element);
-			if (primary_click_released()) {
-				target.drop(this, held_element);
-				held_element = null;
-			}
-		}
+	public GUIElement current_hovered_element() {
+		// TODO: work with windows/menus etc
+		return GUIUtility.getHoveredElement(root);
 	}
 
+	GUIElement last_pressed_element;
+	
+	public void last_pressed_element(GUIElement element) {
+		last_pressed_element = element;
+		drag_and_drop_support.set_drag_start();
+		drag_and_drop_support.drag_target(element);
+	}
+	
+	public GUIElement last_pressed_element() {
+		return last_pressed_element;
+	}
+	
 }

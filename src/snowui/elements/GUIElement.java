@@ -2,7 +2,6 @@ package snowui.elements;
 
 import java.util.ArrayList;
 
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import frost3d.utility.Utility;
 import snowui.GUIInstance;
@@ -11,7 +10,7 @@ import snowui.coss.CachedProperties;
 import snowui.coss.enums.PredicateKey;
 import snowui.utility.GUIDebugger;
 
-public abstract class GUIElement {
+public abstract class GUIElement implements Cloneable  {
 	
 	public static final int ELEMENT_ADD_DEPTH = 16;
 	
@@ -27,13 +26,21 @@ public abstract class GUIElement {
 	}
 	
 	protected void registerSubElement(GUIElement e) {
-		e.parent(this);
 		sub_elements.add(e);
+		onRegisterSubElement(e);
+	}
+	
+	protected void onRegisterSubElement(GUIElement e) {
+		e.parent(this);
+	}
+	
+	protected void onRemoveSubElement(GUIElement e) {
+		if (e.parent == this) e.parent(null);
 	}
 	
 	protected void removeSubElement(GUIElement e) {
-		if (e.parent == this) e.parent(null);
 		sub_elements.remove(e);
+		onRemoveSubElement(e);
 	}
 
 	private COSSPredicate 	next_state 		= new COSSPredicate();
@@ -146,7 +153,7 @@ public abstract class GUIElement {
 	public int width() { return style.padw(unpadded_width); }
 	public int height() { return style.padh(unpadded_height); }
 
-	public static void tick(GUIInstance gui, GUIElement e, Rectangle limit) {
+	public static void tick(GUIInstance gui, GUIElement e, Rectangle limit, int depth) {
 		e.limit_rectangle(limit);	// (Since this is only run on the root element)
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerUpdateState(gui);
@@ -167,14 +174,14 @@ public abstract class GUIElement {
 		e.triggerUpdateDrawInfo(gui);
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(6, "Update drawing info");
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
-		e.triggerDraw(gui, 0);
+		e.triggerDraw(gui, depth);
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(7, "Draw (element)");
 	}
 	
 	public static void tickFloating(GUIInstance gui, GUIElement e, int x, int y, int depth) {
 		e.triggerRecalculateSize(gui);
 		e.triggerCacheStyle(gui);
-		tick(gui, e, new Rectangle(x, y, x + e.width(), y + e.height()));
+		tick(gui, e, new Rectangle(x, y, x + e.width(), y + e.height()), depth);
 	}
 
 	public abstract void recalculateSize(GUIInstance gui);
@@ -240,6 +247,11 @@ public abstract class GUIElement {
 		
 	}
 	
+	private void triggerOnHover(GUIInstance gui) {
+		onHover(); 
+		onHover(gui);
+	}
+	
 	long last_press_time = 0;
 
 	public int time_since_pressed() {
@@ -257,6 +269,7 @@ public abstract class GUIElement {
 	public void onPress			(GUIInstance gui)  { }
 	public void onHold			(GUIInstance gui)  { }
 	public void onRelease		(GUIInstance gui)  { }
+	public void onHover			(GUIInstance gui)  { }
 	public void onSingleClick	(GUIInstance gui)  { }
 	public void onDoubleClick	(GUIInstance gui)  { }
 	
@@ -310,7 +323,7 @@ public abstract class GUIElement {
 				if (overridden == false) {
 					overridden = true;
 					set(PredicateKey.HOVERED, true);
-					onHover();
+					triggerOnHover(gui);
 					if (gui.primary_click_pressed()) 	{ set(PredicateKey.PRESSED,  true); triggerOnPress(gui); }
 					if (gui.primary_click_down()) 		{ set(PredicateKey.DOWN,     true); triggerOnHold(gui); }
 					if (gui.primary_click_released()) 	{ set(PredicateKey.RELEASED, true); triggerOnRelease(gui);; }
@@ -391,6 +404,25 @@ public abstract class GUIElement {
 			for (GUIElement e : sub_elements) { e.triggerDequeueState(); }
 			dequeueState();
 		}
+	}
+	
+	boolean draggable = false;
+	
+	public boolean draggable() { return draggable; }
+	public GUIElement draggable(boolean b) { draggable = b; return this; }
+	
+	/** Returns a shallow copy of this Element.<br>
+	 *  Mutable fields (so, basically just sub_elements...) aren't
+	 *  also cloned, so modifying the returned Element's version
+	 *  will modify the original's. */
+	@Override
+	public GUIElement clone() {
+		try {
+			return (GUIElement) super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

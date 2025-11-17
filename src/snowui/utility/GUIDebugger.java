@@ -11,11 +11,13 @@ import org.lwjgl.glfw.GLFW;
 import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.interfaces.F3DCanvas;
+import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
-import snowui.elements.interfaces.Droppable;
+import snowui.elements.interfaces.ElementReceiver;
+import snowui.support.DragAndDropSupport;
 
 public class GUIDebugger {
 	
@@ -198,11 +200,11 @@ public class GUIDebugger {
 	
 	static enum DebugState {
 		FRAMETIME_CHART,
-		UPDATE_TIMES
+		UPDATE_TIMES,
+		DRAG_AND_DROP
 	}
 	
 	static boolean show_hover_overlay = false;
-	static boolean show_drop_areas = false;
 	static DebugState current_debug_state = DebugState.FRAMETIME_CHART;
 	
 	public static IntegerDataChart framechart = new IntegerDataChart(60*4, 10);
@@ -245,6 +247,10 @@ public class GUIDebugger {
 			}
 			if (input.keyPressed(GLFW.GLFW_KEY_2)) {
 				current_debug_state = DebugState.values()[1];
+				used_modifier = true;
+			}
+			if (input.keyPressed(GLFW.GLFW_KEY_3)) {
+				current_debug_state = DebugState.values()[2];
 				used_modifier = true;
 			}
 			if (current_debug_state == DebugState.FRAMETIME_CHART) {
@@ -313,10 +319,34 @@ public class GUIDebugger {
 			canvas.rect(hovered.hover_rectangle(), 1000);
 		}
 		
-		// Extras
-		if (show_drop_areas)
-		if (hovered instanceof Droppable) {
-			((Droppable) hovered).DEBUG_draw_drop_areas(gui, null, 1000);
+		if (current_debug_state == DebugState.DRAG_AND_DROP) {
+			if (hovered instanceof ElementReceiver) {
+				((ElementReceiver) hovered).DEBUG_draw_drop_areas(gui, null, 1000);
+			}
+			if (hovered.draggable()) {
+				if (hovered.parent() instanceof ElementReceiver) {
+					((ElementReceiver) hovered.parent()).DEBUG_draw_drop_areas(gui, null, 1000);
+				}	
+				canvas.color(Color.TRANSPARENT_AQUA.val());
+				canvas.rect(hovered.hover_rectangle(), 1000);
+			}
+			if (gui.drag_and_drop_support.drag_start != null) {
+				canvas.color(Color.RED.val());
+				canvas.rect(
+						gui.drag_and_drop_support.drag_start.x - DragAndDropSupport.DRAG_THRESHOLD, 
+						gui.drag_and_drop_support.drag_start.y - DragAndDropSupport.DRAG_THRESHOLD, 
+						gui.drag_and_drop_support.drag_start.x + DragAndDropSupport.DRAG_THRESHOLD, 
+						gui.drag_and_drop_support.drag_start.y + DragAndDropSupport.DRAG_THRESHOLD, 
+						1000
+					);
+			}
+			ArrayList<String> dragndrop = new ArrayList<String>();
+				dragndrop.add("hovered" + hovered);
+				dragndrop.add("parent: " + hovered.parent());
+				dragndrop.add("held: " + gui.drag_and_drop_support.held);
+				dragndrop.add("target: " + gui.drag_and_drop_support.drag_target);
+
+			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, dragndrop);
 		}
 		
 		if (current_debug_state == DebugState.FRAMETIME_CHART) {
