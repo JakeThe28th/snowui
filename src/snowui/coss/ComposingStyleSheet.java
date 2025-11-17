@@ -62,7 +62,8 @@ public class ComposingStyleSheet {
 		sheet.setProperty("default", "vertical_alignment", 		"top");	 // Top, bottom, middle
 
 		sheet.setProperty("default", "font_size", 				"8");
-		sheet.setProperty("default", "outline_size", 			"2");
+		sheet.setProperty("default", "outline_size", 			"1");
+		sheet.setProperty("default", "outline_margin", 			"3");
 		sheet.setProperty("default", "symbol_size", 			"8");
 		
 		sheet.setProperty("default", "list_spacing", 			"0");

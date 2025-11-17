@@ -7,6 +7,7 @@ import frost3d.utility.Utility;
 import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
+import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.utility.GUIDebugger;
 
@@ -381,6 +382,9 @@ public abstract class GUIElement implements Cloneable  {
 	private final void triggerDraw(GUIInstance gui, int depth) {
 		if (is_on_screen()) {
 			if (scissor_rectangle() != null) gui.push_scissor(scissor_rectangle());
+			if (style().outline_size().integer() != 0) {
+				drawOutline(gui, depth+2);
+			}
 			draw(gui, depth);
 			if (scissor_rectangle() != null) gui.pop_scissor();
 			for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
@@ -405,6 +409,21 @@ public abstract class GUIElement implements Cloneable  {
 			dequeueState();
 		}
 	}
+	
+	// -- == ... == -- //
+
+	protected void drawOutline(GUIInstance gui, int depth) {
+		if (hover_rectangle() == null) return;
+		Rectangle b = hover_rectangle().expand(style().outline_margin().pixels());
+		gui.canvas().color(style().outline_color().color());
+		int o = style().outline_size().pixels();
+		gui.canvas().rect(b.left(), 	b.top(), 		b.right(), 	b.top()+o, 	depth);
+		gui.canvas().rect(b.left(), 	b.bottom()-o, 	b.right(), 	b.bottom(), depth);
+		gui.canvas().rect(b.left(), 	b.top(), 		b.left()+o, b.bottom(), depth);
+		gui.canvas().rect(b.right()-o, 	b.top(), 		b.right(), 	b.bottom(), depth);
+	}
+	
+	// -- == Dragging == -- //
 	
 	boolean draggable = false;
 	

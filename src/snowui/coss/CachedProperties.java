@@ -15,6 +15,7 @@ public record CachedProperties(
 		COSSProperty base_color, 	
 		COSSProperty preview_color, 	
 		COSSProperty outline_size,
+		COSSProperty outline_margin,
 		COSSProperty list_spacing,
 		COSSProperty list_indent,
 		COSSProperty size
@@ -41,6 +42,7 @@ public record CachedProperties(
 		s.getProperty(type, "base_color", predicate),
 		s.getProperty(type, "preview_color", predicate),
 		s.getProperty(type, "outline_size", predicate),
+		s.getProperty(type, "outline_margin", predicate),
 		s.getProperty(type, "list_spacing", predicate),
 		s.getProperty(type, "list_indent", predicate),
 		s.getProperty(type, "size", predicate)

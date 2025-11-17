@@ -3,7 +3,10 @@ package snowui.elements.base;
 import org.joml.Vector2i;
 
 import frost3d.utility.Log;
+import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.Color;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
 import snowui.utility.Margin;
 
