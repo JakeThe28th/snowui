@@ -14,6 +14,11 @@ import snowui.utility.GUIDebugger;
 public abstract class GUIElement {
 	
 	public static final int ELEMENT_ADD_DEPTH = 16;
+	
+	GUIElement parent = null;
+	
+	public GUIElement 	parent() 				{ return parent; }
+	public void 		parent(GUIElement e) 	{ parent = e; }
 
 	protected ArrayList<GUIElement> sub_elements = new ArrayList<>();
 	
@@ -22,10 +27,12 @@ public abstract class GUIElement {
 	}
 	
 	protected void registerSubElement(GUIElement e) {
+		e.parent(this);
 		sub_elements.add(e);
 	}
 	
 	protected void removeSubElement(GUIElement e) {
+		if (e.parent == this) e.parent(null);
 		sub_elements.remove(e);
 	}
 
@@ -63,7 +70,10 @@ public abstract class GUIElement {
 	private boolean should_cache_style 		= true;
 	
 	protected void should_update			(boolean v) { should_update 			= v; }
-	protected void should_recalculate_size	(boolean v) { should_recalculate_size 	= v; }
+	protected void should_recalculate_size	(boolean v) { 
+		should_recalculate_size 	= v; 
+		if (parent() != null) parent().should_recalculate_size(v); 
+	}
 	protected void should_cache_style		(boolean v) { should_cache_style 		= v; }
 
 	private   Rectangle hover_rectangle;
@@ -150,9 +160,6 @@ public abstract class GUIElement {
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerCacheStyle(gui);
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(3, "Cache style");
-		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
-		e.checkIfSubelementsWillRecalculatesize();
-		if (GUIInstance.DEBUG) GUIDebugger.endprofile(4, "Check if ...");
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerRecalculateSize(gui);
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(5, "Recalculate size");
@@ -384,21 +391,6 @@ public abstract class GUIElement {
 			for (GUIElement e : sub_elements) { e.triggerDequeueState(); }
 			dequeueState();
 		}
-	}
-	
-	/** Not really the same as the other methods
-	 *  in this area, but it recursively acts on
-	 *  sub-elements, so I'm putting it here. */
-	private void checkIfSubelementsWillRecalculatesize() {
-		if (!is_on_screen()) return;
-
-		boolean will = false;
-		for (GUIElement e : sub_elements) { 
-			if (!e.is_on_screen()) continue;
-			e.checkIfSubelementsWillRecalculatesize(); 
-			will = will || e.should_recalculate_size;
-		}
-		if (will) this.should_recalculate_size(true);
 	}
 
 }
