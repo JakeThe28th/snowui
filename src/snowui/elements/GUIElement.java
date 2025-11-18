@@ -314,7 +314,7 @@ public abstract class GUIElement {
 			
 			// Checking this later lets us not trigger events if a sub-element is hovered
 			boolean overridden = false;
-			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui); }
+			for (GUIElement e : sub_elements) { overridden = overridden | e.triggerUpdateState(gui); }
 
 			Rectangle _hover_rectangle = hover_rectangle;
 			if (_hover_rectangle != null && scissor_rectangle() != null) { 
