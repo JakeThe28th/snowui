@@ -428,9 +428,11 @@ public abstract class GUIElement {
 	
 	// -- == Dragging == -- //
 	
-	boolean draggable = false;
+		   boolean 		draggable = false;
+	public boolean 		draggable() 				{ return draggable; }
+	public GUIElement 	draggable(boolean b) 		{ draggable = b; return this; }
 	
-	public boolean draggable() { return draggable; }
-	public GUIElement draggable(boolean b) { draggable = b; return this; }
-
+	public Rectangle	drag_rectangle()			{ return hover_rectangle(); }
+	public boolean 		can_drop(GUIInstance gui) 	{ return true; }
+	
 }

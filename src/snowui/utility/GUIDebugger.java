@@ -11,7 +11,6 @@ import org.lwjgl.glfw.GLFW;
 import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.interfaces.F3DCanvas;
-import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
@@ -320,15 +319,17 @@ public class GUIDebugger {
 		}
 		
 		if (current_debug_state == DebugState.DRAG_AND_DROP) {
+			GUIElement drag_target = gui.drag_and_drop_support.find_drag_target(gui.current_window_root());
 			if (hovered instanceof ElementReceiver) {
 				((ElementReceiver) hovered).DEBUG_draw_drop_areas(gui, null, 1000);
 			}
-			if (hovered.draggable()) {
-				if (hovered.parent() instanceof ElementReceiver) {
-					((ElementReceiver) hovered.parent()).DEBUG_draw_drop_areas(gui, null, 1000);
+			if (drag_target != null && drag_target.draggable()) {
+				if (drag_target.parent() instanceof ElementReceiver) {
+					((ElementReceiver) drag_target.parent()).DEBUG_draw_drop_areas(gui, null, 1000);
 				}	
 				canvas.color(Color.TRANSPARENT_AQUA.val());
-				canvas.rect(hovered.hover_rectangle(), 1000);
+				canvas.rect(drag_target.drag_rectangle(), 1000);
+				
 			}
 			if (gui.drag_and_drop_support.drag_start != null) {
 				canvas.color(Color.RED.val());

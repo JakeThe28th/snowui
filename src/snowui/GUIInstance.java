@@ -133,12 +133,15 @@ public class GUIInstance {
 	
 	public void last_pressed_element(GUIElement element) {
 		last_pressed_element = element;
-		drag_and_drop_support.set_drag_start();
-		drag_and_drop_support.drag_target(element);
 	}
 	
 	public GUIElement last_pressed_element() {
 		return last_pressed_element;
+	}
+
+	public GUIElement current_window_root() {
+		// TODO Auto-generated method stub
+		return root;
 	}
 	
 }

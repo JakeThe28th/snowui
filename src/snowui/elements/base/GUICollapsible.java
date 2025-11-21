@@ -99,4 +99,8 @@ public class GUICollapsible extends GUIElement {
 
 	@Override public void draw(GUIInstance gui, int depth) { }
 	
+	@Override public Rectangle drag_rectangle() {
+		return root.hover_rectangle();
+	}
+	
 }

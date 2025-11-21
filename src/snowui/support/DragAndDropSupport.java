@@ -4,6 +4,7 @@ import org.joml.Vector2i;
 
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.GUIElement;
 import snowui.elements.interfaces.ElementReceiver;
 
@@ -31,6 +32,10 @@ public class DragAndDropSupport {
 	
 	public void tick() {
 		
+		if (g.primary_click_pressed()) { 
+			set_drag_start(); 
+			drag_target(find_drag_target(g.current_window_root())); 
+		}
 		if (g.primary_click_released()) { drag_target(null); }
 		
 		// Grab
@@ -49,7 +54,7 @@ public class DragAndDropSupport {
 		
 		if (g.current_hovered_element() instanceof ElementReceiver) {
 			ElementReceiver target =  ((ElementReceiver) g.current_hovered_element());
-			if (target.canDropHere(g, held)) {
+			if (target.canDropHere(g, held) && held.can_drop(g)) {
 				target.dropPreview(g, held);
 				if (g.primary_click_released()) {
 					if (held.parent() instanceof ElementReceiver) {
@@ -69,6 +74,20 @@ public class DragAndDropSupport {
 			}
 		}
 		
+	}
+	
+	public GUIElement find_drag_target(GUIElement e) {
+		GUIElement found = null;
+		if (e.get(PredicateKey.BOUNDED) && e.is_on_screen()) {
+			if (e.draggable() && e.drag_rectangle().contains(g.mouspos())) {
+				found = e;
+			}	
+			for (GUIElement sub_e : e.sub_elements()) {
+				GUIElement se = find_drag_target(sub_e);
+				if (se != null) found = se;
+			}
+		}
+		return found;
 	}
 
 }
