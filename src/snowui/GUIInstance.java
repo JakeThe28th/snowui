@@ -16,7 +16,6 @@ import frost3d.interfaces.F3DWindow;
 import frost3d.utility.Rectangle;
 import snowui.coss.ComposingStyleSheet;
 import snowui.elements.GUIElement;
-import snowui.elements.interfaces.ElementReceiver;
 import snowui.support.DragAndDropSupport;
 import snowui.utility.GUIDebugger;
 import snowui.utility.FPSCounter;
@@ -92,6 +91,8 @@ public class GUIInstance {
 		}
 	}
 	
+	public Input rawinput() { return input; }
+	
 	public GUIInstance(F3DWindow window, Input input) {
 		this.input = input;
 		this.text = new SimpleTextRenderer();
@@ -109,6 +110,9 @@ public class GUIInstance {
 	
 	ComposingStyleSheet style = new ComposingStyleSheet();
 	public ComposingStyleSheet style() { return style; }
+	public void style(ComposingStyleSheet sheet) {
+		this.style = sheet;
+	}
 	
 	public void render() {
 		GUIElement.tick(this, root, canvas().size(), 0);	
@@ -143,5 +147,5 @@ public class GUIInstance {
 		// TODO Auto-generated method stub
 		return root;
 	}
-	
+
 }

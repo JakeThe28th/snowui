@@ -222,7 +222,7 @@ public class GUIDebugger {
 		};
 	}
 	
-	public static boolean show_debug = true;
+	public static boolean show_debug = false;
 	static boolean used_modifier = false;
 	
 	public static void drawTree(GUIInstance gui, GUIElement e, Input input) {
