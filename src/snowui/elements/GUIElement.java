@@ -2,16 +2,12 @@ package snowui.elements;
 
 import java.util.ArrayList;
 
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import frost3d.utility.Utility;
 import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
-import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
-import snowui.elements.base.GUICollapsible;
-import snowui.elements.base.GUIText;
 import snowui.utility.GUIDebugger;
 
 public abstract class GUIElement {
@@ -73,6 +69,15 @@ public abstract class GUIElement {
 			return scissor_rectangle().intersects(limit_rectangle());
 		} else {
 			return true;
+		}
+	}
+	
+	public void force_update_all() {
+		should_update(true);
+		should_recalculate_size(true);
+		should_cache_style(true);
+		for (GUIElement e : sub_elements()) {
+			e.force_update_all();
 		}
 	}
 	
@@ -311,6 +316,10 @@ public abstract class GUIElement {
 			set(PredicateKey.DOWN, 		false);
 
 			if (!is_on_screen()) return false;
+			
+			@SuppressWarnings("unchecked") // Some events might want to modify the sub-elements list,
+										   // So, a copy is made.
+			ArrayList<GUIElement> sub_elements = (ArrayList<GUIElement>) this.sub_elements.clone();
 			
 			// Checking this later lets us not trigger events if a sub-element is hovered
 			boolean overridden = false;
