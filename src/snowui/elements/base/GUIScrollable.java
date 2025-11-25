@@ -191,7 +191,7 @@ public class GUIScrollable extends GUIElement {
 		horizontal_scrollbar.set(PredicateKey.HIDDEN, true);
 	}
 
-	private void root(GUIElement root) {
+	public void root(GUIElement root) {
 		if (this.root != null) this.removeSubElement(this.root);
 		this.root = root;
 		this.registerSubElement(root);
