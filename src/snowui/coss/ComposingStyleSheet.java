@@ -10,6 +10,12 @@ public class ComposingStyleSheet {
 	
 	// -- ++  IO  ++ -- //
 	
+	public static ComposingStyleSheet from(NBTCompound nbt) {
+		ComposingStyleSheet sheet = new ComposingStyleSheet();
+		setFromNBT(sheet, nbt);
+		return sheet;
+	}
+	
 	private static void setFromNBT(ComposingStyleSheet sheet, NBTCompound nbt) {
 		
 		for (int i = 0; i < nbt.length(); i++) {
@@ -96,7 +102,28 @@ public class ComposingStyleSheet {
 		sheet.setProperty("slider_handle", 	"base_color", 			"#6097f0");
 		sheet.setProperty("slider_handle", 	"size", 				"18");
 		sheet.setProperty("slider", 	"size", 					"8");
+		
+		
+		sheet.setProperty("textbox-style", 	  		"base_color", 			"AQUA");	
+		sheet.setProperty("textbox-style", 	  		"min_width", 			"container");	
+		sheet.setProperty("textbox-style", 	  		"max_width", 			"container");	
+		sheet.setProperty("textbox-style", 	  		"min_height", 			"container");	
+		sheet.setProperty("textbox-style", 	  		"max_height", 			"container");	
 
+		sheet.setProperty("textbox-style", 			"left_margin", 			"8");
+		sheet.setProperty("textbox-style", 			"right_margin", 		"8");
+		sheet.setProperty("textbox-style", 			"top_margin", 			"8");
+		sheet.setProperty("textbox-style", 			"bottom_margin", 		"8");
+		
+		sheet.setPredicate("textbox", 			"SELECTED=true", 		"textbox_selected");
+		sheet.addContains("textbox", 	"textbox-style");
+
+		
+		sheet.setProperty("textbox_selected", 	"outline_color", 		"RED");	
+		sheet.setProperty("textbox_selected", 	"base_color", 			"DESYELLOW");	
+		sheet.setProperty("textbox_selected", 	"outline_size", 		"3");	
+		sheet.setProperty("textbox_selected", 	"outline_margin", 		"6");	
+		sheet.addContains("textbox_selected", 	"textbox-style");
 
 
 //		sheet.setProperty("scroll_area", "horizontal_alignment",	"right"); // Left, right, middle
