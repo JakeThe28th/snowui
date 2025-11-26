@@ -4,8 +4,10 @@ import org.lwjgl.glfw.GLFW;
 
 import frost3d.Input;
 import frost3d.implementations.SimpleTextRenderer;
+import frost3d.utility.Log;
 import frost3d.utility.NavigableLimitedStack;
 import frost3d.utility.Rectangle;
+import frost3d.utility.Utility;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
@@ -97,6 +99,8 @@ public class GUITextBox extends GUIElement {
 		@Override
 		public void draw(GUIInstance gui, int depth) {
 			
+			try {
+			
 			if (is_selected()) {
 				Input i = gui.rawinput();
 				
@@ -174,6 +178,17 @@ public class GUITextBox extends GUIElement {
 //				gui.canvas().text(10, 40, depth, content_undo.size() + "");
 			
 				
+			}
+			
+			} catch (Exception e) {
+				Log.trace(e);
+				String old_content = content;
+				Input.setClipboardString(old_content);
+				content = "Error while modifying text. Previous contents have been copied to your clipboard.";
+				content += "\n\n--- ERROR ---\n\n";
+				content += Utility.getStackTrace(e);
+				content += "\n\n--- PREVIOUS CONTENT ---\n\n";
+				content += old_content;
 			}
 			
 			Rectangle b = this.padded_limit_rectangle();
