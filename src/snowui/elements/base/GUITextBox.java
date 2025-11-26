@@ -1,5 +1,6 @@
 package snowui.elements.base;
 
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
 import frost3d.Input;
@@ -15,6 +16,8 @@ import snowui.elements.GUIElement;
 import snowui.utility.Margin;
 
 public class GUITextBox extends GUIElement {
+	
+	GUITextBox textbox_this() { return this; }
 	
 	public static GUITextBox selected = null;
 	
@@ -37,7 +40,7 @@ public class GUITextBox extends GUIElement {
 			return select_end;
 		}
 		
-		{ identifier("text"); }
+		{ identifier("textbox-text"); }
 		
 		String content;
 		
@@ -50,11 +53,14 @@ public class GUITextBox extends GUIElement {
 		@Override
 		public void recalculateSize(GUIInstance gui) {
 			// N/A because of wrapping...
+			Vector2i size = gui.canvas().textrenderer().size(content);
+			this.unpadded_width = size.x;
+			this.unpadded_height = size.y;
 		}
 
 		@Override
 		public void updateDrawInfo(GUIInstance gui) {
-			// Also N/A ...
+			this.hover_rectangle(padded_limit_rectangle());
 		}
 		
 		private void setcursor(int new_position, boolean shift) {
@@ -67,7 +73,7 @@ public class GUITextBox extends GUIElement {
 		}
 		
 		private void fix_cursor_pos() {
-			if (cursor < 0) cursor = 0;
+			if (cursor < -1) cursor = -1;
 			if (cursor >= content.length()) cursor = content.length()-1;
 		}
 		
@@ -78,6 +84,7 @@ public class GUITextBox extends GUIElement {
 				fix_cursor_pos();
 				setinputtime();
 				onTextChange(content);
+				this.should_recalculate_size(true);
 			}
 		}
 		
@@ -99,106 +106,18 @@ public class GUITextBox extends GUIElement {
 		@Override
 		public void draw(GUIInstance gui, int depth) {
 			
-			try {
-			
-			if (is_selected()) {
-				Input i = gui.rawinput();
-				
-				boolean shift = i.keyDown(GLFW.GLFW_KEY_LEFT_SHIFT);
-				
-				if (i.keyPressed(GLFW.GLFW_KEY_LEFT) || i.keyRepeated(GLFW.GLFW_KEY_LEFT)) {
-					setcursor(cursor-1, shift);
-				}
-				if (i.keyPressed(GLFW.GLFW_KEY_RIGHT) || i.keyRepeated(GLFW.GLFW_KEY_RIGHT)) {
-					setcursor(cursor+1, shift);
-				}
-				
-				fix_cursor_pos();
-				
-				if (i.keyPressed(GLFW.GLFW_KEY_BACKSPACE) || i.keyRepeated(GLFW.GLFW_KEY_BACKSPACE)) {
-					boolean had_selection = delete_selection();
-					if (!had_selection && cursor > 0) {
-						setcursor(cursor-1, false);
-						content(content.substring(0, cursor + 1) + content.substring(cursor + 2));
-					}
-				}
-				
-				if (i.keyPressed(GLFW.GLFW_KEY_ENTER) || i.keyRepeated(GLFW.GLFW_KEY_ENTER)) {
-					i.input_string(i.input_string() + "\n");
-				}
-				
-				if (i.input_string() != "") {
-					delete_selection();
-					int t_cursor = cursor;
-					setcursor(t_cursor + i.input_string().length(), false);
-					if (content.length() > 0) {
-						content(content.substring(0, t_cursor + 1) + i.input_string() + content.substring(t_cursor + 1));
-					} else {
-						content(content + i.input_string());
-					}
-					i.input_string("");
-				}
-				
-				if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_Z) || i.keyRepeated(GLFW.GLFW_KEY_Z)) {
-					if (content_undo.index() > 0) {
-						ContentState state = content_undo.prev();
-						content = state.content;
-						cursor = state.cursor;
-					}
-				}
-				
-				if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_Y) || i.keyRepeated(GLFW.GLFW_KEY_Y)) {
-					if (content_undo.index() < content_undo.size() -1) {
-						ContentState state = content_undo.next();
-						content = state.content;
-						cursor = state.cursor;
-					}
-				}
-				
-				if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_C)) {
-					Input.setClipboardString(selected_string());
-				}
-				
-				if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_X)) {
-					Input.setClipboardString(selected_string());
-					delete_selection();
-				}
-				
-				if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_V)) {
-					i.input_string(i.input_string() + Input.getClipboardString());
-				}
-				
-				if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_A)) {
-					select_start = 0;
-					select_end = content.length();
-				}
-				
-//				gui.canvas().color(Color.BLACK.val());
-//				gui.canvas().text(10, 10, depth, content_undo.index() + "");
-//				gui.canvas().text(10, 40, depth, content_undo.size() + "");
-			
-				
-			}
-			
-			} catch (Exception e) {
-				Log.trace(e);
-				String old_content = content;
-				Input.setClipboardString(old_content);
-				content = "Error while modifying text. Previous contents have been copied to your clipboard.";
-				content += "\n\n--- ERROR ---\n\n";
-				content += Utility.getStackTrace(e);
-				content += "\n\n--- PREVIOUS CONTENT ---\n\n";
-				content += old_content;
-			}
-			
-			Rectangle b = this.padded_limit_rectangle();
+			Rectangle b = this.hover_rectangle();
 			SimpleTextRenderer text = gui.textrenderer();
 			int xx = 0;
 			int yy = 0;
 			int i = 0;
 			int line_height = text.size(content).y;
-			int half = line_height / 2;
 			gui.canvas().color(style().base_color().color());
+			
+			if (is_selected() && -1 == cursor && blink()) {
+				text.character(gui.canvas(), b.left(), b.top() + yy, depth, '|');
+			}
+			
 			while(i < content.length()) {
 				
 				int next_breakable_index = i;
@@ -217,24 +136,29 @@ public class GUITextBox extends GUIElement {
 				
 				while (i < next_breakable_index + 1 && i < content.length()) {
 					int advance = text.advance(content, i);
-					if (xx + advance * 2 > b.width() || content.charAt(i) == '\n') {
+					if (xx + advance > b.width() || content.charAt(i) == '\n') {
 						xx = 0;
 						yy += line_height;
 					}
 					if (is_selected()) {
-					if (i >= select_start() && i < select_end() || gui.primary_click_down() || gui.primary_click_pressed()) {
+					if (i >= select_start() && i < select_end() || gui.primary_click_down() || gui.primary_click_pressed() || preselect_mouse != null) {
 						int offset = 2;	
 						Rectangle letter_rect = new Rectangle(
-								b.left() + xx + advance, 
-								b.top() + yy + half + offset, 
-								b.left() + xx + advance + advance,  
-								b.top() + yy + offset+ line_height + half
+								b.left() + xx, 
+								b.top() + yy + offset, 
+								b.left() + xx + advance,  
+								b.top() + yy + offset+ line_height
 							);
 						
 						if (gui.primary_click_down() && letter_rect.contains(gui.mouspos())) {
 							setcursor(i, true);
 						}
 						
+						if (preselect_mouse != null && letter_rect.contains(preselect_mouse)) {
+							setcursor(i, false);
+							preselect_mouse = null;
+						}
+							
 						if (gui.primary_click_pressed() && letter_rect.contains(gui.mouspos())) {
 							if (gui.rawinput().keyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 								setcursor(i, true);
@@ -252,13 +176,114 @@ public class GUITextBox extends GUIElement {
 					}
 					text.character(gui.canvas(), b.left() + xx, b.top() + yy, depth + 2, content.charAt(i));
 					if (is_selected() && i == cursor && blink()) {
-						text.character(gui.canvas(), b.left() + xx + text.advance(content, i) / 2 , b.top() + yy, depth, '|');
+						text.character(gui.canvas(), b.left() + xx + (advance/2), b.top() + yy, depth, '|');
 					}
 					xx += advance;
 					i++;
 				}
 				
 			}
+			
+			performTextEditing(gui);
+			
+		}
+		
+		private void performTextEditing(GUIInstance gui) {
+			try {
+				
+				if (is_selected()) {
+					Input i = gui.rawinput();
+					
+					boolean shift = i.keyDown(GLFW.GLFW_KEY_LEFT_SHIFT);
+					
+					if (i.keyPressed(GLFW.GLFW_KEY_LEFT) || i.keyRepeated(GLFW.GLFW_KEY_LEFT)) {
+						setcursor(cursor-1, shift);
+					}
+					if (i.keyPressed(GLFW.GLFW_KEY_RIGHT) || i.keyRepeated(GLFW.GLFW_KEY_RIGHT)) {
+						setcursor(cursor+1, shift);
+					}
+					
+					fix_cursor_pos();
+					
+					if (i.keyPressed(GLFW.GLFW_KEY_BACKSPACE) || i.keyRepeated(GLFW.GLFW_KEY_BACKSPACE)) {
+						boolean had_selection = delete_selection();
+						if (!had_selection && cursor > -1) {
+							setcursor(cursor-1, false);
+							content(content.substring(0, cursor + 1) + content.substring(cursor + 2));
+						}
+					}
+					
+					if (i.keyPressed(GLFW.GLFW_KEY_ENTER) || i.keyRepeated(GLFW.GLFW_KEY_ENTER)) {
+						if (finish_on_enter()) {
+							deselect();
+						} else {
+							i.input_string(i.input_string() + "\n");
+						}
+					}
+					
+					if (i.input_string() != "") {
+						delete_selection();
+						int t_cursor = cursor;
+						setcursor(t_cursor + i.input_string().length(), false);
+						if (content.length() > 0) {
+							content(content.substring(0, t_cursor + 1) + i.input_string() + content.substring(t_cursor + 1));
+						} else {
+							content(content + i.input_string());
+						}
+						i.input_string("");
+					}
+					
+					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_Z) || i.keyRepeated(GLFW.GLFW_KEY_Z)) {
+						if (content_undo.index() > 0) {
+							ContentState state = content_undo.prev();
+							content = state.content;
+							cursor = state.cursor;
+						}
+					}
+					
+					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_Y) || i.keyRepeated(GLFW.GLFW_KEY_Y)) {
+						if (content_undo.index() < content_undo.size() -1) {
+							ContentState state = content_undo.next();
+							content = state.content;
+							cursor = state.cursor;
+						}
+					}
+					
+					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_C)) {
+						Input.setClipboardString(selected_string());
+					}
+					
+					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_X)) {
+						Input.setClipboardString(selected_string());
+						delete_selection();
+					}
+					
+					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_V)) {
+						i.input_string(i.input_string() + Input.getClipboardString());
+					}
+					
+					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_A)) {
+						select_start = 0;
+						select_end = content.length();
+					}
+					
+//					gui.canvas().color(Color.BLACK.val());
+//					gui.canvas().text(10, 10, depth, content_undo.index() + "");
+//					gui.canvas().text(10, 40, depth, content_undo.size() + "");
+				
+					
+				}
+				
+				} catch (Exception e) {
+					Log.trace(e);
+					String old_content = content;
+					Input.setClipboardString(old_content);
+					content = "Error while modifying text. Previous contents have been copied to your clipboard.";
+					content += "\n\n--- ERROR ---\n\n";
+					content += Utility.getStackTrace(e);
+					content += "\n\n--- PREVIOUS CONTENT ---\n\n";
+					content += old_content;
+				}
 		}
 
 		long last_input_time = System.currentTimeMillis();
@@ -279,7 +304,18 @@ public class GUITextBox extends GUIElement {
 		
 	}
 	
-
+	boolean finish_on_enter = false;
+	
+	private Vector2i preselect_mouse;
+	
+	public boolean finish_on_enter() {
+		return finish_on_enter;
+	}
+	
+	public void finish_on_enter(boolean b) {
+		finish_on_enter = b;
+	}
+	
 	boolean is_selected() {
 		return selected == this;
 	}
@@ -290,6 +326,7 @@ public class GUITextBox extends GUIElement {
 		selected = this;
 		set(PredicateKey.SELECTED, true);
 		text.setcursor(0, false);
+		preselect_mouse = gui.mouspos();
 	}
 	
 	@Override 
@@ -300,10 +337,14 @@ public class GUITextBox extends GUIElement {
 	@Override
 	public boolean updateState(GUIInstance gui) {
 		if (gui.primary_click_released() && !hover_rectangle().contains(gui.mouspos())) {
-			set(PredicateKey.SELECTED, false);
-			if (is_selected()) selected = null;
+			deselect();
 		}
 		return false;
+	}
+	
+	public void deselect() {
+		set(PredicateKey.SELECTED, false);
+		if (is_selected()) selected = null;
 	}
 
 	EditableText text;
@@ -323,7 +364,7 @@ public class GUITextBox extends GUIElement {
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		hover_rectangle(Margin.calculate(style(), this.padded_limit_rectangle(), unpadded_width, unpadded_height));
+		hover_rectangle(Margin.calculate(style(), this.limit_rectangle(), unpadded_width, unpadded_height));
 		text.limit_rectangle(hover_rectangle());
 	}
 

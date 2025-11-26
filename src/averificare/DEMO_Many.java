@@ -12,14 +12,7 @@ public class DEMO_Many {
 
 	public static void main(String[] args) {
 		
-		// tabs, URLs, dockers, text editors, right click menu
-		
-		/*
-		 * 1. Let's create right click menus!!
-		 * 2. Text Editors
-		 * 3. Tabs
-		 * 4. Dockers
-		 */
+		// tabs, dockers, text editors, right click menu
 
 		GLState.initializeGLFW();
 		SimpleWindow window = new SimpleWindow(4*300, 3*300, "GUI Test");
@@ -48,7 +41,6 @@ public class DEMO_Many {
 				+ "* Signed,\r\n"
 				+ "  The Anonymous Yellow Lizard\r\n"
 				+ "* (You decide not to read it.)");
-		
 		gui.root(textbox);
 		
 		while (!window.should_close()) {

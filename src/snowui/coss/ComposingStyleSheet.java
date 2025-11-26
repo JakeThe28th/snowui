@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import disaethia.io.nbt.NBTCompound;
 import disaethia.io.nbt.NBTList;
-import frost3d.utility.Log;
 
 public class ComposingStyleSheet {
 	
@@ -103,12 +102,18 @@ public class ComposingStyleSheet {
 		sheet.setProperty("slider_handle", 	"size", 				"18");
 		sheet.setProperty("slider", 	"size", 					"8");
 		
+		sheet.setProperty("textbox-text", 	  		"base_color", 			"BLACK");	
+
+//		sheet.setProperty("textbox-text", 			"left_margin", 			"8");
+//		sheet.setProperty("textbox-text", 			"right_margin", 		"8");
+//		sheet.setProperty("textbox-text", 			"top_margin", 			"8");
+//		sheet.setProperty("textbox-text", 			"bottom_margin", 		"8");
 		
 		sheet.setProperty("textbox-style", 	  		"base_color", 			"AQUA");	
-		sheet.setProperty("textbox-style", 	  		"min_width", 			"container");	
-		sheet.setProperty("textbox-style", 	  		"max_width", 			"container");	
-		sheet.setProperty("textbox-style", 	  		"min_height", 			"container");	
-		sheet.setProperty("textbox-style", 	  		"max_height", 			"container");	
+//		sheet.setProperty("textbox-style", 	  		"min_width", 			"container");	
+//		sheet.setProperty("textbox-style", 	  		"max_width", 			"container");	
+//		sheet.setProperty("textbox-style", 	  		"min_height", 			"container");	
+//		sheet.setProperty("textbox-style", 	  		"max_height", 			"container");	
 
 		sheet.setProperty("textbox-style", 			"left_margin", 			"8");
 		sheet.setProperty("textbox-style", 			"right_margin", 		"8");
@@ -124,7 +129,6 @@ public class ComposingStyleSheet {
 		sheet.setProperty("textbox_selected", 	"outline_size", 		"3");	
 		sheet.setProperty("textbox_selected", 	"outline_margin", 		"6");	
 		sheet.addContains("textbox_selected", 	"textbox-style");
-
 
 //		sheet.setProperty("scroll_area", "horizontal_alignment",	"right"); // Left, right, middle
 //		sheet.setProperty("scroll_area", "vertical_alignment",	"bottom"); // Left, right, middle
