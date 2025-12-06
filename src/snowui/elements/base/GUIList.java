@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 import snowui.elements.interfaces.ElementReceiver;
 import snowui.utility.GUIUtility;
 import snowui.utility.Margin;

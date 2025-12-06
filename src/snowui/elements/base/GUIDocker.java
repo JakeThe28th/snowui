@@ -1,6 +1,6 @@
 package snowui.elements.base;
 
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 
 public class GUIDocker { //extends GUIElement {
 

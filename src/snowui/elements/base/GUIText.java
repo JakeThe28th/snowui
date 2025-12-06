@@ -3,7 +3,7 @@ package snowui.elements.base;
 import org.joml.Vector2i;
 
 import snowui.GUIInstance;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 import snowui.utility.Margin;
 
 public class GUIText extends GUIElement {

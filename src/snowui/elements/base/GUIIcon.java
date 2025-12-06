@@ -2,7 +2,7 @@ package snowui.elements.base;
 
 import frost3d.enums.IconType;
 import snowui.GUIInstance;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 import snowui.utility.Margin;
 
 public class GUIIcon extends GUIElement {

@@ -2,7 +2,7 @@ package snowui.elements.base;
 
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 
 //TODO: Vertical version
 public class GUISlider extends GUIElement {

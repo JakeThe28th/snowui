@@ -3,7 +3,7 @@ package snowui.utility;
 import java.util.ArrayList;
 
 import snowui.coss.enums.PredicateKey;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 
 public class GUIUtility {
 	

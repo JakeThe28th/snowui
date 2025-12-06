@@ -1,4 +1,4 @@
-package snowui.elements;
+package snowui.elements.abstracts;
 
 import java.util.ArrayList;
 

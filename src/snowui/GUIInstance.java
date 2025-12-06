@@ -15,7 +15,7 @@ import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
 import frost3d.utility.Rectangle;
 import snowui.coss.ComposingStyleSheet;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 import snowui.support.DragAndDropSupport;
 import snowui.utility.GUIDebugger;
 import snowui.utility.FPSCounter;

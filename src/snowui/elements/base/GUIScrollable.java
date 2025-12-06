@@ -4,7 +4,7 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Constant;
 import snowui.coss.enums.PredicateKey;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 
 public class GUIScrollable extends GUIElement {
 	

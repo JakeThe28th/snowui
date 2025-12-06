@@ -12,7 +12,7 @@ import frost3d.utility.Utility;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 import snowui.utility.Margin;
 
 public class GUITextBox extends GUIElement {

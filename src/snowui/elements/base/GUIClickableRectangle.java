@@ -1,7 +1,7 @@
 package snowui.elements.base;
 
 import snowui.GUIInstance;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 
 public class GUIClickableRectangle extends GUIElement {
 	

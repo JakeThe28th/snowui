@@ -14,7 +14,7 @@ import frost3d.interfaces.F3DCanvas;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 import snowui.elements.interfaces.ElementReceiver;
 import snowui.support.DragAndDropSupport;
 

@@ -1,7 +1,7 @@
 package snowui.elements.interfaces;
 
 import snowui.GUIInstance;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 
 /** An element which a Draggable element may be placed into. */
 public interface ElementReceiver {

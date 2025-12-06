@@ -5,7 +5,7 @@ import org.joml.Vector2i;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
-import snowui.elements.GUIElement;
+import snowui.elements.abstracts.GUIElement;
 import snowui.elements.interfaces.ElementReceiver;
 
 public class DragAndDropSupport {
