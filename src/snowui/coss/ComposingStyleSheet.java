@@ -110,15 +110,15 @@ public class ComposingStyleSheet {
 //		sheet.setProperty("textbox-text", 			"bottom_margin", 		"8");
 		
 		sheet.setProperty("textbox-style", 	  		"base_color", 			"AQUA");	
-//		sheet.setProperty("textbox-style", 	  		"min_width", 			"container");	
-//		sheet.setProperty("textbox-style", 	  		"max_width", 			"container");	
-//		sheet.setProperty("textbox-style", 	  		"min_height", 			"container");	
-//		sheet.setProperty("textbox-style", 	  		"max_height", 			"container");	
+		sheet.setProperty("textbox-style", 	  		"min_width", 			"container");	
+		sheet.setProperty("textbox-style", 	  		"max_width", 			"container");	
+		sheet.setProperty("textbox-style", 	  		"min_height", 			"container");	
+		sheet.setProperty("textbox-style", 	  		"max_height", 			"container");	
 
-		sheet.setProperty("textbox-style", 			"left_margin", 			"8");
-		sheet.setProperty("textbox-style", 			"right_margin", 		"8");
-		sheet.setProperty("textbox-style", 			"top_margin", 			"8");
-		sheet.setProperty("textbox-style", 			"bottom_margin", 		"8");
+		sheet.setProperty("textbox-style", 			"left_margin", 			"10");
+		sheet.setProperty("textbox-style", 			"right_margin", 		"10");
+		sheet.setProperty("textbox-style", 			"top_margin", 			"10");
+		sheet.setProperty("textbox-style", 			"bottom_margin", 		"10");
 		
 		sheet.setPredicate("textbox", 			"SELECTED=true", 		"textbox_selected");
 		sheet.addContains("textbox", 	"textbox-style");

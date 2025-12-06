@@ -24,6 +24,9 @@ public class DEMO_Many {
 		for (int i = 0; i < 5; i++) {
 			list.add(new GUIText("Hello, " + i));
 		}
+		 TODO: delete to delete character in front of cursor 
+		
+		 
 		
 		GUITextBox textbox = new GUITextBox(" (There's an anime review.)\r\n"
 				+ "* (Read it?)\r\n"
@@ -42,6 +45,14 @@ public class DEMO_Many {
 				+ "  The Anonymous Yellow Lizard\r\n"
 				+ "* (You decide not to read it.)");
 		gui.root(textbox);
+		
+		gui.style().setProperty("textbox-text", 			"left_margin", 			"8");
+		gui.style().setProperty("textbox-text", 			"right_margin", 		"8");
+		gui.style().setProperty("textbox-text", 			"top_margin", 			"8");
+		gui.style().setProperty("textbox-text", 			"bottom_margin", 		"8");
+		
+		gui.style().setProperty("textbox-text", 			"outline_size", 		"0");
+
 		
 		while (!window.should_close()) {
 			gui.size(window.width, window.height);
