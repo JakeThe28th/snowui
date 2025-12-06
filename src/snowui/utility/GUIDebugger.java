@@ -240,6 +240,10 @@ public class GUIDebugger {
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_ALT)) {
+			if (input.keyPressed(GLFW.GLFW_KEY_GRAVE_ACCENT)) {
+				gui.fps.show_fps = !gui.fps.show_fps;
+				used_modifier = true;
+			}
 			if (input.keyPressed(GLFW.GLFW_KEY_1)) {
 				current_debug_state = DebugState.values()[0];
 				used_modifier = true;
