@@ -213,6 +213,14 @@ public class GUITextBox extends GUIElement {
 						}
 					}
 					
+					if (i.keyPressed(GLFW.GLFW_KEY_DELETE) || i.keyRepeated(GLFW.GLFW_KEY_DELETE)) {
+						if (content.length() > 1) {
+							content(content.substring(0, cursor + 1) + content.substring(cursor + 2));
+						} else if (content.length() > 0) {
+							content("");
+						}
+					}
+					
 					if (i.keyPressed(GLFW.GLFW_KEY_ENTER) || i.keyRepeated(GLFW.GLFW_KEY_ENTER)) {
 						if (finish_on_enter()) {
 							deselect();

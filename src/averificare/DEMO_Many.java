@@ -23,10 +23,7 @@ public class DEMO_Many {
 		GUIList list = new GUIList();
 		for (int i = 0; i < 5; i++) {
 			list.add(new GUIText("Hello, " + i));
-		}
-		 TODO: delete to delete character in front of cursor 
-		
-		 
+		}		
 		
 		GUITextBox textbox = new GUITextBox(" (There's an anime review.)\r\n"
 				+ "* (Read it?)\r\n"
