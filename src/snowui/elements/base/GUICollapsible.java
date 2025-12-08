@@ -5,7 +5,6 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
-import snowui.utility.Margin;
 
 // TODO: Vertical version?
 
@@ -66,7 +65,7 @@ public class GUICollapsible extends GUIElement {
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		Rectangle b = Margin.calculate(style(), padded_limit_rectangle(), unpadded_width, unpadded_height);
+		Rectangle b = aligned_limit_rectangle();
 		
 		int icon_width = collapse_icon.width();
 		int upper_height = collapse_icon.height();

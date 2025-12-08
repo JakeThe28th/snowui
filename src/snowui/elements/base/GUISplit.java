@@ -3,7 +3,7 @@ package snowui.elements.base;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
 
-public class GUIDocker extends GUIElement {
+public class GUISplit extends GUIElement {
 
 	@Override
 	public void recalculateSize(GUIInstance gui) {

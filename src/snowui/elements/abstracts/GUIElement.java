@@ -9,6 +9,7 @@ import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
 import snowui.coss.enums.PredicateKey;
 import snowui.utility.GUIDebugger;
+import snowui.utility.Margin;
 
 public abstract class GUIElement {
 	
@@ -99,10 +100,12 @@ public abstract class GUIElement {
 	/** Defines the bounding box that updateDrawInfo() stays within */
 	private   Rectangle limit_rectangle;
 	private   Rectangle padded_limit_rectangle;
+	private   Rectangle aligned_limit_rectangle;
 
 	/** Defines the bounding box that updateDrawInfo() stays within */
-	public 	  Rectangle limit_rectangle() 						{ return limit_rectangle; 		}
-	public 	  Rectangle padded_limit_rectangle() 				{ return padded_limit_rectangle; 		}
+	public 	  Rectangle limit_rectangle() 						{ return limit_rectangle; 			}
+	public 	  Rectangle padded_limit_rectangle() 				{ return padded_limit_rectangle; 	}
+	public 	  Rectangle aligned_limit_rectangle() 				{ return aligned_limit_rectangle; 	}
 	/** Defines the bounding box that updateDrawInfo() stays within */
 	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{  
 		boolean limit_changed = false;
@@ -145,6 +148,16 @@ public abstract class GUIElement {
 				limit_rectangle.right() - style().right_margin().pixels(),
 				limit_rectangle.bottom() - style().bottom_margin().pixels()
 				);
+		set_aligned_limit_rectangle();
+	}
+	
+	public void set_aligned_limit_rectangle() {
+		aligned_limit_rectangle = Margin.calculate(
+				style(), 
+				padded_limit_rectangle(), 
+				unpadded_width, 
+				unpadded_height
+			);
 	}
 	
 	private   Rectangle scissor_rectangle;

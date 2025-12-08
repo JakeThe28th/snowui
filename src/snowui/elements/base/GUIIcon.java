@@ -3,7 +3,6 @@ package snowui.elements.base;
 import frost3d.enums.IconType;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
-import snowui.utility.Margin;
 
 public class GUIIcon extends GUIElement {
 
@@ -28,7 +27,7 @@ public class GUIIcon extends GUIElement {
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		hover_rectangle(Margin.calculate(style(), this.padded_limit_rectangle(), unpadded_width, unpadded_height));
+		hover_rectangle(aligned_limit_rectangle());
 	}
 
 	@Override

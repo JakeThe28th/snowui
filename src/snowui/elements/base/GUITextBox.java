@@ -372,7 +372,7 @@ public class GUITextBox extends GUIElement {
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		hover_rectangle(Margin.calculate(style(), this.limit_rectangle(), unpadded_width, unpadded_height));
+		hover_rectangle(aligned_limit_rectangle());
 		text.limit_rectangle(hover_rectangle());
 	}
 

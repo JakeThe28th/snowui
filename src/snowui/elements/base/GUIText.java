@@ -2,6 +2,7 @@ package snowui.elements.base;
 
 import org.joml.Vector2i;
 
+import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
 import snowui.utility.Margin;
@@ -25,7 +26,7 @@ public class GUIText extends GUIElement {
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		hover_rectangle(Margin.calculate(style(), this.padded_limit_rectangle(), unpadded_width, unpadded_height));
+		hover_rectangle(aligned_limit_rectangle());
 	}
 
 	@Override
