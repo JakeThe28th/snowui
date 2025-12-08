@@ -47,7 +47,6 @@ public class DEMO_DockWindow {
 		gui.style().setProperty("title_bar", "outline_size", "2");
 		gui.style().setProperty("title_bar", "outline_margin", "1");
 
-
 		while (!window.should_close()) {
 			gui.size(window.width, window.height);
 			gui.render();

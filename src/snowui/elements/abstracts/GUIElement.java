@@ -424,6 +424,9 @@ public abstract class GUIElement {
 				recalculateSize(gui);
 				should_update(true);
 				should_recalculate_size = false;
+				if (this.aligned_limit_rectangle != null) {
+					set_aligned_limit_rectangle();
+				}
 			}
 		}
 	}
