@@ -45,7 +45,6 @@ public class GUIDockable extends GUIElement {
 		@Override
 		public void updateDrawInfo(GUIInstance gui) {
 			Rectangle b = aligned_limit_rectangle(); 
-			// TODO 'aligned_limit_rectangle' adding weird margins?
 			icon.limit_rectangle(new Rectangle(b.left(), b.top(), b.left() + icon.width(), b.bottom()));
 			title.limit_rectangle(new Rectangle(b.left() + icon.width(), b.top(), b.right(), b.bottom()));
 			this.hover_rectangle(b);
@@ -63,6 +62,7 @@ public class GUIDockable extends GUIElement {
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
 		Rectangle b = aligned_limit_rectangle();
+		this.hover_rectangle(b);
 		titlebar.limit_rectangle(new Rectangle(b.left(), b.top(), b.right(), b.top() + titlebar.height()));
 		root.limit_rectangle(new Rectangle(b.left(), b.top() + titlebar.height(), b.right(), b.bottom()));
 	}
