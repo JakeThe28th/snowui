@@ -4,12 +4,7 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
-import snowui.elements.base.GUIDockable;
-import snowui.elements.base.GUIList;
-import snowui.elements.base.GUIScrollable;
-import snowui.elements.base.GUISlider;
-import snowui.elements.base.GUITabList;
-import snowui.elements.base.GUIText;
+import snowui.elements.extended.GUIDockable;
 
 public class DEMO_DockWindow {
 
@@ -25,7 +20,8 @@ public class DEMO_DockWindow {
 		
 		GUIDockable docker = new GUIDockable();
 		
-		
+		docker.titlebar().title("Hello! I'm, Lie!!!");
+		docker.draggable(true);
 		
 		gui.root(docker);
 		

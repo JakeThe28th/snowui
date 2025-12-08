@@ -203,7 +203,7 @@ public class GUIDebugger {
 		DRAG_AND_DROP
 	}
 	
-	static boolean show_hover_overlay = false;
+	static boolean show_hover_overlay = true;
 	static DebugState current_debug_state = DebugState.FRAMETIME_CHART;
 	
 	public static IntegerDataChart framechart = new IntegerDataChart(60*4, 10);

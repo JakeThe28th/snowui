@@ -15,8 +15,6 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	
 	{ identifier("list"); }
 	
-	//TODO: wrapping
-	
 	boolean vertical = true;
 	boolean wrap = false;
 	

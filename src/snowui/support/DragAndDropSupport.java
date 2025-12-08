@@ -49,7 +49,7 @@ public class DragAndDropSupport {
 		// (...probably not ideal, but making a copy isn't practical,
 		//     and this doesn't seem to affect performance *too* much, so...)
 		Rectangle limit = held.limit_rectangle();
-		GUIElement.tickFloating(g, held, g.mx(), g.my(), 1000);
+		GUIElement.tickFloating(g, held, g.mx(), g.my(), 600);
 		held.limit_rectangle(limit);
 		
 		if (g.current_hovered_element() instanceof ElementReceiver) {

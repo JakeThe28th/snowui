@@ -1,4 +1,4 @@
-package snowui.elements.base;
+package snowui.elements.extended;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,8 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
+import snowui.elements.base.GUIClickableRectangle;
+import snowui.elements.base.GUIText;
 import snowui.utility.GUIUtility;
 
 public class GUITabList extends GUIElement {

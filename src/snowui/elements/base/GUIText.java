@@ -2,16 +2,19 @@ package snowui.elements.base;
 
 import org.joml.Vector2i;
 
-import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
-import snowui.utility.Margin;
 
 public class GUIText extends GUIElement {
 	
 	{ identifier("text"); }
 	
 	String text = null;
+	
+	public void text(String new_text) {
+		this.text = new_text;
+		this.should_recalculate_size(true);
+	}
 	
 	public GUIText(String text) {
 		this.text = text;

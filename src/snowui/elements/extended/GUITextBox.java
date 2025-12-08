@@ -1,4 +1,4 @@
-package snowui.elements.base;
+package snowui.elements.extended;
 
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
@@ -13,7 +13,6 @@ import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
-import snowui.utility.Margin;
 
 public class GUITextBox extends GUIElement {
 	

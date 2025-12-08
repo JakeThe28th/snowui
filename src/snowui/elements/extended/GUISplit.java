@@ -1,4 +1,4 @@
-package snowui.elements.base;
+package snowui.elements.extended;
 
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;

@@ -13,7 +13,7 @@ import snowui.utility.Margin;
 
 public abstract class GUIElement {
 	
-	public static final int ELEMENT_ADD_DEPTH = 16;
+	public static final int ELEMENT_ADD_DEPTH = 8;
 	
 	GUIElement parent = null;
 	
@@ -411,8 +411,8 @@ public abstract class GUIElement {
 				drawOutline(gui, depth+2);
 			}
 			draw(gui, depth);
-			if (scissor_rectangle() != null) gui.pop_scissor();
 			for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
+			if (scissor_rectangle() != null) gui.pop_scissor();
 		}
 	}
 	
