@@ -1,13 +1,16 @@
 package snowui.elements.extended;
 
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIText;
+import snowui.elements.interfaces.ElementReceiver;
 import snowui.utility.GUIUtility;
 
-public class GUIDockable extends GUIElement {
+public class GUIDockable extends GUIElement implements ElementReceiver {
 	
 	GUIElement root;
 	GUITitleBar titlebar = new GUITitleBar();
@@ -19,6 +22,10 @@ public class GUIDockable extends GUIElement {
 		root(new GUIText("No content"));
 	}
 	
+	public GUIDockable(String title) {
+		titlebar.title.text(title);
+	}
+
 	public void root(GUIElement root) {
 		if (this.root != null) this.removeSubElement(this.root);
 		this.registerSubElement(root);
@@ -56,5 +63,63 @@ public class GUIDockable extends GUIElement {
 	@Override public Rectangle drag_rectangle() {
 		return titlebar.hover_rectangle();
 	}
+	
+	@Override
+	public boolean canDropHere(GUIInstance gui, GUIElement element) {
+		return this.aligned_limit_rectangle().contains(gui.mouspos());
+	}
+
+	@Override
+	public void drop(GUIInstance gui, GUIElement element) {
+		Rectangle b = this.aligned_limit_rectangle();
+		float edge = 1f/3f;
+		Rectangle left_side 	= b.internal(0, 		0, 		  edge, 	1);
+		Rectangle middle 		= b.internal(	 edge, 	0, 		1-edge, 	1);
+		Rectangle right_side 	= b.internal(1 - edge, 	0, 		1, 			1);
+		if (left_side	.contains(gui.mouspos())) 	{ 
+			
+		}
+		if (middle		.contains(gui.mouspos())) 	{ 
+			
+		}
+		if (right_side	.contains(gui.mouspos())) 	{ 
+			
+		}
+	}
+
+	@Override
+	public void dropPreview(GUIInstance gui, GUIElement element) {
+		Rectangle b = this.aligned_limit_rectangle();
+		float edge = 1f/3f;
+		Rectangle left_side 	= b.internal(0, 		0, 		  edge, 	1);
+		Rectangle middle 		= b.internal(	 edge, 	0, 		1-edge, 	1);
+		Rectangle right_side 	= b.internal(1 - edge, 	0, 		1, 			1);
+		Rectangle draw = null;
+		if (left_side	.contains(gui.mouspos())) 	{ draw = left_side	; }
+		if (middle		.contains(gui.mouspos())) 	{ draw = middle		; }
+		if (right_side	.contains(gui.mouspos())) 	{ draw = right_side	; }
+		if (draw != null) {
+			gui.canvas().color(style().preview_color().color());
+			gui.canvas().rect(draw, gui.PREVIEW_DEPTH());
+		}
+	}
+
+	@Override
+	public void DEBUG_draw_drop_areas(GUIInstance gui, GUIElement element, int depth) {
+		Rectangle r = this.aligned_limit_rectangle();
+		if (r.contains(gui.mouspos())) {
+			gui.canvas().color(Color.DESBLUE.val());
+		} else {
+			gui.canvas().color(Color.DESYELLOW.val());
+		}
+		gui.canvas().rect(r, depth);
+	}
+
+	@Override
+	public void remove(GUIElement subelement) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
+

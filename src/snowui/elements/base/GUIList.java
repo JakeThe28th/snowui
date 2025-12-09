@@ -266,26 +266,3 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	}
 
 }
-
-/*
-
- - Collapsible List =
-     Collapsible
-	   List
-	     -Collapsible
-		    List
-		 -Collapsible
-		    List
-		...
-
-extends makes the alternation hidden by being
-a Collapsible that already has a sub-element 'list'.
-
-
-List
-  - Horizontal & Vertical, ideally sharing the same code somehow
-  - Support the ability to use wrapping instead of overflowing (scrolling)
-  - Support culling properly
-
-
-*/

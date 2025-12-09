@@ -13,7 +13,7 @@ public class DEMO_DockWindow {
 		// tabs, dockers, text editors, right click menu
 
 		GLState.initializeGLFW();
-		SimpleWindow window = new SimpleWindow(4*300, 3*300, "GUI Test");
+		SimpleWindow window = new SimpleWindow(2*300, 2*300, "GUI Test");
 		BuiltinShaders.init();
 		
 		GUIInstance gui = new GUIInstance(window, window.input());
