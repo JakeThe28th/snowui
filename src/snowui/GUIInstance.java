@@ -8,9 +8,11 @@ import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.*;
 
 import frost3d.Input;
+import frost3d.enums.CursorType;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
 import frost3d.implementations.VectorIconRenderer;
+import frost3d.interfaces.F3DExtWindow;
 import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
 import frost3d.utility.Rectangle;
@@ -47,7 +49,6 @@ public class GUIInstance {
 		}
 	}
 	
-	F3DWindow 					window;
 	F3DIconRenderer				icons;
 	SimpleTextRenderer 			text;
 	SimpleCanvas 				canvas;
@@ -93,6 +94,11 @@ public class GUIInstance {
 	
 	public Input rawinput() { return input; }
 	
+	CursorType current_cursor = CursorType.ARROW_CURSOR;
+	public void cursor(CursorType new_cursor) {
+		this.current_cursor = new_cursor;
+	}
+	
 	public GUIInstance(F3DWindow window, Input input) {
 		this.input = input;
 		this.text = new SimpleTextRenderer();
@@ -115,17 +121,19 @@ public class GUIInstance {
 	}
 	
 	public void render() {
+		cursor(CursorType.ARROW_CURSOR);
+		
 		GUIElement.tick(this, root, canvas().size(), 0);	
 		drag_and_drop_support.tick();
 		
 		if (SHOW_FPS) fps.drawFPS(canvas);
 		if (DEBUG) GUIDebugger.drawTree(this, root, input);
 		
-		
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		canvas.draw_frame();
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(8, "Draw (canvas)");
-
+		
+		if (input.cursor() != current_cursor) input.cursor(current_cursor);
 	}
 	
 	public GUIElement current_hovered_element() {
