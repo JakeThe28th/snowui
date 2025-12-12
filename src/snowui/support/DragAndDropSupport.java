@@ -2,6 +2,7 @@ package snowui.support;
 
 import org.joml.Vector2i;
 
+import frost3d.enums.CursorType;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
@@ -31,6 +32,10 @@ public class DragAndDropSupport {
 	}
 	
 	public void tick() {
+		
+		if (held == null && find_drag_target(g.current_window_root()) != null) {
+			g.cursor(CursorType.POINTING_HAND_CURSOR);
+		}
 		
 		if (g.primary_click_pressed()) { 
 			set_drag_start(); 
