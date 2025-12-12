@@ -1,6 +1,5 @@
 package snowui.elements.extended;
 
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
@@ -12,7 +11,7 @@ import snowui.utility.GUIUtility;
 
 public class GUIDockable extends GUIElement implements ElementReceiver {
 	
-	GUIElement root;
+	GUIElement 	root;
 	GUITitleBar titlebar = new GUITitleBar();
 	
 	{
@@ -22,6 +21,7 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		root(new GUIText("No content"));
 	}
 	
+	public GUIDockable() { }
 	public GUIDockable(String title) {
 		titlebar.title.text(title);
 	}
@@ -32,13 +32,8 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		this.root = root;
 	}
 	
-	public GUIElement root() {
-		return this.root;
-	}
-	
-	public GUITitleBar titlebar() {
-		return this.titlebar;
-	}
+	public GUIElement 	root() 		{ return this.root; }
+	public GUITitleBar 	titlebar() 	{ return this.titlebar; }
 
 	@Override
 	public void recalculateSize(GUIInstance gui) {
@@ -55,8 +50,10 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	}
 
 	@Override public void draw(GUIInstance gui, int depth) {
-		gui.canvas().color(style().base_color().color());
+		// gui.canvas().color(style().base_color().color());
+		gui.canvas().color(Color.RED.val());
 		gui.canvas().rect(this.titlebar.limit_rectangle(), depth);
+		gui.canvas().color(Color.GOLD.val());
 		gui.canvas().rect(this.root.limit_rectangle(), depth);
 	}
 	

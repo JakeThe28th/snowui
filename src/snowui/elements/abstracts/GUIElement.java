@@ -179,7 +179,7 @@ public abstract class GUIElement {
 	public static void tick(GUIInstance gui, GUIElement e, Rectangle limit, int depth) {
 		e.limit_rectangle(limit);	// (Since this is only run on the root element)
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
-		e.triggerUpdateState(gui);
+		e.triggerUpdateState(gui, false);
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(0, "Update state");
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerTickAnimation(gui);
@@ -209,6 +209,7 @@ public abstract class GUIElement {
 
 	public abstract void recalculateSize(GUIInstance gui);
 	public 		 boolean updateState(GUIInstance gui) { return false; };
+	public 		 boolean preUpdateState(GUIInstance gui) { return false; };
 	/** Opportunity to set up drawing information. <br>
 	 *  Notably, this method is responsible for updating
 	 *  sub-elements drawing information itself. */
@@ -320,7 +321,7 @@ public abstract class GUIElement {
 	public 	void log_element_update() 				{ last_element_update_time = System.currentTimeMillis(); }	
 	public 	long last_element_update_elapsed_time() { return System.currentTimeMillis() - last_element_update_time; }
 
-	private final boolean triggerUpdateState(GUIInstance gui) {
+	private final boolean triggerUpdateState(GUIInstance gui, boolean overridden) {
 		if (gui.hasInput() && !get(PredicateKey.DISABLED)) {	
 			// Reset all of the properties that this method touches
 			set(PredicateKey.BOUNDED, 	false);
@@ -334,10 +335,19 @@ public abstract class GUIElement {
 			@SuppressWarnings("unchecked") // Some events might want to modify the sub-elements list,
 										   // So, a copy is made.
 			ArrayList<GUIElement> sub_elements = (ArrayList<GUIElement>) this.sub_elements.clone();
+						
+			// Checking 'overridden' lets us not trigger events if a sub-element is hovered
 			
-			// Checking this later lets us not trigger events if a sub-element is hovered
-			boolean overridden = false;
-			for (GUIElement e : sub_elements) { overridden = overridden | e.triggerUpdateState(gui); }
+			// Also, to accommodate for situations where sub-elements shouldn't have their events
+			// triggered even when hovered (see: dragging the midpoint of a split view),
+			// 'preUpdateState' exists, and 'overridden' is sent as a method argument.
+			// ...(In those cases, events should still be ran as normal for *this*, so
+			//     "overridden"'s assignment is delayed until after those.)
+			
+			// ... But, in normal circumstances, 'overridden' should be 'false' at this point.
+			
+			boolean sub_overridden = overridden | preUpdateState(gui);
+			for (GUIElement e : sub_elements) { overridden = overridden | e.triggerUpdateState(gui, sub_overridden); }
 
 			Rectangle _hover_rectangle = hover_rectangle;
 			if (_hover_rectangle != null && scissor_rectangle() != null) { 
@@ -362,11 +372,13 @@ public abstract class GUIElement {
 			// keep overriding super-elements even when not hovered, so
 			// we can't just put it in the if statement up there.
 			overridden = overridden || updateState(gui);
+			
+			overridden = overridden || sub_overridden;
+			
 			return overridden;
 		} else {
 			if (!is_on_screen()) return false;
-			boolean overridden = false;
-			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui); }
+			for (GUIElement e : sub_elements) { overridden = overridden || e.triggerUpdateState(gui, overridden); }
 			if (!overridden && get(PredicateKey.DOWN)) { triggerOnHold(gui); }
 			return overridden;
 		}

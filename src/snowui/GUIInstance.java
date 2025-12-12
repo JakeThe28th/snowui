@@ -97,6 +97,9 @@ public class GUIInstance {
 	public void cursor(CursorType new_cursor) {
 		this.current_cursor = new_cursor;
 	}
+	public CursorType cursor() {
+		return this.current_cursor;
+	}
 	
 	public GUIInstance(F3DWindow window, Input input) {
 		this.input = input;

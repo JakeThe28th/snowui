@@ -19,15 +19,25 @@ public class DEMO_SplitView {
 		
 		GUIInstance gui = new GUIInstance(window, window.input());
 		
+		GUISplit subsplit = new GUISplit();
+		
+		subsplit.first(new GUIDockable("A").draggable(true));
+		subsplit.second(new GUIDockable("B").draggable(true));
+		
 		GUISplit split = new GUISplit();
 		
-		split.first(new GUIDockable("A"));
-		split.second(new GUIDockable("b"));
+		subsplit.verticalify();
+		
+		split.first(subsplit);
+		split.second(new GUIDockable("C").draggable(true));
 		
 		gui.style().setProperty("dockable", "min_width", "container");
 		gui.style().setProperty("dockable", "max_width", "container");
 		gui.style().setProperty("dockable", "min_height", "container");
 		gui.style().setProperty("dockable", "max_height", "container");
+		
+		gui.style().setProperty("default", "horizontal_alignment", "middle");
+		gui.style().setProperty("default", "vertical_alignment", "middle");
 
 		gui.root(split);
 		
