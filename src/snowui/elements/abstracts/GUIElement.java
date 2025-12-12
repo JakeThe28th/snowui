@@ -8,6 +8,7 @@ import snowui.GUIInstance;
 import snowui.coss.COSSPredicate;
 import snowui.coss.CachedProperties;
 import snowui.coss.enums.PredicateKey;
+import snowui.elements.interfaces.ElementReceiver;
 import snowui.utility.GUIDebugger;
 import snowui.utility.Margin;
 
@@ -458,6 +459,6 @@ public abstract class GUIElement {
 	public GUIElement 	draggable(boolean b) 		{ draggable = b; return this; }
 	
 	public Rectangle	drag_rectangle()			{ return hover_rectangle(); }
-	public boolean 		can_drop(GUIInstance gui) 	{ return true; }
+	public boolean 		can_drop(GUIInstance gui, ElementReceiver target) 	{ return true; }
 	
 }

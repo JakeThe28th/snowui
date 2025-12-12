@@ -43,7 +43,6 @@ public class DragAndDropSupport {
 			held = drag_target;
 		}
 		
-		// Set down
 		if (held == null) return;
 		
 		// (...probably not ideal, but making a copy isn't practical,
@@ -52,23 +51,33 @@ public class DragAndDropSupport {
 		GUIElement.tickFloating(g, held, g.mx(), g.my(), 600);
 		held.limit_rectangle(limit);
 		
-		if (g.current_hovered_element() instanceof ElementReceiver) {
-			ElementReceiver target =  ((ElementReceiver) g.current_hovered_element());
-			if (target.canDropHere(g, held) && held.can_drop(g)) {
-				target.dropPreview(g, held);
-				if (g.primary_click_released()) {
-					if (held.parent() instanceof ElementReceiver) {
-						((ElementReceiver) held.parent()).remove(held);
+		// Set down
+
+		boolean found_target = false;
+				
+		for (GUIElement potential_target : g.current_hovered_element_tree()) {
+			// Search for a valid drop target from most to least nested
+			if (potential_target instanceof ElementReceiver) {
+				found_target = true;
+				ElementReceiver target =  ((ElementReceiver) potential_target);
+				if (target.canDropHere(g, held) && held.can_drop(g, target)) {
+					target.dropPreview(g, held);
+					if (g.primary_click_released()) {
+						if (held.parent() instanceof ElementReceiver) {
+							((ElementReceiver) held.parent()).remove(held);
+						}
+						target.drop(g, held);
+						held = null;
 					}
-					target.drop(g, held);
-					held = null;
+				} else {
+					if (g.primary_click_released()) { 
+						held = null;
+					}
 				}
-			} else {
-				if (g.primary_click_released()) { 
-					held = null;
-				}
-			}
-		} else {
+			} 
+		}
+
+		if (!found_target) {
 			if (g.primary_click_released()) { 
 				held = null;
 			}

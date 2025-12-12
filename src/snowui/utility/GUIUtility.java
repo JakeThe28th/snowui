@@ -13,6 +13,20 @@ public class GUIUtility {
 		}
 		return e;
 	}
+	
+	public static ArrayList<GUIElement> getHoveredElementTree(GUIElement e) {
+		for (GUIElement sub : e.sub_elements()) {
+			if (sub.state().get(PredicateKey.BOUNDED)) {
+				ArrayList<GUIElement> list = getHoveredElementTree(sub);
+				list.add(e);
+				return list;
+			}
+		}
+		ArrayList<GUIElement> list = new ArrayList<GUIElement>();
+		list.add(e);
+		return list;
+	}
+
 
 	// -- ++  ...  ++ -- //
 

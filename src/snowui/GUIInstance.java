@@ -12,7 +12,6 @@ import frost3d.enums.CursorType;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.implementations.SimpleTextRenderer;
 import frost3d.implementations.VectorIconRenderer;
-import frost3d.interfaces.F3DExtWindow;
 import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
 import frost3d.utility.Rectangle;
@@ -139,6 +138,11 @@ public class GUIInstance {
 	public GUIElement current_hovered_element() {
 		// TODO: work with windows/menus etc
 		return GUIUtility.getHoveredElement(root);
+	}
+	
+	public ArrayList<GUIElement> current_hovered_element_tree() {
+		// TODO: work with windows/menus etc
+		return GUIUtility.getHoveredElementTree(root);
 	}
 
 	GUIElement last_pressed_element;
