@@ -2,16 +2,23 @@ package snowui.utility;
 
 public class AnimationTimer {
 	
-	todo 
+	long start;
+	long length;
 	
-	set nanotime vs millis
-
+	public void setStartTimeMS(long time) {
+		start = time;
+	}
 	
-	set star ttime (it does it you ask it to)
+	public void setLengthMS(long time) {
+		length = time;
+	}
 	
-	set length 
+	public int getElapsedMS() {
+		return (int) (System.currentTimeMillis() - start);
+	}
 	
-	get back current time in a float of 0 to 1
-	
+	public float get() {
+		return ((float) getElapsedMS()) / ((float) length);
+	}	
 
 }

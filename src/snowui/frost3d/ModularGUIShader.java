@@ -1,6 +1,5 @@
 package snowui.frost3d;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import frost3d.GLShaderProgram;
@@ -48,7 +47,7 @@ public class ModularGUIShader {
 	HashMap<String, Boolean> injects_on = new HashMap<>();
 
 	public void register(String name, ShaderInject inject) { injects.put(name, inject); }
-	TODO: modular shader
+	//TODO: modular shader
 	{
 		register("rounded_corners", 
 			new ShaderInject(
@@ -69,25 +68,25 @@ public class ModularGUIShader {
 				"uniform float corner_size = .25;"
 			));
 	}
-	
-	unrelated but hmm
-		ok so, level editor
-			layer -- unique objects with their own serialization and editors
-		NPC / Object / Entity / Mob...
-			Defined separately, tand hthen referenced in level, not defined in level?
-			so like, each NPC is like a '.npc' file..?
-					
-		special layer (like WorldDefinition or something) defines how input affects movement 
-		and how that's projected to the screen?
-		
+//	
+//	unrelated but hmm
+//		ok so, level editor
+//			layer -- unique objects with their own serialization and editors
+//		NPC / Object / Entity / Mob...
+//			Defined separately, tand hthen referenced in level, not defined in level?
+//			so like, each NPC is like a '.npc' file..?
+//					
+//		special layer (like WorldDefinition or something) defines how input affects movement 
+//		and how that's projected to the screen?
+//		
 	public GLShaderProgram program() {
-		if (program == null) {
-			String uniform_injects = "";
-			String code_injects = "";
-			for (String inject : injects.keySet()) {
-				uniform_injects += "//" + inject;
-			}
-		}
+//		if (program == null) {
+////			String uniform_injects = "";
+////			String code_injects = "";
+//			for (String inject : injects.keySet()) {
+////				uniform_injects += "//" + inject;
+//			}
+//		}
 		return program;
 	}
 
