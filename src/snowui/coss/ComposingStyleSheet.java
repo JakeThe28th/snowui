@@ -91,7 +91,8 @@ public class ComposingStyleSheet {
 		
 		sheet.setPredicate("default", "HOVERED=true", 				"hover");
 		sheet.setPredicate("default", "HOVERED=true, DOWN=true", 	"down");
-		
+		sheet.setPredicate("default", "SELECTED=true", 				"selected");
+
 		// -- Built-in types -- //
 		
 		sheet.setProperty("down", 	  "base_color", 				"BASIC_PANEL_DOWN");
@@ -99,6 +100,9 @@ public class ComposingStyleSheet {
 		sheet.setProperty("hover", 	  "base_color", 				"BASIC_PANEL_HOVER");
 		sheet.setProperty("hover", 	  "outline_size", 				"2");
 		sheet.setProperty("hover", 	  "outline_color", 				"BLUE");
+		
+		sheet.setProperty("selected", "outline_size", 				"2");
+		sheet.setProperty("selected", "outline_color", 				"DESYELLOW");
 		
 		// text
 		sheet.setProperty("text", 	  		"base_color", 			"WHITE");	
