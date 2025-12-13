@@ -2,6 +2,8 @@ package snowui.coss.enums;
 
 import org.joml.Vector4f;
 
+import frost3d.utility.Utility;
+
 public enum Color {
 	WHITE(new Vector4f(1,1,1,1)),
 	BLACK(new Vector4f(0,0,0,1)),
@@ -26,6 +28,12 @@ public enum Color {
 	TRANSPARENT_AQUA(new Vector4f(0, 1, 0.75f, 0.25f)),
 	TRANSPARENT_RED(new Vector4f(1,0,0,0.25f)),
 	
+	BASIC_PANEL			(Utility.fromHex("#414141")),
+	BASIC_PANEL_HOVER	(Utility.fromHex("#4A4A4A")),
+	BASIC_PANEL_DOWN	(Utility.fromHex("#959595")),
+	BASIC_PANEL_DARK	(Utility.fromHex("#2C2C2C")),
+	BASIC_CLEAR			(Utility.fromHex("#161616"))
+
 	;
 	
 	Vector4f color = null;

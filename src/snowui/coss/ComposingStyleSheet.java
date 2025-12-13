@@ -46,105 +46,95 @@ public class ComposingStyleSheet {
 	
 	// -- ++  Default Style  ++ -- //
 	
+	@SuppressWarnings("unused")
+	private static void HELPERSetUniformMargins(ComposingStyleSheet sheet, String type, int margin) {
+		HELPERSetUniformMargins(sheet, type, Integer.toString(margin));
+	}
+	
+	private static void HELPERSetUniformMargins(ComposingStyleSheet sheet, String type, String margin) {
+		sheet.setProperty(type, "left_margin", 		margin);
+		sheet.setProperty(type, "right_margin", 	margin);
+		sheet.setProperty(type, "top_margin", 		margin);
+		sheet.setProperty(type, "bottom_margin",	margin);
+	}
+	
+	private static void HELPERSetUniformSizeLimit(ComposingStyleSheet sheet, String type, String limit) {
+		sheet.setProperty(type, "max_width", 	limit); // flex, container, or [number]px (EX: 10px)
+		sheet.setProperty(type, "min_width", 	limit); // flex, container, or [number]px (EX: 10px)
+		sheet.setProperty(type, "max_height", 	limit); // flex, container, or [number]px (EX: 10px)
+		sheet.setProperty(type, "min_height", 	limit); // flex, container, or [number]px (EX: 10px)
+	}
+	
 	public static void setDefaults(ComposingStyleSheet sheet) {
 
-		sheet.setProperty("default", "base_color", 				"#686e82");
+		sheet.setProperty("default", "base_color", 				"BASIC_PANEL");
 		sheet.setProperty("default", "outline_color", 			"BLACK");
 		sheet.setProperty("default", "preview_color", 			"css_rgba(187, 161, 255, 0.5)");
 
-
-		sheet.setProperty("default", "left_margin", 			"1");
-		sheet.setProperty("default", "right_margin", 			"1");
-		sheet.setProperty("default", "top_margin", 				"1");
-		sheet.setProperty("default", "bottom_margin", 			"1");
+		HELPERSetUniformMargins		(sheet, "default", "2");
+		HELPERSetUniformSizeLimit	(sheet, "default", "flex");
 		
-		sheet.setProperty("default", "max_width", 				"flex"); // flex, container, or [number]px (EX: 10px)
-		sheet.setProperty("default", "min_width", 				"flex"); // flex, container, or [number]px (EX: 10px)
-		sheet.setProperty("default", "max_height", 				"flex"); // flex, container, or [number]px (EX: 10px)
-		sheet.setProperty("default", "min_height", 				"flex"); // flex, container, or [number]px (EX: 10px)
-		
-		sheet.setProperty("default", "horizontal_alignment",	"left"); // Left, right, middle
-		sheet.setProperty("default", "vertical_alignment", 		"top");	 // Top, bottom, middle
+		sheet.setProperty("default", "horizontal_alignment",	"left"); 	// Left, right, middle
+		sheet.setProperty("default", "vertical_alignment", 		"top");	 	// Top, bottom, middle
 
-		sheet.setProperty("default", "font_size", 				"8");
+
 		sheet.setProperty("default", "outline_size", 			"0");
+		sheet.setProperty("default", "font_size", 				"8");
+		sheet.setProperty("default", "size", 					"16"); 		// Symbol size, scroll bar size, etc
+		
 		sheet.setProperty("default", "outline_margin", 			"3");
-		sheet.setProperty("default", "symbol_size", 			"8");
 		
 		sheet.setProperty("default", "list_spacing", 			"0");
 		sheet.setProperty("default", "list_indent", 			"0");
-		
-		// Symbol size, scroll bar size, etc
-		sheet.setProperty("default", "size", 					"16");
-
 
 		// -- Predicates -- //
 		
 		sheet.setPredicate("default", "HOVERED=true", 				"hover");
 		sheet.setPredicate("default", "HOVERED=true, DOWN=true", 	"down");
 		
-		sheet.setProperty("hover", 	  "base_color", 				"BLACK");
-		sheet.setProperty("down", 	  "base_color", 				"#3c0ffa");
+		// -- Built-in types -- //
 		
+		sheet.setProperty("down", 	  "base_color", 				"BASIC_PANEL_DOWN");
+		
+		sheet.setProperty("hover", 	  "base_color", 				"BASIC_PANEL_HOVER");
 		sheet.setProperty("hover", 	  "outline_size", 				"2");
 		sheet.setProperty("hover", 	  "outline_color", 				"BLUE");
-
 		
-		// -- Default Elements -- //
-		
-		sheet.setProperty("text", 	  		"base_color", 			"BLACK");	
+		// text
+		sheet.setProperty("text", 	  		"base_color", 			"WHITE");	
 		sheet.setProperty("text", 	  		"size", 				"18");	
-
-		sheet.setProperty("scrollbar", 		"base_color", 			"#1b1f24");
-		sheet.setProperty("scroll_handle", 	"base_color", 			"#6097f0");
 		
-		sheet.setProperty("slider_handle", 	"base_color", 			"#6097f0");
+		// slider
+		sheet.setProperty("slider_handle", 	"base_color", 			"DESBLUE");
 		sheet.setProperty("slider_handle", 	"size", 				"18");
-		sheet.setProperty("slider", 	"size", 					"8");
+		sheet.setProperty("slider", 		"size", 				"8");
 		
-		sheet.setProperty("textbox-text", 	  		"base_color", 			"BLACK");	
+		// text box
+		sheet.setPredicate ("textbox", 			 "SELECTED=true", 	"textbox_selected");
+		sheet.addContains  ("textbox", 								"textbox-style");
+		sheet.addContains  ("textbox_selected", 					"textbox-style");
 
-//		sheet.setProperty("textbox-text", 			"left_margin", 			"8");
-//		sheet.setProperty("textbox-text", 			"right_margin", 		"8");
-//		sheet.setProperty("textbox-text", 			"top_margin", 			"8");
-//		sheet.setProperty("textbox-text", 			"bottom_margin", 		"8");
+		sheet.setProperty  ("textbox-text", 	 "base_color", 		"BLACK");	
+		sheet.setProperty  ("textbox-text", 	 "size", 			"18");	
+		sheet.setProperty  ("textbox-style", 	 "base_color", 		"AQUA");	
+		sheet.setProperty  ("textbox_selected",  "base_color", 		"DESYELLOW");	
+		sheet.setProperty  ("textbox_selected",  "outline_color", 	"RED");	
+		sheet.setProperty  ("textbox_selected",  "outline_size", 	"3");	
+		sheet.setProperty  ("textbox_selected",  "outline_margin",	"6");	
 		
-		sheet.setProperty("textbox-style", 	  		"base_color", 			"AQUA");	
-		sheet.setProperty("textbox-style", 	  		"min_width", 			"container");	
-		sheet.setProperty("textbox-style", 	  		"max_width", 			"container");	
-		sheet.setProperty("textbox-style", 	  		"min_height", 			"container");	
-		sheet.setProperty("textbox-style", 	  		"max_height", 			"container");	
+		HELPERSetUniformMargins	  (sheet, "textbox-text", 			"4");
+		HELPERSetUniformSizeLimit (sheet, "textbox-style", 			"container");
+		HELPERSetUniformMargins	  (sheet, "textbox-style", 			"10");
 
-		sheet.setProperty("textbox-style", 			"left_margin", 			"10");
-		sheet.setProperty("textbox-style", 			"right_margin", 		"10");
-		sheet.setProperty("textbox-style", 			"top_margin", 			"10");
-		sheet.setProperty("textbox-style", 			"bottom_margin", 		"10");
+		// scroll area
+		sheet.setProperty("scroll_handle", 	"base_color", 			"DESBLUE");
+		sheet.setProperty("scrollbar", 		"base_color", 			"BASIC_PANEL_DARK");
+		sheet.setProperty("scrollbar", 	 	"size", 				"20");
+//		sheet.setProperty("scroll_area", 	"horizontal_alignment",	"right");
+//		sheet.setProperty("scroll_area", 	"vertical_alignment",		"bottom");
+//		HELPERSetUniformMargins(sheet,   	"scrollbar", 				"4"); // TODO
+		HELPERSetUniformMargins(sheet,   	"scroll_handle", 			"5");
 		
-		sheet.setPredicate("textbox", 			"SELECTED=true", 		"textbox_selected");
-		sheet.addContains("textbox", 	"textbox-style");
-
-		
-		sheet.setProperty("textbox_selected", 	"outline_color", 		"RED");	
-		sheet.setProperty("textbox_selected", 	"base_color", 			"DESYELLOW");	
-		sheet.setProperty("textbox_selected", 	"outline_size", 		"3");	
-		sheet.setProperty("textbox_selected", 	"outline_margin", 		"6");	
-		sheet.addContains("textbox_selected", 	"textbox-style");
-
-//		sheet.setProperty("scroll_area", "horizontal_alignment",	"right"); // Left, right, middle
-//		sheet.setProperty("scroll_area", "vertical_alignment",	"bottom"); // Left, right, middle
-
-		// TODO
-//		sheet.setProperty("scrollbar", "left_margin", 			"3");
-//		sheet.setProperty("scrollbar", "right_margin", 			"3");
-//		sheet.setProperty("scrollbar", "top_margin", 			"3");
-//		sheet.setProperty("scrollbar", "bottom_margin", 		"3");
-		
-		sheet.setProperty("scroll_handle", "left_margin", 			"5");
-		sheet.setProperty("scroll_handle", "right_margin", 			"5");
-		sheet.setProperty("scroll_handle", "top_margin", 			"5");
-		sheet.setProperty("scroll_handle", "bottom_margin", 		"5");
-		
-		sheet.setProperty("scrollbar", "size", 		"20");
 	}
 	
 	// -- ++  ...  ++ -- //
