@@ -42,6 +42,7 @@ public class GUITextBox extends GUIElement {
 		{ identifier("textbox-text"); }
 		
 		String content;
+		String preselect_content;
 		
 		NavigableLimitedStack<ContentState> content_undo = new NavigableLimitedStack<>();
 
@@ -375,6 +376,7 @@ public class GUITextBox extends GUIElement {
 	
 	public void select(GUIInstance gui) {
 		if (selected == this) return;
+		text.preselect_content = text.content;
 		gui.rawinput().input_string("");
 		selected = this;
 		set(PredicateKey.SELECTED, true);
@@ -398,6 +400,7 @@ public class GUITextBox extends GUIElement {
 	public void deselect() {
 		set(PredicateKey.SELECTED, false);
 		if (is_selected()) selected = null;
+		onFinishEditing(text.preselect_content, text.content);
 	}
 
 	EditableText text;
@@ -428,6 +431,10 @@ public class GUITextBox extends GUIElement {
 	}
 	
 	public void onTextChange(String new_text) {
+		
+	}
+	
+	public void onFinishEditing(String old_text, String new_text) {
 		
 	}
 
