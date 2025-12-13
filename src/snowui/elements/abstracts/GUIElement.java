@@ -170,6 +170,13 @@ public abstract class GUIElement {
 		}
 	}
 	
+	private 	  void 	 force_limit_rectangle_recursive(Rectangle rectangle) { 		 
+		limit_rectangle = rectangle; 	
+		for (GUIElement e : sub_elements) {
+			e.force_limit_rectangle_recursive(rectangle);
+		}
+	}
+	
 	protected int unpadded_width = 0;
 	protected int unpadded_height = 0;
 	
@@ -227,6 +234,23 @@ public abstract class GUIElement {
 	
 	private void dequeueState() {
 		if (!next_state.equals(state)) {
+			
+			// TODO: Some updating stuff relies on 'is_on_screen' being true to update.
+			// When something is far off screen and gets hidden, its limit rectangle
+			// isn't updated anymore.
+			//
+			// So, when it gets unhidden, it's can still be considered off screen even
+			// if it shouldn't be anymore, meaning some required updates don't happen.
+			// Kind of a janky workaround, but just overriding the limit rectangle
+			// here fixes the issue, so...
+			if (state.get(PredicateKey.HIDDEN) && !next_state.get(PredicateKey.HIDDEN)) {
+				// Either one of these lines alone works because of the null check in
+				// 'is_on_screen' but this feels like an inherently unstable situation
+				// so I'm just doing both until it inevitably breaks
+				this.force_limit_rectangle_recursive(null);
+				this.scissor_rectangle_recursive(null);
+			}
+			
 			log_state_update();
 			should_cache_style = true;
 			state = next_state;
