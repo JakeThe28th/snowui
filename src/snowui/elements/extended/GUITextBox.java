@@ -52,14 +52,52 @@ public class GUITextBox extends GUIElement {
 		@Override
 		public void recalculateSize(GUIInstance gui) {
 			// N/A because of wrapping...
+			gui.font_size(style().size().pixels());
 			Vector2i size = gui.canvas().textrenderer().size(content);
 			this.unpadded_width = size.x;
 			this.unpadded_height = size.y;
+			
+			// TODO: figure out how to make this DRY compliant 
+			// [and also remember to update this whenever the word wrap logic in draw() changes]
+			
+			int xx = 0, yy = 0, i = 0;
+			int line_height = unpadded_height;
+			
+			int text_width = this.unpadded_width;
+			if (this.hover_rectangle() != null) text_width = this.hover_rectangle().width();
+
+			while(i < content.length()) {
+				int next_breakable_index = i;
+				int next_size = 0;
+				while (next_breakable_index < content.length()) {
+					if (content.charAt(next_breakable_index) == ' ') break;
+					if (content.charAt(next_breakable_index) == '-') break;
+					next_size += gui.textrenderer().advance(content, next_breakable_index);
+					next_breakable_index ++;
+				}
+				if (next_size < text_width && xx + next_size > text_width) {
+					xx = 0;
+					yy += line_height;
+				}
+				while (i < next_breakable_index + 1 && i < content.length()) {
+					int advance = gui.textrenderer().advance(content, i);
+					if (xx + advance > text_width || content.charAt(i) == '\n') {
+						xx = 0;
+						yy += line_height;
+					}
+					xx += advance;
+					i++;
+				}
+			}
+			
+			this.unpadded_height += yy;
+			
 		}
 
 		@Override
 		public void updateDrawInfo(GUIInstance gui) {
 			this.hover_rectangle(padded_limit_rectangle());
+			this.should_recalculate_size(true);
 		}
 		
 		private void setcursor(int new_position, boolean shift) {
@@ -113,6 +151,8 @@ public class GUITextBox extends GUIElement {
 			int line_height = text.size(content).y;
 			gui.canvas().color(style().base_color().color());
 			
+			gui.font_size(style().size().pixels());
+			
 			if (is_selected() && -1 == cursor && blink()) {
 				text.character(gui.canvas(), b.left(), b.top() + yy, depth, '|');
 			}
@@ -128,7 +168,13 @@ public class GUITextBox extends GUIElement {
 					next_breakable_index ++;
 				}
 				
-				if (xx + next_size > b.width()) {
+				// 'next_size' reflects the length of the current word, assuming
+				// words are delimited by the above breakable characters.
+				
+				// If next_size >= b.width, then it's too big to fit and will
+				// be split by character in the loop anyways, so do nothing.
+				
+				if (next_size < b.width() && xx + next_size > b.width()) {
 					xx = 0;
 					yy += line_height;
 				}
@@ -371,7 +417,7 @@ public class GUITextBox extends GUIElement {
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		hover_rectangle(aligned_limit_rectangle());
+		hover_rectangle(padded_limit_rectangle());
 		text.limit_rectangle(hover_rectangle());
 	}
 
