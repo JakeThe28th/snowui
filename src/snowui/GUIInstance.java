@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -16,6 +17,7 @@ import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
 import frost3d.utility.Rectangle;
 import snowui.coss.ComposingStyleSheet;
+import snowui.coss.enums.Color;
 import snowui.elements.abstracts.GUIElement;
 import snowui.support.DragAndDropSupport;
 import snowui.utility.GUIDebugger;
@@ -36,6 +38,16 @@ public class GUIInstance {
 		return 900;
 	}
 	
+	Vector4f clear_color = Color.BASIC_CLEAR.val();
+	
+	public Vector4f clear_color() { return clear_color; }
+	public void clear_color(Vector4f new_color) { 
+		clear_color = new_color;
+		if (canvas != null) {
+			canvas.clear_color(clear_color);
+		}
+	}
+	
 	public void size(int width, int height) {
 		if (canvas == null || canvas.width() != width || canvas.height() != height) {
 			canvas = new SimpleCanvas();
@@ -43,6 +55,7 @@ public class GUIInstance {
 			canvas.size(width, height);
 			canvas.textrenderer(text);
 			canvas.iconrenderer(icons);
+			canvas.clear_color(clear_color);
 			//canvas.clear_color(0, 0, 0, 1);
 			if (root != null) root.scissor_rectangle_recursive(canvas.size());
 		}
@@ -130,6 +143,17 @@ public class GUIInstance {
 		
 		if (SHOW_FPS) fps.drawFPS(canvas);
 		if (DEBUG) GUIDebugger.drawTree(this, root, input);
+		
+		// Dunno why, but for some reason, dragging a GUISplit
+		// causes weird visual glitches to appear until input
+		// is released, *unless* something else is drawn after
+		// drawing all elements (and that something can be
+		// the debugger or FPS counter as well).
+		//
+		// This will likely have many ramifications and is a
+		// very important bug that I do not feel like
+		// dealing with right now
+		canvas.rect(0, 0, 0, 0, 0);
 		
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		canvas.draw_frame();
