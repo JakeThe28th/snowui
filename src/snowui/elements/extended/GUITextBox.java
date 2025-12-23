@@ -451,6 +451,8 @@ public class GUITextBox extends GUIElement {
 		
 	}
 	
+	/** NOTE: Editing the sub_elements array of a parent during this callback will
+	 *  cause {ConcurrentModificationException}s. TODO: maybe fix that lol */
 	public void onFinishEditing(String old_text, String new_text) {
 		
 	}
