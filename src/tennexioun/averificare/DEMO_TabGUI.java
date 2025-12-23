@@ -8,7 +8,7 @@ import snowui.coss.ComposingStyleSheet;
 import snowui.coss.enums.Color;
 import snowui.elements.base.GUIText;
 import snowui.elements.extended.GUISplit;
-import tennexioun.DATANavigationBar;
+import tennexioun.TXDATANavigationBar;
 
 public class DEMO_TabGUI {
 
@@ -26,7 +26,7 @@ public class DEMO_TabGUI {
 		BuiltinShaders.init();
 		
 		GUIInstance 		gui 	= new GUIInstance(window, window.input());
-		DATANavigationBar 	tabs 	= new DATANavigationBar();
+		TXDATANavigationBar 	tabs 	= new TXDATANavigationBar();
 		GUIText				debug 	= new GUIText("Emptiness") {
 			@Override
 			public void draw(GUIInstance gui, int depth) {

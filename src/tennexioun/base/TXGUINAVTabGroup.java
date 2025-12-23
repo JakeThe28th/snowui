@@ -2,14 +2,14 @@ package tennexioun.base;
 
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
-import tennexioun.DATANavigationBar;
-import tennexioun.DATANavigationBar.TabGroup;
+import tennexioun.TXDATANavigationBar;
+import tennexioun.TXDATANavigationBar.TabGroup;
 
 /** The visual element of a tab group. */
-public class GUINAVTabGroup extends GUI_NamedUnit {
+public class TXGUINAVTabGroup extends TXGUI_NamedUnit {
 	TabGroup group;
-	DATANavigationBar nav;
-	public GUINAVTabGroup(TabGroup g, DATANavigationBar n) {
+	TXDATANavigationBar nav;
+	public TXGUINAVTabGroup(TabGroup g, TXDATANavigationBar n) {
 		super(g.group_name());
 		super.color = g.color;
 		group = g;

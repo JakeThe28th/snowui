@@ -7,16 +7,16 @@ import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIList;
 import snowui.elements.extended.GUITextBox;
 import snowui.utility.GUIUtility;
-import tennexioun.DATANavigationBar.Tab;
-import tennexioun.DATANavigationBar.TabGroup;
-import tennexioun.base.GUINAVTab;
-import tennexioun.base.GUINAVTabGroup;
+import tennexioun.TXDATANavigationBar.Tab;
+import tennexioun.TXDATANavigationBar.TabGroup;
+import tennexioun.base.TXGUINAVTab;
+import tennexioun.base.TXGUINAVTabGroup;
 
 /** A GUIElement that mirrors a DATANavigationBar.<br>
  *  Modifications to the DATANavigationBar are reflected here,
  *  and vice-versa.<br><br>
  *  To create, use DATANavigationBar.gui(). */
-public class GUINavigationBar extends GUIElement {
+public class TXGUINavigationBar extends GUIElement {
 	
 	GUIList 	tab_groups 	= new GUIList().horizontalify().wrap(true);
 	GUIList 	tabs 		= new GUIList().horizontalify().wrap(true);
@@ -28,13 +28,13 @@ public class GUINavigationBar extends GUIElement {
 		this.registerSubElement(uri);
 	}
 	
-	DATANavigationBar linked;
+	TXDATANavigationBar linked;
 	
-	public void set_groups(DATANavigationBar data) {
+	public void set_groups(TXDATANavigationBar data) {
 		current_group = -1;
 		tab_groups.clear();
 		for (TabGroup group : data.groups) {
-			tab_groups.add(new GUINAVTabGroup(group, data));
+			tab_groups.add(new TXGUINAVTabGroup(group, data));
 		}
 	}
 	
@@ -42,7 +42,7 @@ public class GUINavigationBar extends GUIElement {
 		current_tab = -1;
 		tabs.clear();
 		for (Tab tab : group.tabs) {
-			tabs.add(new GUINAVTab(tab, group));
+			tabs.add(new TXGUINAVTab(tab, group));
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class GUINavigationBar extends GUIElement {
 	}
 	
 	
-	protected GUINavigationBar(DATANavigationBar source) {
+	protected TXGUINavigationBar(TXDATANavigationBar source) {
 		linked = source;
 	}
 

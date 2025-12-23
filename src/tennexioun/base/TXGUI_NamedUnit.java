@@ -9,9 +9,9 @@ import snowui.elements.base.GUIClickableRectangle;
 import snowui.elements.base.GUIIcon;
 import snowui.elements.extended.GUITextBox;
 
-public abstract class GUI_NamedUnit extends GUIElement {
+public abstract class TXGUI_NamedUnit extends GUIElement {
 
-	GUI_NamedUnit element_this() { return this; }
+	TXGUI_NamedUnit element_this() { return this; }
 	
 	public GUIClickableRectangle 	bg;
 	public GUITextBox 				title;
@@ -19,7 +19,7 @@ public abstract class GUI_NamedUnit extends GUIElement {
 		
 	public Vector4f					color;
 		
-	public GUI_NamedUnit(String title) {
+	public TXGUI_NamedUnit(String title) {
 		color = Color.WHITE.val();
 		bg = new GUIClickableRectangle() {
 			@Override

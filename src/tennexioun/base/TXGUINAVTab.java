@@ -2,15 +2,15 @@ package tennexioun.base;
 
 import frost3d.utility.Utility;
 import snowui.GUIInstance;
-import tennexioun.DATANavigationBar.Tab;
-import tennexioun.DATANavigationBar.TabGroup;
+import tennexioun.TXDATANavigationBar.Tab;
+import tennexioun.TXDATANavigationBar.TabGroup;
 
 /** The visual element of a single tab. */
-public class GUINAVTab extends GUI_NamedUnit {
+public class TXGUINAVTab extends TXGUI_NamedUnit {
 	{ identifier("minitab"); }
 	Tab tab;
 	TabGroup group;
-	public GUINAVTab(Tab tab, TabGroup group) {
+	public TXGUINAVTab(Tab tab, TabGroup group) {
 		super(null);
 		super.color = Utility.fromHex("#444444");
 		this.tab = tab;

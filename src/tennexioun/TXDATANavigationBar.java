@@ -6,7 +6,7 @@ import org.joml.Vector4f;
 
 /** A representation of a navigation bar, with a (string) URI, tabs, and groups.<br>
  *  This object has a corresponding GUIElement which can be retrieved with the gui() method. */
-public class DATANavigationBar {
+public class TXDATANavigationBar {
 	
 	int tbgc;
 	
@@ -63,8 +63,8 @@ public class DATANavigationBar {
 	}
 	
 	// -- =+  GUI  += -- //
-	GUINavigationBar gui = new GUINavigationBar(this);
-	public GUINavigationBar gui() { return gui; }
+	TXGUINavigationBar gui = new TXGUINavigationBar(this);
+	public TXGUINavigationBar gui() { return gui; }
 	
 	private void syncGUI_Navigation() {
 		gui.set_current_tab_and_group(group_index, current_group().tab_index);
