@@ -126,7 +126,7 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	private void recalculateWrappedListSize() {
 		log_element_update();
 		if (padded_limit_rectangle() == null) {
-			this.unpadded_height = 17;
+			this.unpadded_height = GUIUtility.max_height(sub_elements);
 			this.unpadded_width = 17;
 		} else {
 			if (vertical) {

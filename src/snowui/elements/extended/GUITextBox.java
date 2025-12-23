@@ -20,7 +20,7 @@ public class GUITextBox extends GUIElement {
 	
 	public static GUITextBox selected = null;
 	
-	class EditableText extends GUIElement {
+	public class EditableText extends GUIElement {
 		
 		static record ContentState(String content, int cursor) {}
 		
@@ -49,6 +49,11 @@ public class GUITextBox extends GUIElement {
 		public EditableText(String text) {
 			content(text);
 		}
+		
+		@Override public void onLimitRectangleChange() {
+			super.onLimitRectangleChange();
+			this.should_recalculate_size(true);
+		}
 
 		@Override
 		public void recalculateSize(GUIInstance gui) {
@@ -66,7 +71,7 @@ public class GUITextBox extends GUIElement {
 			
 			int text_width = this.unpadded_width;
 			if (this.hover_rectangle() != null) text_width = this.hover_rectangle().width();
-
+			
 			while(i < content.length()) {
 				int next_breakable_index = i;
 				int next_size = 0;
@@ -98,7 +103,6 @@ public class GUITextBox extends GUIElement {
 		@Override
 		public void updateDrawInfo(GUIInstance gui) {
 			this.hover_rectangle(padded_limit_rectangle());
-			this.should_recalculate_size(true);
 		}
 		
 		private void setcursor(int new_position, boolean shift) {
@@ -355,10 +359,17 @@ public class GUITextBox extends GUIElement {
 		public void onSingleClick(GUIInstance gui) {
 			select(gui);
 		}
+
+		public void force_text(String string) {
+			content = string;
+			content_undo.clear();
+			should_recalculate_size(true);
+		}
 		
 	}
 	
 	boolean finish_on_enter = false;
+	boolean hide_background	= false;
 	
 	private Vector2i preselect_mouse;
 	
@@ -368,6 +379,10 @@ public class GUITextBox extends GUIElement {
 	
 	public void finish_on_enter(boolean b) {
 		finish_on_enter = b;
+	}
+	
+	public void hide_background(boolean b) {
+		hide_background = b;
 	}
 	
 	boolean is_selected() {
@@ -426,8 +441,10 @@ public class GUITextBox extends GUIElement {
 
 	@Override
 	public void draw(GUIInstance gui, int depth) {
-		gui.canvas().color(style().base_color().color());
-		gui.canvas().rect(hover_rectangle(), depth);
+		if (!hide_background) {
+			gui.canvas().color(style().base_color().color());
+			gui.canvas().rect(hover_rectangle(), depth);
+		}
 	}
 	
 	public void onTextChange(String new_text) {
@@ -436,6 +453,14 @@ public class GUITextBox extends GUIElement {
 	
 	public void onFinishEditing(String old_text, String new_text) {
 		
+	}
+	
+	public EditableText text() {
+		return text;
+	}
+
+	public void set_text(String string) {
+		text.force_text(string);
 	}
 
 }

@@ -7,7 +7,7 @@ import frost3d.interfaces.F3DCanvas;
 
 public class FPSCounter {
 
-	boolean show_fps = true;
+	public boolean show_fps = true;
 	
 	public long 	frame_start_time 		= 0;
 	int[] 			frametimes 				= new int[60];

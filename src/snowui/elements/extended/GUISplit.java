@@ -8,6 +8,15 @@ import snowui.elements.interfaces.SubElementReplaceable;
 
 public class GUISplit extends GUIElement implements SubElementReplaceable {
 
+	public GUISplit(GUIElement first, GUIElement second) {
+		first(first);
+		second(second);
+	}
+
+	public GUISplit() {
+
+	}
+
 	@Override
 	public void recalculateSize(GUIInstance gui) {
 		this.unpadded_height = 37;
@@ -122,6 +131,15 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 		} else {
 			split = (gui.mx()-limit_rectangle().left()) / (float) limit_rectangle().width();
 		}
+		this.should_update(true);
+	}
+
+	public float split() {
+		return split;
+	}
+	
+	public void split(float nsplit) {
+		split = nsplit;
 		this.should_update(true);
 	}
 	

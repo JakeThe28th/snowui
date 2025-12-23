@@ -100,8 +100,10 @@ public class GUIScrollable extends GUIElement {
 				scroll_amount(mouse_amount_normalized * content_size);
 				
 			}
-			if (vertical) scroll_amount(scroll_amount - gui.scroll().y);
-			if (!vertical) scroll_amount(scroll_amount - gui.scroll().x);
+			if (scroll_this().get(PredicateKey.BOUNDED)) {
+				if (vertical) scroll_amount(scroll_amount - gui.scroll().y);
+				if (!vertical) scroll_amount(scroll_amount - gui.scroll().x);
+			}
 			
 			limit_scroll_amount();
 		}
@@ -195,6 +197,13 @@ public class GUIScrollable extends GUIElement {
 		if (this.root != null) this.removeSubElement(this.root);
 		this.root = root;
 		this.registerSubElement(root);
+		
+		// TODO: make scrollbars always layer above root
+		// by making them last in the sub_e
+		removeSubElement(horizontal_scrollbar);
+		removeSubElement(vertical_scrollbar);
+		registerSubElement(horizontal_scrollbar);
+		registerSubElement(vertical_scrollbar);
 	}
 
 	@Override

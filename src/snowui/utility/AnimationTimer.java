@@ -19,6 +19,10 @@ public class AnimationTimer {
 	
 	public float get() {
 		return ((float) getElapsedMS()) / ((float) length);
+	}
+
+	public void start() {
+		setStartTimeMS(System.currentTimeMillis());
 	}	
 
 }

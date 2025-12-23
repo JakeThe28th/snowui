@@ -24,7 +24,7 @@ public class GUICollapsible extends GUIElement {
 	GUIElement root;
 	GUIElement hidden;
 	
-	boolean collapsed = true;
+	protected boolean collapsed = true;
 	
 	{ this.registerSubElement(collapse_icon); }
 	
