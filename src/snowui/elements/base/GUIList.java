@@ -93,6 +93,13 @@ public class GUIList extends GUIElement implements ElementReceiver {
 		this.should_recalculate_size(true);
 	}	
 	
+	@SuppressWarnings("unchecked")
+	public void clear() {
+		for (GUIElement element : (ArrayList<GUIElement>) elements.clone()) {
+			remove(element);
+		}
+	}	
+	
 	public int length() 			{ return elements.size();     }
 	public GUIElement get(int index) { return elements.get(index); }
 

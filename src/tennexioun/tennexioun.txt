@@ -1,0 +1,3 @@
+Dumping ground for stuff that probably has no right being in the main GUI library, but is useful enough to want to generalize while not being substantial enough to warrant the hassle of making an entire separate project to house it.
+
+The contents of this package will probably eventually be removed, though who knows...

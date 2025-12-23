@@ -1,10 +1,16 @@
 package tennexioun;
 
+import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIList;
 import snowui.elements.extended.GUITextBox;
+import snowui.utility.GUIUtility;
+import tennexioun.DATANavigationBar.Tab;
 import tennexioun.DATANavigationBar.TabGroup;
+import tennexioun.base.GUINAVTab;
+import tennexioun.base.GUINAVTabGroup;
 
 /** A GUIElement that mirrors a DATANavigationBar.<br>
  *  Modifications to the DATANavigationBar are reflected here,
@@ -12,15 +18,54 @@ import tennexioun.DATANavigationBar.TabGroup;
  *  To create, use DATANavigationBar.gui(). */
 public class GUINavigationBar extends GUIElement {
 	
-	GUIList 	tab_groups 	= new GUIList();
-	GUIList 	tabs 		= new GUIList();
+	GUIList 	tab_groups 	= new GUIList().horizontalify().wrap(true);
+	GUIList 	tabs 		= new GUIList().horizontalify().wrap(true);
 	GUITextBox 	uri			= new GUITextBox("");
+	
+	{
+		this.registerSubElement(tab_groups);
+		this.registerSubElement(tabs);
+		this.registerSubElement(uri);
+	}
 	
 	DATANavigationBar linked;
 	
-	public void set_current_tab_and_group(int group_index, int tab_index) {
-		
+	public void set_groups(DATANavigationBar data) {
+		current_group = -1;
+		tab_groups.clear();
+		for (TabGroup group : data.groups) {
+			tab_groups.add(new GUINAVTabGroup(group, data));
+		}
 	}
+	
+	public void set_tabs(TabGroup group) {
+		current_tab = -1;
+		tabs.clear();
+		for (Tab tab : group.tabs) {
+			tabs.add(new GUINAVTab(tab, group));
+		}
+	}
+	
+	int current_group = -1;
+	int current_tab = -1;
+	
+	public void set_current_tab_and_group(int group_index, int tab_index) {
+		if (current_group != group_index && tab_groups.length() > 0) {
+			if (current_group >= 0) tab_groups.get(current_group).set(PredicateKey.SELECTED, false);
+			current_group = group_index;
+			tab_groups.get(current_group).set(PredicateKey.SELECTED, true);
+		}
+		if (current_tab != tab_index && tabs.length() > 0) {
+			if (current_tab >= 0) tabs.get(current_tab).set(PredicateKey.SELECTED, false);
+			current_tab = tab_index;
+			tabs.get(current_tab).set(PredicateKey.SELECTED, true);
+		}
+	}
+
+	public void set_uri(String current_uri) {
+		uri.set_text(current_uri);
+	}
+	
 	
 	protected GUINavigationBar(DATANavigationBar source) {
 		linked = source;
@@ -28,35 +73,25 @@ public class GUINavigationBar extends GUIElement {
 
 	@Override
 	public void recalculateSize(GUIInstance gui) {
-		// TODO Auto-generated method stub
-		
+		this.unpadded_height = tab_groups.height() + tabs.height() + uri.height();
+		this.unpadded_width = GUIUtility.max_width(sub_elements);
 	}
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		// TODO Auto-generated method stub
+		Rectangle b = this.padded_limit_rectangle();
 		
+		int yy = b.top();
+		tab_groups.limit_rectangle(new Rectangle(b.left(), yy, b.right(), yy+tab_groups.height()));
+		    yy += tab_groups.height();
+		    
+		tabs.limit_rectangle(new Rectangle(b.left(), yy, b.right(), yy+tabs.height()));
+		    yy += tabs.height();
+		    
+		uri.limit_rectangle(new Rectangle(b.left(), yy, b.right(), yy+uri.height()));
+		    yy += uri.height();
 	}
 
-	@Override
-	public void draw(GUIInstance gui, int depth) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void set_tabs(TabGroup current_group) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void set_groups(DATANavigationBar dataNavigationBar) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void set_uri(String current_uri) {
-		// TODO Auto-generated method stub
-		
-	}
+	@Override public void draw(GUIInstance gui, int depth) { }
 
 }
