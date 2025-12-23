@@ -94,4 +94,15 @@ public class TXGUINavigationBar extends GUIElement {
 
 	@Override public void draw(GUIInstance gui, int depth) { }
 
+	public void edit_group_name(GUIInstance gui) {
+		current_group().title.select(gui);
+	}
+
+	protected TXGUINAVTabGroup current_group() 	{ return group(current_group); }
+	protected TXGUINAVTabGroup group(int index) { return ((TXGUINAVTabGroup) tab_groups.get(index)); }
+	
+	public void set_group_name(int group_index, String name) {
+		group(group_index).title.text().force_text(name);
+	}
+
 }

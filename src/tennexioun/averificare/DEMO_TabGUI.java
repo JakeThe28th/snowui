@@ -9,6 +9,7 @@ import snowui.coss.enums.Color;
 import snowui.elements.base.GUIText;
 import snowui.elements.extended.GUISplit;
 import tennexioun.TXDATANavigationBar;
+import tennexioun.TXINNavigationBar;
 
 public class DEMO_TabGUI {
 
@@ -53,6 +54,7 @@ public class DEMO_TabGUI {
 		
 		for (int i = 0; i < 500; i++) tabs.group(3).insertTab("fruit never expires");
 
+		TXINNavigationBar inputhandler = tabs.inputhandler(window.input(), gui);
 
 		gui.style().setProperty("text", "base_color", "#FFFFFF");
 		gui.style().setProperty("selected", "outline_margin", "0");
@@ -65,6 +67,7 @@ public class DEMO_TabGUI {
 		while (!window.should_close()) {
 			gui.size(window.width, window.height);
 			gui.render();
+			inputhandler.tick();
 			window.tick();
 		}
 		

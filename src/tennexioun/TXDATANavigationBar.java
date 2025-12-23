@@ -4,10 +4,15 @@ import java.util.ArrayList;
 
 import org.joml.Vector4f;
 
+import frost3d.Input;
+import snowui.GUIInstance;
+
 /** A representation of a navigation bar, with a (string) URI, tabs, and groups.<br>
  *  This object has a corresponding GUIElement which can be retrieved with the gui() method. */
 public class TXDATANavigationBar {
 	
+	ArrayList<Tab> deleted_tabs = new ArrayList<>();
+
 	int tbgc;
 	
 	public class TabGroup {
@@ -27,31 +32,44 @@ public class TXDATANavigationBar {
 		public void	  current_tab(int index) 	{ tab_index = index; syncGUI_Navigation(); setURI(current_tab().tab_uri); }
 		public void	  current_tab(Tab tab) 		{ current_tab(tabs.indexOf(tab)); }
 		public String group_name () 			{ return group_name; }
-		public void   group_name (String name) 	{ group_name = name; syncGUI_Groups(); }
+		public void   group_name (String name) 	{ group_name = name; syncGUI_GroupName(this, name); }
 		// ... Navigation ... //
-		public void	nexttab() {
+		public void	next_tab() {
 			if (tab_index >= tabs.size()-1) return;
 			current_tab(tab_index + 1);
 		}
-		public void	prevtab() {
+		public void	previous_tab() {
 			if (tab_index <= 0) return;
 			current_tab(tab_index - 1);
 		}
 		private void select() {
-			syncGUI_Tabs(); 
-			if (current_tab() != null) setURI(current_tab().tab_uri);
+			if (current_group() == this) {
+				syncGUI_Tabs(); 
+				if (current_tab() != null) setURI(current_tab().tab_uri);
+			}
 		}
 		// ...  Mutability  ... //
-		public void insertTab(String tab_uri) {
-			tabs.add(tab_index, new Tab(tab_uri));
-			syncGUI_Tabs();
-		}
 		public void deleteTab(int tab_index) {
+			deleted_tabs.add(tabs.get(tab_index));
 			tabs.remove(tab_index);
 			syncGUI_Tabs();
+			select();
 		}
 		public void deleteTab() {
 			deleteTab(tab_index);
+		}
+		public void insertTab(Tab tab) {
+			tabs.add(tab_index, tab);
+			syncGUI_Tabs();
+			select();
+		}
+		public void insertTab(String tab_uri) {
+			insertTab(new Tab(tab_uri));
+		}
+		public void restoreTab() {
+			if (deleted_tabs.size() <= 0) return;
+			insertTab(deleted_tabs.getLast());
+			deleted_tabs.removeLast();
 		}
 	}
 	
@@ -62,6 +80,9 @@ public class TXDATANavigationBar {
 		public String uri() 	{ return tab_uri; }
 	}
 	
+	// -- =+  Input  += -- //
+	public TXINNavigationBar inputhandler(Input input, GUIInstance gui) { return new TXINNavigationBar(this, input, gui); }
+
 	// -- =+  GUI  += -- //
 	TXGUINavigationBar gui = new TXGUINavigationBar(this);
 	public TXGUINavigationBar gui() { return gui; }
@@ -78,6 +99,10 @@ public class TXDATANavigationBar {
 	private void syncGUI_Groups() {
 		gui.set_groups(this);
 		syncGUI_Navigation();
+	}
+
+	private void syncGUI_GroupName(TabGroup group, String name) {
+		gui.set_group_name(groups.indexOf(group), name);
 	}
 	
 	private void syncGUI_URI() {
@@ -102,11 +127,11 @@ public class TXDATANavigationBar {
 	public void 	current_uri(String new_uri) { 		 current_uri = new_uri; }
 	
 	// ... Navigation ... //
-	public void	nextgroup() {
+	public void	next_group() {
 		if (group_index >= groups.size()-1) return;
 		current_group(group_index + 1);
 	}
-	public void	prevgroup() {
+	public void	previous_group() {
 		if (group_index <= 0) return;
 		current_group(group_index - 1);
 	}
