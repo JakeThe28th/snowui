@@ -24,15 +24,15 @@ public class TXDATANavigationBar {
 			float sum = r + g + b;
 			color =  new Vector4f(r/sum, g/sum, b/sum, 1);
 		}
-		String 		  group_name		= "Unnamed Group #" + (tbgc++);
+		String 		  name				= "Unnamed Group #" + (tbgc++);
 		ArrayList<Tab> tabs 			= new ArrayList<>();
 		int			  tab_index 		= 0;
 		public Tab	  tab		 (int index)	{ return tabs.get(index); }
 		public Tab 	  current_tab() 			{ return tabs.size() > 0 ? tabs.get(tab_index) : null; }
-		public void	  current_tab(int index) 	{ tab_index = index; syncGUI_Navigation(); setURI(current_tab().tab_uri); }
+		public void	  current_tab(int index) 	{ tab_index = index; syncGUI_Navigation(); setURI(current_tab().uri); }
 		public void	  current_tab(Tab tab) 		{ current_tab(tabs.indexOf(tab)); }
-		public String group_name () 			{ return group_name; }
-		public void   group_name (String name) 	{ group_name = name; syncGUI_GroupName(this, name); }
+		public String name 		 () 			{ return name; }
+		public void   name 		 (String name) 	{ this.name = name; syncGUI_GroupName(this, name); }
 		// ... Navigation ... //
 		public void	next_tab() {
 			if (tab_index >= tabs.size()-1) return;
@@ -45,7 +45,7 @@ public class TXDATANavigationBar {
 		private void select() {
 			if (current_group() == this) {
 				syncGUI_Tabs(); 
-				if (current_tab() != null) setURI(current_tab().tab_uri);
+				if (current_tab() != null) setURI(current_tab().uri);
 			}
 		}
 		// ...  Mutability  ... //
@@ -74,10 +74,10 @@ public class TXDATANavigationBar {
 	}
 	
 	public class Tab {
-		String tab_uri;
+		String uri;
 		// TODO: Icons, custom data, etc.
-		public Tab(String uri) 	{ tab_uri = uri; }
-		public String uri() 	{ return tab_uri; }
+		public Tab(String uri) 	{ this.uri = uri; }
+		public String uri() 	{ return uri; }
 	}
 	
 	// -- =+  Input  += -- //
@@ -86,6 +86,12 @@ public class TXDATANavigationBar {
 	// -- =+  GUI  += -- //
 	TXGUINavigationBar gui = new TXGUINavigationBar(this);
 	public TXGUINavigationBar gui() { return gui; }
+	
+	protected void syncAllGUI() {
+		syncGUI_Groups();
+		syncGUI_Tabs();
+		syncGUI_URI();
+	}
 	
 	private void syncGUI_Navigation() {
 		gui.set_current_tab_and_group(group_index, current_group().tab_index);

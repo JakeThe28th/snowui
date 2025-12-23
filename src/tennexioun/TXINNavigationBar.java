@@ -16,7 +16,7 @@ public class TXINNavigationBar {
 	public String 				new_tab_uri = "snowui://blank";
 	public InsertTabCallback 	insert_tab_cb = null;
 	
-	public TXINNavigationBar(TXDATANavigationBar navigation_bar, Input input, GUIInstance gui) {
+	TXINNavigationBar(TXDATANavigationBar navigation_bar, Input input, GUIInstance gui) {
 		this.input = input;
 		this.navigation_bar = navigation_bar;
 		this.gui = gui;

@@ -1,5 +1,9 @@
 package tennexioun.averificare;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+
 import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
@@ -10,6 +14,7 @@ import snowui.elements.base.GUIText;
 import snowui.elements.extended.GUISplit;
 import tennexioun.TXDATANavigationBar;
 import tennexioun.TXINNavigationBar;
+import tennexioun.TXNavigationBarSerializer;
 
 public class DEMO_TabGUI {
 
@@ -20,14 +25,13 @@ public class DEMO_TabGUI {
 		sheet.setProperty(type, "bottom_margin",	margin);
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		GLState.initializeGLFW();
 		SimpleWindow window = new SimpleWindow(4*300, 3*300, DEMO_TabGUI.class.getCanonicalName());
 		BuiltinShaders.init();
 		
 		GUIInstance 		gui 	= new GUIInstance(window, window.input());
-		TXDATANavigationBar 	tabs 	= new TXDATANavigationBar();
 		GUIText				debug 	= new GUIText("Emptiness") {
 			@Override
 			public void draw(GUIInstance gui, int depth) {
@@ -37,22 +41,15 @@ public class DEMO_TabGUI {
 			}
 		};
 		
+		TXDATANavigationBar tabs;
+		
+		if (new File("tabtest.nbt").exists()) {
+			tabs = TXNavigationBarSerializer.load(Paths.get("tabtest.nbt"));
+		} else {
+			tabs = makeDefaultTabs();
+		}
+		
 		gui.root(new GUISplit(debug, tabs.gui()));
-		
-		tabs.addGroup();
-		tabs.addGroup();
-		tabs.addGroup();
-		tabs.addGroup();
-
-		tabs.current_group().insertTab("Test URI Add! 1");
-		tabs.current_group().insertTab("Test URI Add! 2");
-		
-		tabs.group(2).insertTab("By the way everyone, the");
-		tabs.group(2).insertTab("reason you can see me right now");
-		tabs.group(2).insertTab("is because i'm projecting myself with");
-		tabs.group(2).insertTab("special technolo");
-		
-		for (int i = 0; i < 500; i++) tabs.group(3).insertTab("fruit never expires");
 
 		TXINNavigationBar inputhandler = tabs.inputhandler(window.input(), gui);
 
@@ -75,6 +72,24 @@ public class DEMO_TabGUI {
 
 		GLState.endGLFW();
 		
+		TXNavigationBarSerializer.save(tabs, Paths.get("tabtest.nbt"));
+
+	}
+
+	private static TXDATANavigationBar makeDefaultTabs() {
+		TXDATANavigationBar tabs = new TXDATANavigationBar();
+		tabs.addGroup();
+		tabs.addGroup();
+		tabs.addGroup();
+		tabs.addGroup();
+		tabs.current_group().insertTab("Test URI Add! 1");
+		tabs.current_group().insertTab("Test URI Add! 2");
+		tabs.group(2).insertTab("By the way everyone, the");
+		tabs.group(2).insertTab("reason you can see me right now");
+		tabs.group(2).insertTab("is because i'm projecting myself with");
+		tabs.group(2).insertTab("special technolo");
+		for (int i = 0; i < 500; i++) tabs.group(3).insertTab("fruit never expires");
+		return tabs;
 	}
 
 }

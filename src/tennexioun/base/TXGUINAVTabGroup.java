@@ -10,7 +10,7 @@ public class TXGUINAVTabGroup extends TXGUI_NamedUnit {
 	TabGroup group;
 	TXDATANavigationBar nav;
 	public TXGUINAVTabGroup(TabGroup g, TXDATANavigationBar n) {
-		super(g.group_name());
+		super(g.name());
 		super.color = g.color;
 		group = g;
 		nav = n;
@@ -33,6 +33,6 @@ public class TXGUINAVTabGroup extends TXGUI_NamedUnit {
 	}
 	@Override
 	public void onFinishEditingTitle(String old_text, String new_text) {
-		group.group_name(new_text);
+		group.name(new_text);
 	}
 }
