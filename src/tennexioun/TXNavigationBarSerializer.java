@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import disaethia.io.nbt.NBTCompound;
 import disaethia.io.nbt.NBTList;
 import disaethia.io.nbt.NBTNamedTag;
-import frost3d.utility.Log;
 import frost3d.utility.Utility;
 import tennexioun.TXDATANavigationBar.Tab;
 import tennexioun.TXDATANavigationBar.TabGroup;
