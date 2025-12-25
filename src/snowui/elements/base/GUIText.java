@@ -15,6 +15,8 @@ public class GUIText extends GUIElement {
 		this.text = new_text;
 		this.should_recalculate_size(true);
 	}
+
+	public String text() { return text; }
 	
 	public GUIText(String text) {
 		this.text = text;
