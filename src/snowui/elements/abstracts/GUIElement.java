@@ -496,5 +496,6 @@ public abstract class GUIElement {
 	
 	public Rectangle	drag_rectangle()			{ return hover_rectangle(); }
 	public boolean 		can_drop(GUIInstance gui, ElementReceiver target) 	{ return true; }
+	public void 		onDrop  (GUIInstance gui, ElementReceiver target)   { }
 	
 }

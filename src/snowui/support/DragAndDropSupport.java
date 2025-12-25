@@ -72,6 +72,7 @@ public class DragAndDropSupport {
 							((ElementReceiver) held.parent()).remove(held);
 						}
 						target.drop(g, held);
+						held.onDrop(g, target);
 						held = null;
 					}
 				} else {
