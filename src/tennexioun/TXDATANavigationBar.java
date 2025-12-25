@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.joml.Vector4f;
 
+import disaethia.io.nbt.NBTCompound;
 import frost3d.Input;
 import snowui.GUIInstance;
 
@@ -50,6 +51,7 @@ public class TXDATANavigationBar {
 		}
 		// ...  Mutability  ... //
 		public void deleteTab(int tab_index) {
+			tabs.get(tab_index).ephemeral_data = null; // so it gets GC'd
 			deleted_tabs.add(tabs.get(tab_index));
 			tabs.remove(tab_index);
 			syncGUI_Tabs();
@@ -75,6 +77,8 @@ public class TXDATANavigationBar {
 	
 	public class Tab {
 		String uri;
+		public NBTCompound persistent_data = new NBTCompound();
+		public Object ephemeral_data = null;
 		// TODO: Icons, custom data, etc.
 		public Tab(String uri) 	{ this.uri = uri; }
 		public String uri() 	{ return uri; }

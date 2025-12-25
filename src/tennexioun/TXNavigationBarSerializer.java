@@ -22,7 +22,7 @@ public class TXNavigationBarSerializer {
 				NBTCompound ser_tab = new NBTCompound();
 				ser_tab.put("uri", tab.uri);
 				ser_tablist.add(ser_tab);
-				
+				ser_tab.put("persistent_data", tab.persistent_data);
 				// TODO: serialize custom data, also.
 				
 			}
@@ -75,6 +75,9 @@ public class TXNavigationBarSerializer {
 				String uri = ser_tab.get("uri").getString().get();
 				Tab des_tab = bar.new Tab(uri);
 				des_group.tabs.add(des_tab);
+				
+				value = ser_tab.get("persistent_data");
+				if (value != null) des_tab.persistent_data = value.getCompound();
 				
 				// TODO: deserialize custom data, also.
 			}
