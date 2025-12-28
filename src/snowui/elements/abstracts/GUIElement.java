@@ -155,7 +155,7 @@ public abstract class GUIElement {
 	public void set_aligned_limit_rectangle() {
 		aligned_limit_rectangle = Margin.calculate(
 				style(), 
-				padded_limit_rectangle(), 
+				limit_rectangle(), 
 				unpadded_width, 
 				unpadded_height
 			);
@@ -461,7 +461,7 @@ public abstract class GUIElement {
 				recalculateSize(gui);
 				should_update(true);
 				should_recalculate_size = false;
-				if (this.aligned_limit_rectangle != null) {
+				if (this.aligned_limit_rectangle != null && limit_rectangle != null) {
 					set_aligned_limit_rectangle();
 				}
 			}

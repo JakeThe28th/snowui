@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 
 import frost3d.Input;
 import snowui.GUIInstance;
+import snowui.elements.extended.GUITextBox;
 
 public class TXINNavigationBar {
 
@@ -23,6 +24,7 @@ public class TXINNavigationBar {
 	}
 	
 	public void tick() {
+		if (GUITextBox.selected != null) return;
 		// Tab bar controls
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 			// Tab group navigation

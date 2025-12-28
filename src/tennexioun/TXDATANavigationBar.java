@@ -148,8 +148,10 @@ public class TXDATANavigationBar {
 
 	// ...  Mutability  ... //
 	public void setURI(String uri) {
-		onURIChange(current_uri, uri);
-		current_uri = uri;
+		if (!uri.equals(current_uri)) {
+			onURIChange(current_uri, uri);
+			current_uri = uri;
+		}
 		syncGUI_URI();
 	}
 	

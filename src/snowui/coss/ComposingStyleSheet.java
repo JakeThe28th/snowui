@@ -79,7 +79,6 @@ public class ComposingStyleSheet {
 
 
 		sheet.setProperty("default", "outline_size", 			"0");
-		sheet.setProperty("default", "font_size", 				"8");
 		sheet.setProperty("default", "size", 					"16"); 		// Symbol size, scroll bar size, etc
 		
 		sheet.setProperty("default", "outline_margin", 			"3");

@@ -1,6 +1,7 @@
 package tennexioun;
 
 import frost3d.enums.IconType;
+import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
@@ -12,6 +13,32 @@ import snowui.elements.interfaces.ElementReceiver;
 
 public abstract class TXGUIDirectory extends GUICollapsible implements ElementReceiver {
 	
+	class ItemNameplate extends GUIElement {
+		GUIText name;
+		public GUIText text() { return name; }
+		public ItemNameplate(String name) {
+			this.name = new GUIText(name);
+			this.registerSubElement(this.name);
+			this.name.set(PredicateKey.DISABLED, true);
+		}
+		@Override public void recalculateSize(GUIInstance gui) {
+			this.unpadded_height = name.height();
+			this.unpadded_width = name.width();
+		}
+		@Override public void updateDrawInfo(GUIInstance gui) {
+			Rectangle b = aligned_limit_rectangle();
+			this.hover_rectangle(b);
+			name.limit_rectangle(b);
+		}
+		@Override public void onSingleClick(GUIInstance gui) { onSingleClickName(gui); }
+		@Override public void draw(GUIInstance gui, int depth) { 
+			if (style().base_color() != gui.style().getProperty("default", "base_color", null)) {
+				gui.canvas().color(style().base_color().color());
+				gui.canvas().rect(hover_rectangle().expand(2), depth);
+			}
+		}
+	}
+	
 	private   boolean 			populated 	 = false;
 	private   GUIList 			sub_items 	 = new GUIList();	
 	private   boolean 			is_directory = true;
@@ -20,9 +47,7 @@ public abstract class TXGUIDirectory extends GUICollapsible implements ElementRe
 	protected TXGUIDirectory 	parent;
 	
 	public TXGUIDirectory(String name) {
-		root(new GUIText(name) {
-			@Override public void onSingleClick(GUIInstance gui) { onSingleClickName(gui); }
-		});
+		root(new ItemNameplate(name));
 		this.hidden(sub_items);
 		draggable(true);
 	}
@@ -45,6 +70,8 @@ public abstract class TXGUIDirectory extends GUICollapsible implements ElementRe
 			this.collapse_icon.set(PredicateKey.DISABLED, true);
 		}
 	}
+	
+	public boolean is_directory() { return is_directory; }
 	
 	public 		abstract void 		onSingleClickName(GUIInstance gui);
 	protected 	abstract void		populate();

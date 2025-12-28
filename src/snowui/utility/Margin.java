@@ -10,7 +10,7 @@ import frost3d.utility.Utility;
 public class Margin {
 		
 	public static Rectangle calculate(CachedProperties info, Rectangle bounds, int target_width, int target_height) {
-
+		
 		int left_limit 		= bounds.left();
 		int top_limit 		= bounds.top();
 		int right_limit 	= bounds.right();
@@ -63,7 +63,7 @@ public class Margin {
 			int left  = left_limit + info.left_margin().integer() + x_offset;
 			int right = 			 left  + internal_width;
 
-		/* Vertical Alignment; What We Just Did But top is Top and bottom is Bottom. */
+		/* Vertical Alignment; What We Just Did But Left is Top and Right is Bottom. */
 			int available_bounding_height = info.unpadh(bottom_limit-top_limit);
 			
 			// Assume top-aligned by default.

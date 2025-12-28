@@ -7,6 +7,7 @@ import tennexioun.TXDATANavigationBar.TabGroup;
 
 /** The visual element of a tab group. */
 public class TXGUINAVTabGroup extends TXGUI_NamedUnit {
+	{ identifier("tabgroup"); }
 	TabGroup group;
 	TXDATANavigationBar nav;
 	public TXGUINAVTabGroup(TabGroup g, TXDATANavigationBar n) {

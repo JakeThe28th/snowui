@@ -40,7 +40,10 @@ public class TXNavigationBarSerializer {
 	}
 	
 	public static TXDATANavigationBar deserialize(NBTCompound serialized) {
-		TXDATANavigationBar bar = new TXDATANavigationBar();
+		return deserialize(serialized, new TXDATANavigationBar());
+	}
+	
+	public static TXDATANavigationBar deserialize(NBTCompound serialized, TXDATANavigationBar bar) {
 		
 		NBTNamedTag value;
 		

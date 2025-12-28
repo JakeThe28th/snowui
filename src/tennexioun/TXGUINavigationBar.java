@@ -20,12 +20,18 @@ public class TXGUINavigationBar extends GUIElement {
 	
 	GUIList 	tab_groups 	= new GUIList().horizontalify().wrap(true);
 	GUIList 	tabs 		= new GUIList().horizontalify().wrap(true);
-	GUITextBox 	uri			= new GUITextBox("");
+	GUITextBox 	uri			= new GUITextBox("") {
+		@Override
+		public void onFinishEditing(String old_text, String new_text) {
+			linked.setURI(new_text);
+		}
+	};
 	
 	{
 		this.registerSubElement(tab_groups);
 		this.registerSubElement(tabs);
 		this.registerSubElement(uri);
+		uri.finish_on_enter(true);
 	}
 	
 	TXDATANavigationBar linked;
@@ -80,6 +86,7 @@ public class TXGUINavigationBar extends GUIElement {
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
 		Rectangle b = this.padded_limit_rectangle();
+		this.hover_rectangle(b);
 		
 		int yy = b.top();
 		tab_groups.limit_rectangle(new Rectangle(b.left(), yy, b.right(), yy+tab_groups.height()));

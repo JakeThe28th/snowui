@@ -406,6 +406,7 @@ public class GUITextBox extends GUIElement {
 
 	@Override
 	public boolean updateState(GUIInstance gui) {
+		if (hover_rectangle() != null)
 		if (gui.primary_click_released() && !hover_rectangle().contains(gui.mouspos())) {
 			deselect();
 		}
@@ -414,7 +415,8 @@ public class GUITextBox extends GUIElement {
 	
 	public void deselect() {
 		set(PredicateKey.SELECTED, false);
-		if (is_selected()) selected = null;
+		if (!is_selected()) return;
+		selected = null;
 		onFinishEditing(text.preselect_content, text.content);
 	}
 
