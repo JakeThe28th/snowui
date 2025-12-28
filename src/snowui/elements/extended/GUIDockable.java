@@ -71,15 +71,23 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		Rectangle b = this.aligned_limit_rectangle();
 		float edge = 1f/3f;
 		Rectangle left_side 	= b.internal(0, 		0, 		  edge, 	1);
-		Rectangle middle 		= b.internal(	 edge, 	0, 		1-edge, 	1);
+		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
 		Rectangle right_side 	= b.internal(1 - edge, 	0, 		1, 			1);
+		Rectangle top_side 		= b.internal(edge, 		0, 		1-edge, 	edge);
+		Rectangle bottom_side 	= b.internal(edge, 		1-edge, 1-edge, 	1);
 		if (left_side	.contains(gui.mouspos())) 	{ 
 			
 		}
 		if (middle		.contains(gui.mouspos())) 	{ 
-			
+
 		}
 		if (right_side	.contains(gui.mouspos())) 	{ 
+			
+		}
+		if (top_side	.contains(gui.mouspos())) 	{ 
+			
+		}
+		if (bottom_side	.contains(gui.mouspos())) 	{ 
 			
 		}
 	}
@@ -89,12 +97,16 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		Rectangle b = this.aligned_limit_rectangle();
 		float edge = 1f/3f;
 		Rectangle left_side 	= b.internal(0, 		0, 		  edge, 	1);
-		Rectangle middle 		= b.internal(	 edge, 	0, 		1-edge, 	1);
+		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
 		Rectangle right_side 	= b.internal(1 - edge, 	0, 		1, 			1);
+		Rectangle top_side 		= b.internal(edge, 		0, 		1-edge, 	edge);
+		Rectangle bottom_side 	= b.internal(edge, 		1-edge, 1-edge, 	1);
 		Rectangle draw = null;
 		if (left_side	.contains(gui.mouspos())) 	{ draw = left_side	; }
 		if (middle		.contains(gui.mouspos())) 	{ draw = middle		; }
 		if (right_side	.contains(gui.mouspos())) 	{ draw = right_side	; }
+		if (top_side	.contains(gui.mouspos())) 	{ draw = top_side	; }
+		if (bottom_side	.contains(gui.mouspos())) 	{ draw = bottom_side; }
 		if (draw != null) {
 			gui.canvas().color(style().preview_color().color());
 			gui.canvas().rect(draw, gui.PREVIEW_DEPTH());
