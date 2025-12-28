@@ -82,7 +82,7 @@ public abstract class GUIElement {
 			e.force_update_all();
 		}
 	}
-	
+
 	private boolean should_update 			= true;
 	private boolean should_recalculate_size = true;
 	private boolean should_cache_style 		= true;
@@ -346,7 +346,7 @@ public abstract class GUIElement {
 	public 	long last_element_update_elapsed_time() { return System.currentTimeMillis() - last_element_update_time; }
 
 	private final boolean triggerUpdateState(GUIInstance gui, boolean overridden) {
-		if (gui.hasInput() && !get(PredicateKey.DISABLED)) {	
+		if (gui.hasInput()) {	
 			// Reset all of the properties that this method touches
 			set(PredicateKey.BOUNDED, 	false);
 			set(PredicateKey.HOVERED, 	false);
@@ -370,7 +370,15 @@ public abstract class GUIElement {
 			
 			// ... But, in normal circumstances, 'overridden' should be 'false' at this point.
 			
-			boolean sub_overridden = overridden | preUpdateState(gui);
+			// ... (dec.28.2025) Also, if an element is disabled, it and all sub-elements should
+			// still set these states to false, and update 'BOUNDED' as usual, so if 'disabled'
+			// is true, overridden is also set.
+			
+			boolean disabled = get(PredicateKey.DISABLED);
+			
+			boolean sub_overridden = overridden || disabled;
+			
+			if (!sub_overridden) sub_overridden = sub_overridden | preUpdateState(gui);
 			for (GUIElement e : sub_elements) { overridden = overridden | e.triggerUpdateState(gui, sub_overridden); }
 
 			Rectangle _hover_rectangle = hover_rectangle;
@@ -399,6 +407,7 @@ public abstract class GUIElement {
 			
 			overridden = overridden || sub_overridden;
 			
+			if (disabled) return false;
 			return overridden;
 		} else {
 			if (!is_on_screen()) return false;
