@@ -53,8 +53,11 @@ public class DragAndDropSupport {
 		// (...probably not ideal, but making a copy isn't practical,
 		//     and this doesn't seem to affect performance *too* much, so...)
 		Rectangle limit = held.limit_rectangle();
+		Rectangle scissor = held.scissor_rectangle();
+		held.scissor_rectangle_recursive(g.canvas().size());
 		GUIElement.tickFloating(g, held, g.mx(), g.my(), 600);
 		held.limit_rectangle(limit);
+		held.scissor_rectangle_recursive(scissor);
 		
 		// Set down
 
