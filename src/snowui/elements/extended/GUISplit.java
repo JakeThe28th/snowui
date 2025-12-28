@@ -60,6 +60,7 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
 		Rectangle b = limit_rectangle();
+		this.hover_rectangle(b);
 		
 		if (vertical) {
 			first.limit_rectangle(b.internal(0, 0, 1, split));
