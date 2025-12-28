@@ -162,11 +162,6 @@ public class GUIInstance {
 		if (input.cursor() != current_cursor) input.cursor(current_cursor);
 	}
 	
-	public GUIElement current_hovered_element() {
-		// TODO: work with windows/menus etc
-		return GUIUtility.getHoveredElement(root);
-	}
-	
 	public ArrayList<GUIElement> current_hovered_element_tree() {
 		// TODO: work with windows/menus etc
 		return GUIUtility.getHoveredElementTree(root);

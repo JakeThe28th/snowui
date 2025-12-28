@@ -51,7 +51,7 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 
 	@Override public void draw(GUIInstance gui, int depth) {
 		// gui.canvas().color(style().base_color().color());
-		gui.canvas().color(Color.RED.val());
+		gui.canvas().color(Color.AQUA.val());
 		gui.canvas().rect(this.titlebar.limit_rectangle(), depth);
 		gui.canvas().color(Color.GOLD.val());
 		gui.canvas().rect(this.root.limit_rectangle(), depth);

@@ -309,16 +309,15 @@ public class GUIDebugger {
 		
 		// State
 		
-		ArrayList<String> state = new ArrayList<String>();
 		GUIElement hovered = GUIUtility.getHoveredElement(e);
-		for (PredicateKey key : hovered.state().keySet()) {
-			state.add(key.toString() + " = " + hovered.state().get(key));
-		}
 		
 		// Draw a red flashing rectangle over the currently hovered element 
 		if (show_hover_overlay)
 		if (hovered.state().get(PredicateKey.HOVERED)) {
 			canvas.color(new Vector4f(1, 0, 0, flash_opacity()));
+			canvas.rect(hovered.hover_rectangle(), 1000);
+		} else if (hovered.state().get(PredicateKey.BOUNDED)) {
+			canvas.color(new Vector4f(1, 0, 1, flash_opacity()));
 			canvas.rect(hovered.hover_rectangle(), 1000);
 		}
 		
@@ -360,6 +359,12 @@ public class GUIDebugger {
 		}
 
 		if (current_debug_state == DebugState.UPDATE_TIMES) {
+			// State
+			ArrayList<String> state = new ArrayList<String>();
+			for (PredicateKey key : hovered.state().keySet()) {
+				state.add(key.toString() + " = " + hovered.state().get(key));
+			}
+			// Update times
 			NumberFormat f = DecimalFormat.getInstance();
 			f.setMinimumIntegerDigits(3);
 			f.setMinimumFractionDigits(3);
@@ -367,6 +372,8 @@ public class GUIDebugger {
 			state.add("§`Last draw update: " + f.format(hovered.last_draw_update_elapsed_time()/1000f) + " seconds ago");
 			state.add("§`Last state update: " + f.format(hovered.last_state_update_elapsed_time()/1000f) + " seconds ago");
 			state.add("§`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
+			// Misc
+			state.add("§>Is on screen: " + e.is_on_screen());
 			state.add("Render Queue Items: " + ((SimpleCanvas) canvas).queue_size());
 			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, state);
 		}
