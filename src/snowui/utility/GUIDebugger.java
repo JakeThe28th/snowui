@@ -5,13 +5,14 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_ALT;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
 import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.interfaces.F3DCanvas;
-import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
@@ -406,6 +407,10 @@ public class GUIDebugger {
 	
 	private static ArrayList<String> getElementTreeText(GUIElement root, String pre) {
 		ArrayList<String> result = new ArrayList<String>();
+		if (root == null) {
+			result.add("§c" + pre + "snowui.??? NULL");
+			return result;
+		}
 		String color = "§h";
 		if (root.get(PredicateKey.BOUNDED)) color = "";
 		if (root instanceof GUISplit) color = "§c";
@@ -413,6 +418,20 @@ public class GUIDebugger {
 		if (root.get(PredicateKey.DISABLED)) color = "§7";
 		if (root.get(PredicateKey.DISABLED) && root.get(PredicateKey.BOUNDED)) color = "§9";
 		result.add(color + pre + root.getClass().getName());
+		boolean special = false;
+		
+		if (root instanceof GUISplit) {
+			ArrayList<String> array;
+			array = getElementTreeText(((GUISplit) root).first(), pre + "   ");
+			array.set(0, array.get(0).replaceAll(Pattern.quote("snowui"), "FIRST: snowui"));
+			result.addAll(array);
+			array = getElementTreeText(((GUISplit) root).second(), pre + "   ");
+			array.set(0, array.get(0).replaceAll(Pattern.quote("snowui"), "SECOND: snowui"));
+			result.addAll(array);
+			special = true;
+		}
+		
+		if (!special) 
 		for (GUIElement e : root.sub_elements()) {
 			result.addAll(getElementTreeText(e, pre + "   "));
 		}
