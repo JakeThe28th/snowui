@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.joml.Vector2i;
 
 import frost3d.interfaces.F3DCanvas;
+import frost3d.utility.Utility;
 import snowui.coss.enums.Color;
 
 public class DrawUtility {
@@ -46,6 +47,12 @@ public class DrawUtility {
 			canvas.color(Color.WHITE.val());
 			if (str.startsWith("§`")) canvas.color(Color.DESYELLOW.val());
 			if (str.startsWith("§>")) canvas.color(Color.DESBLUE.val());
+			if (str.startsWith("§c")) canvas.color(Utility.fromHex("#FF5555"));
+			if (str.startsWith("§b")) canvas.color(Utility.fromHex("#55FFFF"));
+			if (str.startsWith("§7")) canvas.color(Utility.fromHex("#AAAAAA"));
+			if (str.startsWith("§9")) canvas.color(Utility.fromHex("#5555FF"));
+			if (str.startsWith("§h")) canvas.color(Utility.fromHex("#E3D4D1"));
+			if (str.startsWith("§f")) canvas.color(Utility.fromHex("#FFFFFF"));
 			if (str.startsWith("§")) str = str.substring(2);
 			canvas.text(xx+m, yy+m, depth+1, str);
 			yy += size.y + m*3;

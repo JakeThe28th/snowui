@@ -11,10 +11,12 @@ import org.lwjgl.glfw.GLFW;
 import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.interfaces.F3DCanvas;
+import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
+import snowui.elements.extended.GUISplit;
 import snowui.elements.interfaces.ElementReceiver;
 import snowui.support.DragAndDropSupport;
 
@@ -200,7 +202,8 @@ public class GUIDebugger {
 	static enum DebugState {
 		FRAMETIME_CHART,
 		UPDATE_TIMES,
-		DRAG_AND_DROP
+		DRAG_AND_DROP,
+		ELEMENT_TREE
 	}
 	
 	static boolean show_hover_overlay = true;
@@ -225,8 +228,10 @@ public class GUIDebugger {
 	public static boolean show_debug = false;
 	static boolean used_modifier = false;
 	
+	static int font_size = 18;
+	
 	public static void drawTree(GUIInstance gui, GUIElement e, Input input) {
-		
+				
 		if (input.keyReleased(GLFW_KEY_LEFT_ALT) && !used_modifier) {
 			show_debug = !show_debug;
 		}
@@ -254,6 +259,10 @@ public class GUIDebugger {
 			}
 			if (input.keyPressed(GLFW.GLFW_KEY_3)) {
 				current_debug_state = DebugState.values()[2];
+				used_modifier = true;
+			}
+			if (input.keyPressed(GLFW.GLFW_KEY_4)) {
+				current_debug_state = DebugState.values()[3];
 				used_modifier = true;
 			}
 			if (current_debug_state == DebugState.FRAMETIME_CHART) {
@@ -307,12 +316,14 @@ public class GUIDebugger {
 		
 		F3DCanvas canvas = gui.canvas();
 		
+		canvas.textrenderer().font_size(font_size);
+
 		// State
 		
 		GUIElement hovered = GUIUtility.getHoveredElement(e);
 		
 		// Draw a red flashing rectangle over the currently hovered element 
-		if (show_hover_overlay)
+		if (show_hover_overlay && input.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL))
 		if (hovered.state().get(PredicateKey.HOVERED)) {
 			canvas.color(new Vector4f(1, 0, 0, flash_opacity()));
 			canvas.rect(hovered.hover_rectangle(), 1000);
@@ -378,6 +389,12 @@ public class GUIDebugger {
 			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, state);
 		}
 		
+		if (current_debug_state == DebugState.ELEMENT_TREE) {
+			canvas.textrenderer().font_size(20);
+			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(gui.root(), ""));
+			canvas.textrenderer().font_size(font_size);
+		}
+		
 		// Hover tree
 		ArrayList<String> elements = new ArrayList<String>();
 		add(elements, e);
@@ -385,6 +402,21 @@ public class GUIDebugger {
 		
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(9, "Draw (Debugger)");
 		
+	}
+	
+	private static ArrayList<String> getElementTreeText(GUIElement root, String pre) {
+		ArrayList<String> result = new ArrayList<String>();
+		String color = "§h";
+		if (root.get(PredicateKey.BOUNDED)) color = "";
+		if (root instanceof GUISplit) color = "§c";
+		if (root.get(PredicateKey.HOVERED)) color = "§b";
+		if (root.get(PredicateKey.DISABLED)) color = "§7";
+		if (root.get(PredicateKey.DISABLED) && root.get(PredicateKey.BOUNDED)) color = "§9";
+		result.add(color + pre + root.getClass().getName());
+		for (GUIElement e : root.sub_elements()) {
+			result.addAll(getElementTreeText(e, pre + "   "));
+		}
+		return result;
 	}
 
 	private static float flash_opacity() {
