@@ -3,6 +3,7 @@ package snowui.elements.meta;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.interfaces.SubElementReplaceable;
+import snowui.elements.interfaces.components.SubElementReplaceQueue;
 
 public class GUIRootContainer extends GUIElement implements SubElementReplaceable {
 	
@@ -11,6 +12,7 @@ public class GUIRootContainer extends GUIElement implements SubElementReplaceabl
 	public void root(GUIElement element) {
 		if (root != null) this.removeSubElement(root);
 		root = element;
+		if (root == null) return;
 		this.registerSubElement(element);
 	}
 	
@@ -21,7 +23,7 @@ public class GUIRootContainer extends GUIElement implements SubElementReplaceabl
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		root.limit_rectangle(this.limit_rectangle());
+		if (root != null) root.limit_rectangle(this.limit_rectangle());
 		this.hover_rectangle(limit_rectangle());
 	}
 	
@@ -30,6 +32,13 @@ public class GUIRootContainer extends GUIElement implements SubElementReplaceabl
 		if (root == original) root(replacement);
 		this.should_update(true);
 	}
-
+	
+	@Override
+	public void tickAnimation(GUIInstance gui) {
+		replace_queue.dequeue(this);
+	}
+	
+	SubElementReplaceQueue replace_queue = new SubElementReplaceQueue();
+	@Override public SubElementReplaceQueue queue() { return replace_queue; }
 
 }

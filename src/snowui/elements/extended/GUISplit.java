@@ -5,6 +5,7 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.interfaces.SubElementReplaceable;
+import snowui.elements.interfaces.components.SubElementReplaceQueue;
 
 public class GUISplit extends GUIElement implements SubElementReplaceable {
 
@@ -29,33 +30,41 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 	float split = 0.5f;
 	boolean vertical = false;
 	
-	public void verticalify() {
+	public GUISplit verticalify() {
 		if (!vertical) {
 			this.should_update(true);
 		}
 		vertical = true;
+		return this;
 	}
 	
-	public void horizontalify() {
+	public GUISplit horizontalify() {
 		if (vertical) {
 			this.should_update(true);
 		}
 		vertical = false;
+		return this;
 	}
 	
 	public GUISplit first(GUIElement e) {
 		if (first != null) this.removeSubElement(first);
 		first = e;
+		if (e == null) return this;
 		this.registerSubElement(e);
 		return this;
 	}
+	
+	public GUIElement first() { return first; }
 
 	public GUISplit second(GUIElement e) {
 		if (second != null) this.removeSubElement(second);
 		second = e;
+		if (e == null) return this;
 		this.registerSubElement(e);
 		return this;
 	}
+	
+	public GUIElement second() { return second; }
 	
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
@@ -75,12 +84,6 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 	}
 
 	@Override public void draw(GUIInstance gui, int depth) { }
-
-	@Override
-	public void replace(GUIElement original, GUIElement replacement) {
-		if (first == original) first(replacement);
-		if (second == original) second(replacement);
-	}
 
 	boolean can_drag = false;
 	boolean dragging = false;
@@ -110,12 +113,23 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 	}
 	
 	@Override
+	public void replace(GUIElement original, GUIElement replacement) {
+		if (first == original) first(replacement);
+		if (second == original) second(replacement);
+		this.should_update(true);
+	}
+
+	SubElementReplaceQueue replace_queue = new SubElementReplaceQueue();
+	@Override public SubElementReplaceQueue queue() { return replace_queue; }
+	
+	@Override
 	public void tickAnimation(GUIInstance gui) {
 		if (		   !gui.primary_click_down()) 		dragging = false;
 		if (can_drag && gui.primary_click_pressed()) 	dragging = true;
 		if (can_drag || dragging) if ( vertical) 		setcursor(gui, CursorType.RESIZE_NS_CURSOR);
 		if (can_drag || dragging) if (!vertical) 		setcursor(gui, CursorType.RESIZE_EW_CURSOR);
 		if (			dragging) 						set_amount_to_mouse(gui);
+		replace_queue.dequeue(this);
 	}
 	
 	private void setcursor(GUIInstance gui, CursorType cursor) {
