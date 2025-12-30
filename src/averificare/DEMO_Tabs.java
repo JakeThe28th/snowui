@@ -8,7 +8,7 @@ import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIScrollable;
 import snowui.elements.base.GUISlider;
 import snowui.elements.base.GUIText;
-import snowui.elements.extended.GUITabList;
+import snowui.elements.docking.GUITabList;
 
 public class DEMO_Tabs {
 

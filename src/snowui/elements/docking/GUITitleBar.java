@@ -1,4 +1,4 @@
-package snowui.elements.extended;
+package snowui.elements.docking;
 
 import frost3d.enums.IconType;
 import frost3d.utility.Rectangle;

@@ -4,7 +4,7 @@ import org.lwjgl.glfw.GLFW;
 
 import frost3d.Input;
 import snowui.GUIInstance;
-import snowui.elements.extended.GUITextBox;
+import snowui.elements.docking.GUITextBox;
 
 public class TXINNavigationBar {
 

@@ -17,7 +17,7 @@ import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
-import snowui.elements.extended.GUISplit;
+import snowui.elements.docking.GUISplit;
 import snowui.elements.interfaces.ElementReceiver;
 import snowui.support.DragAndDropSupport;
 

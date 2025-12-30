@@ -11,7 +11,7 @@ import snowui.GUIInstance;
 import snowui.coss.ComposingStyleSheet;
 import snowui.coss.enums.Color;
 import snowui.elements.base.GUIText;
-import snowui.elements.extended.GUISplit;
+import snowui.elements.docking.GUISplit;
 import tennexioun.TXDATANavigationBar;
 import tennexioun.TXINNavigationBar;
 import tennexioun.TXNavigationBarSerializer;

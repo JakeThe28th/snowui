@@ -4,7 +4,7 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
-import snowui.elements.extended.GUIDockable;
+import snowui.elements.docking.GUIDockable;
 
 public class DEMO_DockWindow {
 

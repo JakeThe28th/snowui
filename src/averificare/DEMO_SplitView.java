@@ -4,8 +4,8 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
-import snowui.elements.extended.GUIDockable;
-import snowui.elements.extended.GUISplit;
+import snowui.elements.docking.GUIDockable;
+import snowui.elements.docking.GUISplit;
 
 public class DEMO_SplitView {
 

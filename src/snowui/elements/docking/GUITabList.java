@@ -1,4 +1,4 @@
-package snowui.elements.extended;
+package snowui.elements.docking;
 
 import java.util.ArrayList;
 
