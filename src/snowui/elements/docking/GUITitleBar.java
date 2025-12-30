@@ -32,7 +32,7 @@ public class GUITitleBar extends GUIElement {
 		Rectangle b = aligned_limit_rectangle(); 
 		icon.limit_rectangle(new Rectangle(b.left(), b.top(), b.left() + icon.width(), b.bottom()));
 		title.limit_rectangle(new Rectangle(b.left() + icon.width(), b.top(), b.right(), b.bottom()));
-		this.hover_rectangle(b);
+		this.hover_rectangle(this.limit_rectangle());
 	}
 	
 	@Override public void draw(GUIInstance gui, int depth) { }
