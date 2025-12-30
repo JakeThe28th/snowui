@@ -7,6 +7,7 @@ import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
+import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIText;
 import snowui.elements.interfaces.ElementReceiver;
 import snowui.elements.interfaces.SubElementReplaceable;
@@ -29,6 +30,11 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		titlebar.title.text(title);
 	}
 
+	public GUIDockable(String title, GUIElement root) {
+		this(title);
+		root(root);
+	}
+	
 	public void root(GUIElement root) {
 		if (this.root != null) this.removeSubElement(this.root);
 		this.registerSubElement(root);
@@ -94,6 +100,7 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		} else {
 			if (original_parent != null) original_parent.replace(temporary_replacement, null);
 		}
+		this.force_update_all();
 	}
 
 	float edge = 1f/4f;
