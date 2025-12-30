@@ -94,6 +94,9 @@ public class ComposingStyleSheet {
 
 		// -- Built-in types -- //
 		
+		sheet.setProperty("centered", "horizontal_alignment",		"middle");
+		sheet.setProperty("centered", "vertical_alignment", 		"middle");
+		
 		sheet.setProperty("down", 	  "base_color", 				"BASIC_PANEL_DOWN");
 		
 		sheet.setProperty("hover", 	  "base_color", 				"BASIC_PANEL_HOVER");

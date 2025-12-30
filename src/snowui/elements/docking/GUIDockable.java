@@ -68,7 +68,11 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	}
 	
 	SubElementReplaceable original_parent;
-	GUIElement temporary_replacement = new GUIText("DEBUG");;
+	GUIElement temporary_replacement = new GUIText("(Drag docker here to return)");
+	
+	{
+		temporary_replacement.identifier("centered");
+	}
 	
 	@Override
 	public void onDragStart(GUIInstance gui) {
