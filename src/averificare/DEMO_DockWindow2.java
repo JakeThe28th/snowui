@@ -3,7 +3,9 @@ package averificare;
 import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
+import frost3d.utility.Log;
 import snowui.GUIInstance;
+import snowui.elements.abstracts.GUIElement;
 import snowui.elements.extended.GUIDockable;
 import snowui.elements.extended.GUISplit;
 
@@ -22,17 +24,25 @@ public class DEMO_DockWindow2 {
 		GUISplit main_split = new GUISplit();
 				
 		GUIDockable docker_a = new GUIDockable();
-		docker_a.titlebar().title("Hello! I'm, Lie!!!");
+		docker_a.titlebar().title("Hello! I'm, Lie!!! 1");
 		docker_a.draggable(true);
 		setStyle(docker_a, gui);
 		
 		GUIDockable docker_b = new GUIDockable();
-		docker_b.titlebar().title("Hello! I'm, Lie!!!");
+		docker_b.titlebar().title("Hello! I'm, Lie!!! 2");
 		docker_b.draggable(true);
 		setStyle(docker_b, gui);
+		
+		GUIDockable docker_c = new GUIDockable();
+		docker_c.titlebar().title("Hello! I'm, Lie!!! 3");
+		docker_c.draggable(true);
+		setStyle(docker_c, gui);
+		
+		GUISplit split_b = new GUISplit(docker_b, docker_c);
+		split_b.verticalify();
 
 		main_split.first(docker_a);
-		main_split.second(docker_b);
+		main_split.second(split_b);
 
 		gui.root(main_split);
 

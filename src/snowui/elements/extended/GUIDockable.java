@@ -7,6 +7,7 @@ import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIText;
 import snowui.elements.interfaces.ElementReceiver;
+import snowui.elements.interfaces.SubElementReplaceable;
 import snowui.utility.GUIUtility;
 
 public class GUIDockable extends GUIElement implements ElementReceiver {
@@ -65,6 +66,26 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	public boolean canDropHere(GUIInstance gui, GUIElement element) {
 		return this.aligned_limit_rectangle().contains(gui.mouspos());
 	}
+	
+	SubElementReplaceable original_parent;
+	GUIElement temporary_replacement = new GUIText("DEBUG");;
+	
+	@Override
+	public void onDragStart(GUIInstance gui) {
+		if (parent() instanceof SubElementReplaceable) {
+			original_parent = (SubElementReplaceable) parent();
+			original_parent.replace(this, temporary_replacement);
+		}
+	}
+	
+	@Override
+	public void onDrop(GUIInstance gui, ElementReceiver target) {
+		if (target == null && original_parent != null) {
+			original_parent.replace(temporary_replacement, this);
+		} else {
+			if (original_parent != null) original_parent.replace(temporary_replacement, null);
+		}
+	}
 
 	@Override
 	public void drop(GUIInstance gui, GUIElement element) {
@@ -76,19 +97,29 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		Rectangle top_side 		= b.internal(edge, 		0, 		1-edge, 	edge);
 		Rectangle bottom_side 	= b.internal(edge, 		1-edge, 1-edge, 	1);
 		if (left_side	.contains(gui.mouspos())) 	{ 
-			
+			if (parent() instanceof SubElementReplaceable) {
+				((SubElementReplaceable) parent()).replace(this, new GUISplit(element, this));
+			}
 		}
 		if (middle		.contains(gui.mouspos())) 	{ 
-
+			
+			
+			
 		}
 		if (right_side	.contains(gui.mouspos())) 	{ 
-			
+			if (parent() instanceof SubElementReplaceable) {
+				((SubElementReplaceable) parent()).replace(this, new GUISplit(this, element));
+			}
 		}
 		if (top_side	.contains(gui.mouspos())) 	{ 
-			
+			if (parent() instanceof SubElementReplaceable) {
+				((SubElementReplaceable) parent()).replace(this, new GUISplit(element, this).verticalify());
+			}
 		}
 		if (bottom_side	.contains(gui.mouspos())) 	{ 
-			
+			if (parent() instanceof SubElementReplaceable) {
+				((SubElementReplaceable) parent()).replace(this, new GUISplit(this, element).verticalify());
+			}
 		}
 	}
 

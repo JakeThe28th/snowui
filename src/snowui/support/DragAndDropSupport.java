@@ -46,6 +46,7 @@ public class DragAndDropSupport {
 		// Grab
 		if (held == null && drag_target != null && drag_target.draggable() && should_drag()) {
 			held = drag_target;
+			held.onDragStart(g);
 		}
 		
 		if (held == null) return;
@@ -87,7 +88,8 @@ public class DragAndDropSupport {
 		}
 
 		if (!found_target) {
-			if (g.primary_click_released()) { 
+			if (g.primary_click_released()) {
+				held.onDrop(g, null);
 				held = null;
 			}
 		}

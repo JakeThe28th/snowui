@@ -71,16 +71,21 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 		Rectangle b = limit_rectangle();
 		this.hover_rectangle(b);
 		
-		if (vertical) {
-			first.limit_rectangle(b.internal(0, 0, 1, split));
-			second.limit_rectangle(b.internal(0, split, 1, 1));
+		if ((first == null || second == null) && (first != null || second != null)) { 
+			if (first  != null) first.limit_rectangle(b);
+			if (second != null) second.limit_rectangle(b);
 		} else {
-			first.limit_rectangle(b.internal(0, 0, split, 1));
-			second.limit_rectangle(b.internal(split, 0, 1, 1));
+			if (vertical) {
+				if (first  != null) first.limit_rectangle(b.internal(0, 0, 1, split));
+				if (second != null) second.limit_rectangle(b.internal(0, split, 1, 1));
+			} else {
+				if (first  != null) first.limit_rectangle(b.internal(0, 0, split, 1));
+				if (second != null) second.limit_rectangle(b.internal(split, 0, 1, 1));
+			}
 		}
-		
-		first.scissor_rectangle_recursive(first.limit_rectangle());
-		second.scissor_rectangle_recursive(second.limit_rectangle());
+
+		if (first  != null) first.scissor_rectangle_recursive(first.limit_rectangle());
+		if (second != null) second.scissor_rectangle_recursive(second.limit_rectangle());
 	}
 
 	@Override public void draw(GUIInstance gui, int depth) { }
@@ -91,6 +96,7 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 	@Override
 	public boolean preUpdateState(GUIInstance gui) {
 		Rectangle b = limit_rectangle();
+		if (b == null) return false;
 		
 		int split_radius = 10;
 		Rectangle split_rectangle;
@@ -129,6 +135,7 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 		if (can_drag || dragging) if ( vertical) 		setcursor(gui, CursorType.RESIZE_NS_CURSOR);
 		if (can_drag || dragging) if (!vertical) 		setcursor(gui, CursorType.RESIZE_EW_CURSOR);
 		if (			dragging) 						set_amount_to_mouse(gui);
+		collapse();
 		replace_queue.dequeue(this);
 	}
 	
@@ -155,6 +162,34 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 	
 	public void split(float nsplit) {
 		split = nsplit;
+		this.should_update(true);
+	}
+	
+	// -= : Collapsing : =- //
+	
+	void collapse() {
+		// When one side is null, GUISplit[s] display as the non-null side. 
+		// If this side is another GUISplit, it's effectively the same as
+		// if the super element was the sub-element. So, the sub-element's
+		// contents are collapsed into the super-element this way.
+		     if (first  == null && second instanceof GUISplit) become((GUISplit) second);
+		else if (second == null && first  instanceof GUISplit) become((GUISplit) first);
+		// Additionally, if both are null, nothing can be rendered, so
+	 	// it's similar to as if the GUISplit itself were null.
+		     if (first == null && second == null) {
+		    	 if (parent() instanceof SubElementReplaceable) {
+		    		 ((SubElementReplaceable) parent()).queue().queue_replace(this, null);
+		    	 }
+		     }
+		// This prevents infinite GUISplit[s] from being created and maintained
+	    // after dragging GUIDockable[s] onto each-other.
+	}
+	
+	void become(GUISplit other) {
+		first(other.first);
+		second(other.second);
+		this.vertical = other.vertical;
+		this.split = other.split;
 		this.should_update(true);
 	}
 	
