@@ -81,6 +81,7 @@ public class DragAndDropSupport {
 					}
 				} else {
 					if (g.primary_click_released()) { 
+						held.onDrop(g, null);
 						held = null;
 					}
 				}
