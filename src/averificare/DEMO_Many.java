@@ -6,7 +6,7 @@ import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
 import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIText;
-import snowui.elements.docking.GUITextBox;
+import snowui.elements.base.GUITextBox;
 
 public class DEMO_Many {
 

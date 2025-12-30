@@ -5,7 +5,7 @@ import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIList;
-import snowui.elements.docking.GUITextBox;
+import snowui.elements.base.GUITextBox;
 import snowui.utility.GUIUtility;
 import tennexioun.TXDATANavigationBar.Tab;
 import tennexioun.TXDATANavigationBar.TabGroup;

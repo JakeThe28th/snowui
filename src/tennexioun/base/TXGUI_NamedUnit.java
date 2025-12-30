@@ -7,7 +7,7 @@ import snowui.coss.enums.Color;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIClickableRectangle;
 import snowui.elements.base.GUIIcon;
-import snowui.elements.docking.GUITextBox;
+import snowui.elements.base.GUITextBox;
 
 public abstract class TXGUI_NamedUnit extends GUIElement {
 

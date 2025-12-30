@@ -1,4 +1,4 @@
-package snowui.elements.docking;
+package snowui.elements.base;
 
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
