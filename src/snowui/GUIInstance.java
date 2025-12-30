@@ -19,6 +19,7 @@ import frost3d.utility.Rectangle;
 import snowui.coss.ComposingStyleSheet;
 import snowui.coss.enums.Color;
 import snowui.elements.abstracts.GUIElement;
+import snowui.elements.meta.GUIRootContainer;
 import snowui.support.DragAndDropSupport;
 import snowui.utility.GUIDebugger;
 import snowui.utility.FPSCounter;
@@ -57,7 +58,7 @@ public class GUIInstance {
 			canvas.iconrenderer(icons);
 			canvas.clear_color(clear_color);
 			//canvas.clear_color(0, 0, 0, 1);
-			if (root != null) root.scissor_rectangle_recursive(canvas.size());
+			root_container.scissor_rectangle_recursive(canvas.size());
 		}
 	}
 	
@@ -123,9 +124,9 @@ public class GUIInstance {
 	
 	// -- ++  ...  ++ -- //
 	
-	GUIElement root;
-	public void root(GUIElement r) { root = r; }
-	public GUIElement root() { return root; }
+	GUIRootContainer root_container = new GUIRootContainer();
+	public void 		root(GUIElement r) 	{ root_container.root(r); }
+	public GUIElement 	root() 				{ return root_container.root(); }
 
 	ArrayList<GUIElement> windows; // TODO
 	
@@ -138,11 +139,11 @@ public class GUIInstance {
 	public void render() {
 		cursor(CursorType.ARROW_CURSOR);
 		
-		GUIElement.tick(this, root, canvas().size(), 0);	
+		GUIElement.tick(this, root_container, canvas().size(), 0);	
 		drag_and_drop_support.tick();
 		
 		if (SHOW_FPS) fps.drawFPS(canvas);
-		if (DEBUG) GUIDebugger.drawTree(this, root, input);
+		if (DEBUG) GUIDebugger.drawTree(this, root_container, input);
 		
 		// Dunno why, but for some reason, dragging a GUISplit
 		// causes weird visual glitches to appear until input
@@ -164,7 +165,7 @@ public class GUIInstance {
 	
 	public ArrayList<GUIElement> current_hovered_element_tree() {
 		// TODO: work with windows/menus etc
-		return GUIUtility.getHoveredElementTree(root);
+		return GUIUtility.getHoveredElementTree(root_container);
 	}
 
 	GUIElement last_pressed_element;
@@ -179,7 +180,7 @@ public class GUIInstance {
 
 	public GUIElement current_window_root() {
 		// TODO Auto-generated method stub
-		return root;
+		return root_container;
 	}
 
 }
