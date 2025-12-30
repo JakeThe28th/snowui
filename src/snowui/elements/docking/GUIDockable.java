@@ -1,5 +1,7 @@
 package snowui.elements.docking;
 
+import org.joml.Vector2i;
+
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
@@ -64,7 +66,10 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	
 	@Override
 	public boolean canDropHere(GUIInstance gui, GUIElement element) {
-		return this.aligned_limit_rectangle().contains(gui.mouspos());
+		return 
+			element instanceof GUIDockable && 
+			this.aligned_limit_rectangle().contains(gui.mouspos()) &&
+     	   !this.aligned_limit_rectangle().internal(edge, edge, 1-edge, 1-edge).contains(gui.mouspos());
 	}
 	
 	SubElementReplaceable original_parent;
@@ -91,54 +96,65 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		}
 	}
 
+	float edge = 1f/4f;
+
 	@Override
 	public void drop(GUIInstance gui, GUIElement element) {
 		Rectangle b = this.aligned_limit_rectangle();
-		float edge = 1f/3f;
 		Rectangle left_side 	= b.internal(0, 		0, 		  edge, 	1);
-		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
+//		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
 		Rectangle right_side 	= b.internal(1 - edge, 	0, 		1, 			1);
 		Rectangle top_side 		= b.internal(edge, 		0, 		1-edge, 	edge);
 		Rectangle bottom_side 	= b.internal(edge, 		1-edge, 1-edge, 	1);
-		if (left_side	.contains(gui.mouspos())) 	{ 
-			if (parent() instanceof SubElementReplaceable) {
-				((SubElementReplaceable) parent()).replace(this, new GUISplit(element, this));
-			}
-		}
-		if (middle		.contains(gui.mouspos())) 	{ 
-			
-			
-			
-		}
-		if (right_side	.contains(gui.mouspos())) 	{ 
-			if (parent() instanceof SubElementReplaceable) {
-				((SubElementReplaceable) parent()).replace(this, new GUISplit(this, element));
-			}
-		}
-		if (top_side	.contains(gui.mouspos())) 	{ 
-			if (parent() instanceof SubElementReplaceable) {
-				((SubElementReplaceable) parent()).replace(this, new GUISplit(element, this).verticalify());
-			}
-		}
-		if (bottom_side	.contains(gui.mouspos())) 	{ 
-			if (parent() instanceof SubElementReplaceable) {
-				((SubElementReplaceable) parent()).replace(this, new GUISplit(this, element).verticalify());
-			}
+		
+		// TODO: Tab List Stuff
+		
+//		GUIDockable insert = (GUIDockable) element;
+//		
+//		if (middle.contains(gui.mouspos())) 	{ 
+//			if (parent() instanceof GUITabList) {
+//				((GUITabList) parent()).add(insert.titlebar.title.text(), insert);
+//			}
+//			if (parent() instanceof GUISplit) {
+//				GUITabList tabs = new GUITabList();
+//				((SubElementReplaceable) parent()).replace(this, tabs);
+//				tabs.add(		titlebar.title.text(), this);
+//				tabs.add(insert.titlebar.title.text(), insert);
+//			}
+//		}
+		
+		SubElementReplaceable p_replace = null;
+		
+		// If this is in a GUISplit, it should insert the added element next to itself.
+		if (parent() instanceof SubElementReplaceable) p_replace = (SubElementReplaceable) parent();
+		
+		// If this is in a GUITabList, it should insert the added element next to that tab list.
+//		if (parent() instanceof GUITabList) {
+//			if (parent().parent() instanceof SubElementReplaceable) {
+//				p_replace = (SubElementReplaceable) parent().parent();
+//			}
+//		}
+
+		Vector2i mp = gui.mouspos();
+		if (p_replace != null) {
+			if (left_side	.contains(mp)) p_replace.replace(this, new GUISplit(element, this));
+			if (right_side	.contains(mp)) p_replace.replace(this, new GUISplit(this, element));
+			if (top_side	.contains(mp)) p_replace.replace(this, new GUISplit(element, this).verticalify());
+			if (bottom_side	.contains(mp)) p_replace.replace(this, new GUISplit(this, element).verticalify());
 		}
 	}
 
 	@Override
 	public void dropPreview(GUIInstance gui, GUIElement element) {
 		Rectangle b = this.aligned_limit_rectangle();
-		float edge = 1f/3f;
 		Rectangle left_side 	= b.internal(0, 		0, 		  edge, 	1);
-		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
+//		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
 		Rectangle right_side 	= b.internal(1 - edge, 	0, 		1, 			1);
 		Rectangle top_side 		= b.internal(edge, 		0, 		1-edge, 	edge);
 		Rectangle bottom_side 	= b.internal(edge, 		1-edge, 1-edge, 	1);
 		Rectangle draw = null;
 		if (left_side	.contains(gui.mouspos())) 	{ draw = left_side	; }
-		if (middle		.contains(gui.mouspos())) 	{ draw = middle		; }
+//		if (middle		.contains(gui.mouspos())) 	{ draw = middle		; }
 		if (right_side	.contains(gui.mouspos())) 	{ draw = right_side	; }
 		if (top_side	.contains(gui.mouspos())) 	{ draw = top_side	; }
 		if (bottom_side	.contains(gui.mouspos())) 	{ draw = bottom_side; }
