@@ -70,6 +70,9 @@ public class ComposingStyleSheet {
 		sheet.setProperty("default", "base_color", 				"BASIC_PANEL");
 		sheet.setProperty("default", "outline_color", 			"BLACK");
 		sheet.setProperty("default", "preview_color", 			"css_rgba(187, 161, 255, 0.5)");
+		
+		sheet.setProperty("default", "background_color", 		"css_rgba(0,0,0,0)");
+		sheet.setProperty("default", "background_margin", 		"4");
 
 		HELPERSetUniformMargins		(sheet, "default", "2");
 		HELPERSetUniformSizeLimit	(sheet, "default", "flex");
@@ -94,6 +97,11 @@ public class ComposingStyleSheet {
 
 		// -- Built-in types -- //
 		
+		sheet.setProperty("contained", "min_width", "container");
+		sheet.setProperty("contained", "max_width", "container");
+		sheet.setProperty("contained", "min_height", "container");
+		sheet.setProperty("contained", "max_height", "container");
+		
 		sheet.setProperty("centered", "horizontal_alignment",		"middle");
 		sheet.setProperty("centered", "vertical_alignment", 		"middle");
 		
@@ -102,6 +110,8 @@ public class ComposingStyleSheet {
 		sheet.setProperty("hover", 	  "base_color", 				"BASIC_PANEL_HOVER");
 		sheet.setProperty("hover", 	  "outline_size", 				"2");
 		sheet.setProperty("hover", 	  "outline_color", 				"BLUE");
+		// sheet.setProperty("hover", 	  "background_color", 			"RED");
+
 		
 		sheet.setProperty("selected", "outline_size", 				"2");
 		sheet.setProperty("selected", "outline_color", 				"DESYELLOW");
@@ -137,10 +147,18 @@ public class ComposingStyleSheet {
 		sheet.setProperty("scrollbar", 		"base_color", 			"BASIC_PANEL_DARK");
 		sheet.setProperty("scrollbar", 	 	"size", 				"20");
 //		sheet.setProperty("scroll_area", 	"horizontal_alignment",	"right");
-//		sheet.setProperty("scroll_area", 	"vertical_alignment",		"bottom");
-//		HELPERSetUniformMargins(sheet,   	"scrollbar", 				"4"); // TODO
-		HELPERSetUniformMargins(sheet,   	"scroll_handle", 			"5");
+//		sheet.setProperty("scroll_area", 	"vertical_alignment",	"bottom");
+//		HELPERSetUniformMargins(sheet,   	"scrollbar", 			"4"); // TODO
+		HELPERSetUniformMargins(sheet,   	"scroll_handle", 		"5");
 		
+		// Dockers
+		sheet.addContains  ("title_bar_text", 						"text");
+		sheet.setProperty  ("title_bar",    "base_color", 			"BLACK");	
+		sheet.setProperty  ("dockable",     "base_color", 			"BASIC_PANEL_DARK");	
+		
+		// GUISplit
+		HELPERSetUniformMargins	  (sheet, "split_view", 			"0");
+
 	}
 	
 	// -- ++  ...  ++ -- //
@@ -213,7 +231,10 @@ public class ComposingStyleSheet {
 
 		// Check for predicates
 		String target = sheet.get(type).getPredicateTargetType(predicate);
-		if (target != null) return getPropertyNoDefault(target, property, predicate);
+		if (target != null) {
+			COSSProperty result_from_predicate = getPropertyNoDefault(target, property, predicate);
+			if (result_from_predicate != null) return result_from_predicate;
+		}
 			
 		HashMap<String, COSSProperty> properties_of_this_type = sheet.get(type).properties();
 

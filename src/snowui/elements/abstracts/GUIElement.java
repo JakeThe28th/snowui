@@ -269,6 +269,7 @@ public abstract class GUIElement {
 		should_cache_style = false;
 		CachedProperties old_style = style;
 		style = new CachedProperties(gui.style(), identifier, state);
+		has_background = style.background_color().color().w > 0.01f;
 		return !style.equals(old_style);
 	}
 	
@@ -462,6 +463,9 @@ public abstract class GUIElement {
 			if (style().outline_size().integer() != 0) {
 				drawOutline(gui, depth+2);
 			}
+			if (has_background) {
+				drawBackground(gui, depth);
+			}
 			draw(gui, depth);
 			for (GUIElement e : sub_elements) { e.triggerDraw(gui, depth + ELEMENT_ADD_DEPTH); }
 			if (scissor_rectangle() != null) gui.pop_scissor();
@@ -501,6 +505,15 @@ public abstract class GUIElement {
 		gui.canvas().rect(b.left(), 	b.bottom()-o, 	b.right(), 	b.bottom(), depth);
 		gui.canvas().rect(b.left(), 	b.top(), 		b.left()+o, b.bottom(), depth);
 		gui.canvas().rect(b.right()-o, 	b.top(), 		b.right(), 	b.bottom(), depth);
+	}
+	
+	boolean has_background = false;
+	
+	protected void drawBackground(GUIInstance gui, int depth) {
+		if (hover_rectangle() == null) return;
+		Rectangle b = hover_rectangle().expand(style().background_margin().pixels());
+		gui.canvas().color(style().background_color().color());
+		gui.canvas().rect(b, depth);
 	}
 	
 	// -- == Dragging == -- //
