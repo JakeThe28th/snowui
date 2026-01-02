@@ -161,9 +161,11 @@ public class GUIList extends GUIElement implements ElementReceiver {
 		
 		drop_points.clear();
 		
-		Rectangle bounds = this.padded_limit_rectangle();
+		Rectangle bounds = this.limit_rectangle();
 		if (!wrap) {
 			bounds = Margin.calculate(style(), bounds, unpadded_width, unpadded_height);
+		} else {
+			bounds = this.padded_limit_rectangle();
 		}
 		
 		int left 	= bounds.left();
