@@ -55,7 +55,16 @@ public class DragAndDropSupport {
 		//     and this doesn't seem to affect performance *too* much, so...)
 		Rectangle limit = held.limit_rectangle();
 		Rectangle scissor = held.scissor_rectangle();
-		held.scissor_rectangle_recursive(g.canvas().size());
+		//held.scissor_rectangle_recursive(g.canvas().size());
+		held.scissor_rectangle_recursive(
+				new Rectangle(
+						g.mx(), 
+						g.my(),
+						g.mx() + held.floatwidth(), 
+						g.my() + held.floatheight()
+					)
+			);
+		held.force_update_all(); // <-- required so that, for example, scrollables set the scissor box properly
 		GUIElement.tickFloating(g, held, g.mx(), g.my(), 600);
 		held.limit_rectangle(limit);
 		held.scissor_rectangle_recursive(scissor);
