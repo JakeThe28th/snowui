@@ -16,6 +16,7 @@ import frost3d.implementations.VectorIconRenderer;
 import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
 import frost3d.utility.Rectangle;
+import snowui.coss.COSSProperty;
 import snowui.coss.ComposingStyleSheet;
 import snowui.coss.enums.Color;
 import snowui.elements.abstracts.GUIElement;
@@ -134,6 +135,9 @@ public class GUIInstance {
 	public ComposingStyleSheet style() { return style; }
 	public void style(ComposingStyleSheet sheet) {
 		this.style = sheet;
+		this.root_container.force_update_all();
+		COSSProperty style_clear_color = sheet.getProperty("gui_clear_color", "base_color", null);
+		if (style_clear_color != null) this.clear_color(style_clear_color .color());
 	}
 	
 	public void render() {
