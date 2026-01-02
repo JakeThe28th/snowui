@@ -7,7 +7,6 @@ import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
-import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIText;
 import snowui.elements.interfaces.ElementReceiver;
 import snowui.elements.interfaces.SubElementReplaceable;
@@ -49,6 +48,12 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		this.unpadded_height = GUIUtility.combined_height(sub_elements);
 		this.unpadded_width = GUIUtility.max_width(sub_elements);
 	}
+	
+	@Override
+	public int floatwidth() { return 200; }
+	
+	@Override
+	public int floatheight() { return 200; }
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
@@ -60,9 +65,9 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 
 	@Override public void draw(GUIInstance gui, int depth) {
 		// gui.canvas().color(style().base_color().color());
-		gui.canvas().color(Color.AQUA.val());
+		gui.canvas().color(titlebar.style().base_color().color());
 		gui.canvas().rect(this.titlebar.limit_rectangle(), depth);
-		gui.canvas().color(Color.GOLD.val());
+		gui.canvas().color(style().base_color().color());
 		gui.canvas().rect(this.root.limit_rectangle(), depth);
 	}
 	

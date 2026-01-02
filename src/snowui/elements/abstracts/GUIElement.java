@@ -55,7 +55,7 @@ public abstract class GUIElement {
 	
 	String 					identifier 		= "none";
 	
-	public void identifier(String i) 		{ identifier = i; }
+	public GUIElement identifier(String i) 	{ identifier = i; return this; }
 
 	public String listStyles() {
 		return identifier;
@@ -168,7 +168,10 @@ public abstract class GUIElement {
 		for (GUIElement e : sub_elements) {
 			e.scissor_rectangle_recursive(rectangle);
 		}
+		onScissorChange();
 	}
+	
+	public void onScissorChange() { }
 	
 	private 	  void 	 force_limit_rectangle_recursive(Rectangle rectangle) { 		 
 		limit_rectangle = rectangle; 	
@@ -182,6 +185,9 @@ public abstract class GUIElement {
 	
 	public int width() { return style.padw(unpadded_width); }
 	public int height() { return style.padh(unpadded_height); }
+	
+	public int floatwidth() { return width(); }
+	public int floatheight() { return height(); }
 
 	public static void tick(GUIInstance gui, GUIElement e, Rectangle limit, int depth) {
 		e.limit_rectangle(limit);	// (Since this is only run on the root element)
@@ -211,7 +217,7 @@ public abstract class GUIElement {
 	public static void tickFloating(GUIInstance gui, GUIElement e, int x, int y, int depth) {
 		e.triggerRecalculateSize(gui);
 		e.triggerCacheStyle(gui);
-		tick(gui, e, new Rectangle(x, y, x + e.width(), y + e.height()), depth);
+		tick(gui, e, new Rectangle(x, y, x + e.floatwidth(), y + e.floatheight()), depth);
 	}
 
 	public abstract void recalculateSize(GUIInstance gui);
