@@ -81,4 +81,12 @@ public class GUIUtility {
 		return 37;
 	}
 
+	// -- -- -- //
+
+	public static ArrayList<GUIElement> array(GUIElement... elements) {
+		ArrayList<GUIElement> arr = new ArrayList<GUIElement>();
+		for (GUIElement e : elements) arr.add(e);
+		return arr;
+	}
+	
 }
