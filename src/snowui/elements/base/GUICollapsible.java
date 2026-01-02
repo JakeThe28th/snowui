@@ -24,6 +24,12 @@ public class GUICollapsible extends GUIElement {
 	GUIElement hidden;
 	
 	protected boolean collapsed = true;
+	protected boolean even_center;
+	
+	public void even_center(boolean v) {
+		this.even_center = v;
+		this.should_update(true);
+	}
 	
 	{ this.registerSubElement(collapse_icon); }
 	
@@ -76,8 +82,11 @@ public class GUICollapsible extends GUIElement {
 		Rectangle b = aligned_limit_rectangle();
 		
 		int icon_width = collapse_icon.width();
+		int center_fix = 0;
 		int upper_height = collapse_icon.height();
 		if (root.height() > upper_height) upper_height = root.height();
+		
+		if (even_center) center_fix = icon_width;
 		
 		collapse_icon.limit_rectangle(new Rectangle(
 				b.left(), 
@@ -89,14 +98,14 @@ public class GUICollapsible extends GUIElement {
 		root.limit_rectangle(new Rectangle(
 				b.left() + icon_width, 
 				b.top(), 
-				b.right() , 
+				b.right() - center_fix, 
 				b.top() + upper_height)
 			);
 		
 		hidden.limit_rectangle(new Rectangle(
 				b.left() + icon_width, 
 				b.top() + upper_height, 
-				b.right() , 
+				b.right() - center_fix, 
 				b.bottom())
 			);
 		
@@ -108,6 +117,10 @@ public class GUICollapsible extends GUIElement {
 	
 	@Override public Rectangle drag_rectangle() {
 		return root.hover_rectangle();
+	}
+
+	public GUIElement icon() {
+		return this.collapse_icon;
 	}
 	
 }
