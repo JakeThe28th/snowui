@@ -16,6 +16,12 @@ public class Margin {
 		int right_limit 	= bounds.right();
 		int bottom_limit 	= bounds.bottom();
 		
+			// It's probably more efficient to skip the rest of the math after
+			// doing these checks instead of changing 'target_<size>', so
+			// I'll do that later TODO
+		if (target_width  > bounds.width())  target_width  = info.unpadw(bounds.width());
+		if (target_height > bounds.height()) target_height = info.unpadh(bounds.height());
+
 		// Get the width/height of the internal part of the element.
 		
 			// --** = Width = **-- //
