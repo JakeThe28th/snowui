@@ -1,5 +1,6 @@
 package snowui.elements.base;
 
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Constant;
@@ -211,7 +212,7 @@ public class GUIScrollable extends GUIElement {
 		this.unpadded_height = 17;	// n/a, so...
 		this.unpadded_width = 17;	// n/a, so...
 	}
-
+	
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
 		
@@ -299,18 +300,35 @@ public class GUIScrollable extends GUIElement {
 		}
 		
 		root.scissor_rectangle_recursive(area_rectangle);
+		last_area = area_rectangle;
 		
-		root.limit_rectangle(
-			new Rectangle(
-					 area_rectangle.left() 	- horizontal_scrollbar	.scroll_amount_pixels(),
-					 area_rectangle.top() 	- vertical_scrollbar	.scroll_amount_pixels(),
-					(area_rectangle.left() 	- horizontal_scrollbar	.scroll_amount_pixels()) + root.width(),
-					(area_rectangle.top() 	- vertical_scrollbar	.scroll_amount_pixels()) + root.height()
-			));
+		
+		Rectangle root_limit = new Rectangle(
+				 area_rectangle.left() 	- horizontal_scrollbar	.scroll_amount_pixels(),
+				 area_rectangle.top() 	- vertical_scrollbar	.scroll_amount_pixels(),
+				(area_rectangle.left() 	- horizontal_scrollbar	.scroll_amount_pixels()) + root.width(),
+				(area_rectangle.top() 	- vertical_scrollbar	.scroll_amount_pixels()) + root.height()
+		);
+		
+		if (root.style().min_width().constant() == Constant.CONTAINER) {
+			root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
+		}
+		
+		root.limit_rectangle(root_limit);
+
 		
 	}
+	
+	Rectangle last_area = null;
+	@Override
+	public void onScissorChange() { if (last_area != null) root.scissor_rectangle_recursive(last_area); }
 
 	@Override
 	public void draw(GUIInstance gui, int depth) { }
+	
+	public void tickAnimation(GUIInstance gui) {
+		if (horizontal_scrollbar.get(PredicateKey.HIDDEN)) horizontal_scrollbar.scroll_amount(0);
+		if (vertical_scrollbar.get(PredicateKey.HIDDEN)) vertical_scrollbar.scroll_amount(0);
+	}
 	
 }
