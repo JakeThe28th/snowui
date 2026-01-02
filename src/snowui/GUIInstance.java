@@ -63,6 +63,11 @@ public class GUIInstance {
 		}
 	}
 	
+	public void iconrenderer(F3DIconRenderer new_icons) {
+		icons = new_icons;
+		if (canvas != null) canvas.iconrenderer(new_icons);
+	}
+	
 	F3DIconRenderer				icons;
 	SimpleTextRenderer 			text;
 	SimpleCanvas 				canvas;
