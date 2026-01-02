@@ -8,6 +8,8 @@ import snowui.elements.interfaces.SubElementReplaceable;
 import snowui.elements.interfaces.components.SubElementReplaceQueue;
 
 public class GUISplit extends GUIElement implements SubElementReplaceable {
+	
+	{ identifier("split_view"); }
 
 	public GUISplit(GUIElement first, GUIElement second) {
 		first(first);
@@ -20,8 +22,18 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 
 	@Override
 	public void recalculateSize(GUIInstance gui) {
-		this.unpadded_height = 37;
-		this.unpadded_width = 37;
+		unpadded_height = 5;
+		unpadded_width = 5;
+		
+		if (first != null) {
+			unpadded_height = first.height();
+			unpadded_width = first.width();
+		}
+		
+		if (second != null) {
+			if (unpadded_height < second.height()) unpadded_height = second.height();
+			if (unpadded_width < second.width()) unpadded_width = second.width();
+		}
 	}
 	
 	GUIElement first;
@@ -84,6 +96,12 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 			}
 		}
 
+		if (first  != null) first.scissor_rectangle_recursive(first.limit_rectangle());
+		if (second != null) second.scissor_rectangle_recursive(second.limit_rectangle());
+	}
+	
+	@Override
+	public void onScissorChange() {
 		if (first  != null) first.scissor_rectangle_recursive(first.limit_rectangle());
 		if (second != null) second.scissor_rectangle_recursive(second.limit_rectangle());
 	}
