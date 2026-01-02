@@ -13,6 +13,7 @@ import org.lwjgl.glfw.GLFW;
 import frost3d.Input;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.interfaces.F3DCanvas;
+import frost3d.utility.Utility;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
@@ -226,6 +227,8 @@ public class GUIDebugger {
 		};
 	}
 	
+	static boolean element_tree_fade_after_interact = false;
+	
 	public static boolean show_debug = false;
 	static boolean used_modifier = false;
 	
@@ -313,6 +316,12 @@ public class GUIDebugger {
 					used_modifier = true;
 				}
 			}
+			if (current_debug_state == DebugState.ELEMENT_TREE) {
+				if (input.keyPressed(GLFW.GLFW_KEY_0)) {
+					element_tree_fade_after_interact = !element_tree_fade_after_interact;
+					used_modifier = true;
+				}
+			}
 		}
 		
 		F3DCanvas canvas = gui.canvas();
@@ -391,8 +400,8 @@ public class GUIDebugger {
 		}
 		
 		if (current_debug_state == DebugState.ELEMENT_TREE) {
-			canvas.textrenderer().font_size(20);
-			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(gui.root(), ""));
+			canvas.textrenderer().font_size(15);
+			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(gui.root(), "", false), 1);
 			canvas.textrenderer().font_size(font_size);
 		}
 		
@@ -405,27 +414,37 @@ public class GUIDebugger {
 		
 	}
 	
-	private static ArrayList<String> getElementTreeText(GUIElement root, String pre) {
+	private static ArrayList<String> getElementTreeText(GUIElement root, String pre, boolean hidden) {
 		ArrayList<String> result = new ArrayList<String>();
 		if (root == null) {
 			result.add("§c" + pre + "snowui.??? NULL");
 			return result;
 		}
+		
+		hidden = hidden || root.get(PredicateKey.HIDDEN);
+		
 		String color = "§h";
 		if (root.get(PredicateKey.BOUNDED)) color = "";
 		if (root instanceof GUISplit) color = "§c";
 		if (root.get(PredicateKey.HOVERED)) color = "§b";
 		if (root.get(PredicateKey.DISABLED)) color = "§7";
 		if (root.get(PredicateKey.DISABLED) && root.get(PredicateKey.BOUNDED)) color = "§9";
-		result.add(color + pre + root.getClass().getName());
+		if (hidden) color = "§8";
+		
+		if (element_tree_fade_after_interact) {
+			float elapsed = (float) (root.last_update_elapsed_time());
+			color = "§[opacity=" + Utility.clampf(((1000f-elapsed) / 1000f), 0, 1) + "]" + color;
+		}
+		
+		result.add(color + space(root.listStyles(), 30) + pre + root.getClass().getName());
 		boolean special = false;
 		
 		if (root instanceof GUISplit) {
 			ArrayList<String> array;
-			array = getElementTreeText(((GUISplit) root).first(), pre + "   ");
+			array = getElementTreeText(((GUISplit) root).first(), pre + "   ", hidden);
 			array.set(0, array.get(0).replaceAll(Pattern.quote("snowui"), "FIRST: snowui"));
 			result.addAll(array);
-			array = getElementTreeText(((GUISplit) root).second(), pre + "   ");
+			array = getElementTreeText(((GUISplit) root).second(), pre + "   ", hidden);
 			array.set(0, array.get(0).replaceAll(Pattern.quote("snowui"), "SECOND: snowui"));
 			result.addAll(array);
 			special = true;
@@ -433,9 +452,15 @@ public class GUIDebugger {
 		
 		if (!special) 
 		for (GUIElement e : root.sub_elements()) {
-			result.addAll(getElementTreeText(e, pre + "   "));
+			result.addAll(getElementTreeText(e, pre + "   ", hidden));
 		}
 		return result;
+	}
+
+	private static String space(String str, int len) {
+		String spc = "";
+		for (int i = 0; i < len - str.length(); i++) spc += " ";
+		return str + spc;
 	}
 
 	private static float flash_opacity() {
