@@ -145,6 +145,10 @@ public class GUIInstance {
 		if (style_clear_color != null) this.clear_color(style_clear_color .color());
 	}
 	
+	public void force_update_all() {
+		this.root_container.force_update_all();
+	}
+	
 	public void render() {
 		cursor(CursorType.ARROW_CURSOR);
 		
