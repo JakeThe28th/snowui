@@ -2,12 +2,14 @@ package snowui.elements.base;
 
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.Color;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 
 //TODO: Vertical version
 public class GUISlider extends GUIElement {
 
-	class GUISliderHandle extends GUIElement {
+	public class GUISliderHandle extends GUIElement {
 
 		{ identifier("slider_handle"); }
 		
@@ -28,7 +30,6 @@ public class GUISlider extends GUIElement {
 		public void draw(GUIInstance gui, int depth) {
 			gui.canvas().color(style().base_color().color());
 			gui.canvas().rect(bar.left(), bar.top(), x, bar.bottom(), depth);
-			gui.canvas().color(style().base_color().color());
 			gui.canvas().dot(x, y, depth, size/2);
 		}
 		
@@ -38,12 +39,20 @@ public class GUISlider extends GUIElement {
 	
 	{ identifier("slider"); }
 
+	public GUISlider() { }
+	
+	public GUISlider(float percent) {
+		this.amount = percent;
+	}
+
 	// N/A
-	@Override public void recalculateSize(GUIInstance gui) { unpadded_height = 53; unpadded_width = 59; }
+	@Override public void recalculateSize(GUIInstance gui) { unpadded_height = style().size().pixels(); unpadded_width = 3; }
 	
-	float amount = 0.5f;
+	protected float amount = 0.5f;
 	
-	GUISliderHandle handle = new GUISliderHandle();
+	protected boolean display_amount_on_hover = false;
+	
+	protected GUISliderHandle handle = new GUISliderHandle();
 	
 	{ this.registerSubElement(handle); }
 
@@ -68,6 +77,27 @@ public class GUISlider extends GUIElement {
 	public void draw(GUIInstance gui, int depth) {
 		gui.canvas().color(style().base_color().color());
 		gui.canvas().rect(bar, depth);
+		
+		if (display_amount_on_hover && (dragging || get(PredicateKey.BOUNDED))) {
+			gui.canvas().color(Color.BLACK75.val());
+			int cx = bar.center().x;
+			int cy = bar.center().y;
+			String text = amountFormatted();
+			gui.textrenderer().font_size(18);
+			int width = gui.textrenderer().size(text).x;
+			int height = gui.textrenderer().size(text).y;
+			int m = 5;
+			Rectangle display_rect = new Rectangle(cx - ((width+m+m)/2), cy - (height+m+m), cx + ((width+m+m)/2), cy);
+			gui.canvas().push_scissor(display_rect);
+			gui.canvas().rect(display_rect, depth+10);
+			gui.canvas().color(Color.WHITE.val());
+			gui.canvas().text(display_rect.left()+m, display_rect.top()+m, depth+20, text);
+			gui.canvas().pop_scissor();
+		}
+	}
+	
+	protected String amountFormatted() {
+		return String.format("%.2f", amount);
 	}
 	
 	@Override public void onPress(GUIInstance gui) { dragging = true; }
@@ -76,6 +106,8 @@ public class GUISlider extends GUIElement {
 	
 	void set_amount_to_mouse(GUIInstance gui) {
 		amount = (gui.mx()-bar.left()) / (float) bar.width();
+		if (amount < 0) amount = 0;
+		if (amount > 1) amount = 1;
 		onChange(amount);
 		handle.update_handle_position();
 	}
