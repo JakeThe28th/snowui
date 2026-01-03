@@ -188,7 +188,8 @@ public class ComposingStyleSheet {
 	}
 
 	public void setProperty(String type, String property, String value) {		
-		getType(type).properties().put(property, COSSProperty.from(value));
+		if (value == null) getType(type).properties().remove(property);
+		else getType(type).properties().put(property, COSSProperty.from(value));
 	}
 	
 	public void setPredicate(String type, String predicates, String target_type) {
