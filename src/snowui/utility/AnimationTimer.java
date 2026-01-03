@@ -5,6 +5,8 @@ public class AnimationTimer {
 	long start;
 	long length;
 	
+	int state = 0;
+	
 	public void setStartTimeMS(long time) {
 		start = time;
 	}
@@ -23,6 +25,15 @@ public class AnimationTimer {
 
 	public void start() {
 		setStartTimeMS(System.currentTimeMillis());
+		state = 1;
 	}	
+	
+	public boolean just_finished() {
+		if (state == 1 && get() >= 1) {
+			state = 2;
+			return true;
+		}
+		return false;
+	}
 
 }
