@@ -82,7 +82,7 @@ public class GUIInstance {
 	Input input;
 	public Input 	rawinput()  { return input; }
 
-	public Vector2i mouspos	() 	{ return new Vector2i(input.mouseX(), input.mouseY()); }
+	public Vector2i mousepos() 	{ return new Vector2i(input.mouseX(), input.mouseY()); }
 	public int 		mx		() 	{ return input.mouseX(); }
 	public int 		my		() 	{ return input.mouseY(); }
 	public boolean  hasInput() 	{ return input.hasInputThisFrame(); }

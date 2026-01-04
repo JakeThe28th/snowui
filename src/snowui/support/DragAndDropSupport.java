@@ -108,6 +108,7 @@ public class DragAndDropSupport {
 		GUIElement found = null;
 		if (e.get(PredicateKey.BOUNDED) && e.is_on_screen()) {
 			if (e.draggable() && e.drag_rectangle().contains(g.mouspos())) {
+			if (e.draggable() && e.drag_rectangle().contains(g.mousepos())) {
 				found = e;
 			}	
 			for (GUIElement sub_e : e.sub_elements()) {

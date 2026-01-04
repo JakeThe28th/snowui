@@ -127,7 +127,7 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 			split_rectangle = new Rectangle(split_x - split_radius, b.top(), split_x + split_radius, b.bottom());
 		}
 		
-		if (split_rectangle .contains(gui.mouspos())) {
+		if (split_rectangle .contains(gui.mousepos())) {
 			can_drag = true;
 		} else {
 			can_drag = false;

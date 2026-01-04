@@ -107,7 +107,7 @@ public abstract class TXGUIDirectory extends GUICollapsible implements ElementRe
 
 	public boolean canDropHere(GUIInstance gui, GUIElement element) {
 		return 	element 						 instanceof TXGUIDirectory 	&& 
-				root().drag_rectangle()			.contains(gui.mouspos()) 	&& 
+				root().drag_rectangle()			.contains(gui.mousepos()) 	&& 
 				this							.is_directory;
 	}
 	

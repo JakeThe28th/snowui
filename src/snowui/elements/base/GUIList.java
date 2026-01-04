@@ -238,7 +238,7 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	@Override
 	public boolean canDropHere(GUIInstance gui, GUIElement element) {
 		for (Rectangle r : drop_points) {
-			if (r.contains(gui.mouspos())) return true;
+			if (r.contains(gui.mousepos())) return true;
 		}
 		return false;
 	}
@@ -247,7 +247,7 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	public void drop(GUIInstance gui, GUIElement element) {
 		for (int i = 0; i < drop_points.size(); i++) {
 			Rectangle r = drop_points.get(i);
-			if (r.contains(gui.mouspos())) {
+			if (r.contains(gui.mousepos())) {
 				add(element, i+1);
 			}
 		}
@@ -256,7 +256,7 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	@Override
 	public void dropPreview(GUIInstance gui, GUIElement element) {
 		for (Rectangle r : drop_points) {
-			if (r.contains(gui.mouspos())) {
+			if (r.contains(gui.mousepos())) {
 				gui.canvas().color(style().preview_color().color());
 				gui.canvas().rect(r, gui.PREVIEW_DEPTH());
 			}
@@ -266,7 +266,7 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	@Override
 	public void DEBUG_draw_drop_areas(GUIInstance gui, GUIElement element, int depth) {		
 		for (Rectangle r : drop_points) {
-			if (r.contains(gui.mouspos())) {
+			if (r.contains(gui.mousepos())) {
 				gui.canvas().color(Color.DESBLUE.val());
 			} else {
 				gui.canvas().color(Color.DESYELLOW.val());

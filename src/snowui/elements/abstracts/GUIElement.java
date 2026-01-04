@@ -393,7 +393,7 @@ public abstract class GUIElement {
 				_hover_rectangle = _hover_rectangle.constrain_to(scissor_rectangle());
 			}
 			
-			if (_hover_rectangle != null && _hover_rectangle.contains(gui.mouspos())) {
+			if (_hover_rectangle != null && _hover_rectangle.contains(gui.mousepos())) {
 				// (PredicateKey.BOUNDED should be set regardless of if a sub-element is hovered, though)
 				set(PredicateKey.BOUNDED, true);
 				if (overridden == false) {

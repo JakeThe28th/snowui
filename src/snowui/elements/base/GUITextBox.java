@@ -14,6 +14,10 @@ import snowui.coss.enums.Color;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 
+// TODO : ctrl + backspace = delete word
+// TODO : ctrl + arrows = move forward and backward word
+// TODO : up/down arrow also
+
 public class GUITextBox extends GUIElement {
 	
 	GUITextBox textbox_this() { return this; }
@@ -200,7 +204,7 @@ public class GUITextBox extends GUIElement {
 								b.top() + yy + offset+ line_height
 							);
 						
-						if (gui.primary_click_down() && letter_rect.contains(gui.mouspos())) {
+						if (gui.primary_click_down() && letter_rect.contains(gui.mousepos())) {
 							setcursor(i, true);
 						}
 						
@@ -209,7 +213,7 @@ public class GUITextBox extends GUIElement {
 							preselect_mouse = null;
 						}
 							
-						if (gui.primary_click_pressed() && letter_rect.contains(gui.mouspos())) {
+						if (gui.primary_click_pressed() && letter_rect.contains(gui.mousepos())) {
 							if (gui.rawinput().keyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 								setcursor(i, true);
 							} else {
@@ -251,6 +255,10 @@ public class GUITextBox extends GUIElement {
 					}
 					if (i.keyPressed(GLFW.GLFW_KEY_RIGHT) || i.keyRepeated(GLFW.GLFW_KEY_RIGHT)) {
 						setcursor(cursor+1, shift);
+					}
+					
+					if (i.keyPressed(GLFW.GLFW_KEY_HOME)) {
+						setcursor(0, shift);
 					}
 					
 					fix_cursor_pos();
@@ -396,7 +404,7 @@ public class GUITextBox extends GUIElement {
 		selected = this;
 		set(PredicateKey.SELECTED, true);
 		text.setcursor(0, false);
-		preselect_mouse = gui.mouspos();
+		preselect_mouse = gui.mousepos();
 	}
 	
 	@Override 
@@ -407,7 +415,7 @@ public class GUITextBox extends GUIElement {
 	@Override
 	public boolean updateState(GUIInstance gui) {
 		if (hover_rectangle() != null)
-		if (gui.primary_click_released() && !hover_rectangle().contains(gui.mouspos())) {
+		if (gui.primary_click_released() && !hover_rectangle().contains(gui.mousepos())) {
 			deselect();
 		}
 		return false;

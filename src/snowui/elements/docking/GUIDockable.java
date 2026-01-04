@@ -79,8 +79,8 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	public boolean canDropHere(GUIInstance gui, GUIElement element) {
 		return 
 			element instanceof GUIDockable && 
-			this.aligned_limit_rectangle().contains(gui.mouspos()) &&
-     	   !this.aligned_limit_rectangle().internal(edge, edge, 1-edge, 1-edge).contains(gui.mouspos());
+			this.aligned_limit_rectangle().contains(gui.mousepos()) &&
+     	   !this.aligned_limit_rectangle().internal(edge, edge, 1-edge, 1-edge).contains(gui.mousepos());
 	}
 	
 	SubElementReplaceable original_parent;
@@ -123,7 +123,7 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		
 //		GUIDockable insert = (GUIDockable) element;
 //		
-//		if (middle.contains(gui.mouspos())) 	{ 
+//		if (middle.contains(gui.mousepos())) 	{ 
 //			if (parent() instanceof GUITabList) {
 //				((GUITabList) parent()).add(insert.titlebar.title.text(), insert);
 //			}
@@ -147,7 +147,7 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 //			}
 //		}
 
-		Vector2i mp = gui.mouspos();
+		Vector2i mp = gui.mousepos();
 		if (p_replace != null) {
 			if (left_side	.contains(mp)) p_replace.replace(this, new GUISplit(element, this));
 			if (right_side	.contains(mp)) p_replace.replace(this, new GUISplit(this, element));
@@ -165,11 +165,11 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		Rectangle top_side 		= b.internal(edge, 		0, 		1-edge, 	edge);
 		Rectangle bottom_side 	= b.internal(edge, 		1-edge, 1-edge, 	1);
 		Rectangle draw = null;
-		if (left_side	.contains(gui.mouspos())) 	{ draw = left_side	; }
-//		if (middle		.contains(gui.mouspos())) 	{ draw = middle		; }
-		if (right_side	.contains(gui.mouspos())) 	{ draw = right_side	; }
-		if (top_side	.contains(gui.mouspos())) 	{ draw = top_side	; }
-		if (bottom_side	.contains(gui.mouspos())) 	{ draw = bottom_side; }
+		if (left_side	.contains(gui.mousepos())) 	{ draw = left_side	; }
+//		if (middle		.contains(gui.mousepos())) 	{ draw = middle		; }
+		if (right_side	.contains(gui.mousepos())) 	{ draw = right_side	; }
+		if (top_side	.contains(gui.mousepos())) 	{ draw = top_side	; }
+		if (bottom_side	.contains(gui.mousepos())) 	{ draw = bottom_side; }
 		if (draw != null) {
 			gui.canvas().color(style().preview_color().color());
 			gui.canvas().rect(draw, gui.PREVIEW_DEPTH());
@@ -179,7 +179,7 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	@Override
 	public void DEBUG_draw_drop_areas(GUIInstance gui, GUIElement element, int depth) {
 		Rectangle r = this.aligned_limit_rectangle();
-		if (r.contains(gui.mouspos())) {
+		if (r.contains(gui.mousepos())) {
 			gui.canvas().color(Color.DESBLUE.val());
 		} else {
 			gui.canvas().color(Color.DESYELLOW.val());

@@ -114,7 +114,7 @@ public class GUIScrollable extends GUIElement {
 		}
 		
 		@Override public void onPress(GUIInstance gui) {
-			if (scroll_handle.limit_rectangle().contains(gui.mouspos())) {
+			if (scroll_handle.limit_rectangle().contains(gui.mousepos())) {
 				scroll_handle.onPress(gui);
 			} else {
 				scroll_towards_mouse(gui);
@@ -122,7 +122,7 @@ public class GUIScrollable extends GUIElement {
 		}
 		
 		@Override public void onHold(GUIInstance gui) {
-			if (scroll_handle.limit_rectangle().contains(gui.mouspos())) {
+			if (scroll_handle.limit_rectangle().contains(gui.mousepos())) {
 				// N/A
 			} else if (time_since_pressed() > GUIInstance.INPUT_REPEAT_TIME) {
 				should_update(true);
