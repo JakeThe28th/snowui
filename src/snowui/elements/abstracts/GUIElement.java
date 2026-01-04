@@ -189,10 +189,10 @@ public abstract class GUIElement {
 	public int floatwidth() { return width(); }
 	public int floatheight() { return height(); }
 
-	public static void tick(GUIInstance gui, GUIElement e, Rectangle limit, int depth) {
+	public static void tick(GUIInstance gui, GUIElement e, Rectangle limit, int depth, boolean input) {
 		e.limit_rectangle(limit);	// (Since this is only run on the root element)
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
-		e.triggerUpdateState(gui, false);
+		e.triggerUpdateState(gui, !input);
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(0, "Update state");
 		if (GUIInstance.DEBUG) GUIDebugger.startprofile();
 		e.triggerTickAnimation(gui);
@@ -214,10 +214,10 @@ public abstract class GUIElement {
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(7, "Draw (element)");
 	}
 	
-	public static void tickFloating(GUIInstance gui, GUIElement e, int x, int y, int depth) {
+	public static void tickFloating(GUIInstance gui, GUIElement e, int x, int y, int depth, boolean input) {
 		e.triggerRecalculateSize(gui);
 		e.triggerCacheStyle(gui);
-		tick(gui, e, new Rectangle(x, y, x + e.floatwidth(), y + e.floatheight()), depth);
+		tick(gui, e, new Rectangle(x, y, x + e.floatwidth(), y + e.floatheight()), depth, input);
 	}
 
 	public abstract void recalculateSize(GUIInstance gui);

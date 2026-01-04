@@ -19,6 +19,7 @@ import snowui.coss.COSSProperty;
 import snowui.coss.ComposingStyleSheet;
 import snowui.coss.enums.Color;
 import snowui.elements.abstracts.GUIElement;
+import snowui.elements.interfaces.FloatingElement;
 import snowui.elements.meta.GUIRootContainer;
 import snowui.support.DragAndDropSupport;
 import snowui.utility.GUIDebugger;
@@ -119,29 +120,36 @@ public class GUIInstance {
 	
 	// ............................ -- Elements -- ............................ //
 	
-	GUIRootContainer 	root_container = new GUIRootContainer();
+	GUIRootContainer 			root_container = new GUIRootContainer();
+	public void 				root(GUIElement r) 	{ 		 root_container.root(r); }
+	public GUIElement 			root() 				{ return root_container.root() ; }
 	
-	public void 		root(GUIElement r) 	{ 		 root_container.root(r); }
-	public GUIElement 	root() 				{ return root_container.root() ; }
+	ArrayList<FloatingElement> 	windows = new ArrayList<FloatingElement>();
+	public void 				add_window(FloatingElement element) 	{ windows.add(element); }
+	public void 				remove_window(FloatingElement element) 	{ windows.remove(element); }
 	
 	public void force_update_all() {
-		this.root_container.force_update_all();
+		root_container.force_update_all();
+		for (FloatingElement w : windows) w.as_element().force_update_all();
+	}
+	
+	public GUIElement current_window_root() {
+		for (int index = windows.size()-1; index >= 0; index--) {
+			GUIElement element = windows.get(index).as_element();
+			if (element.limit_rectangle() != null && element.limit_rectangle().contains(mousepos())) {
+				return windows.get(index).as_element();
+			}
+		}
+		return root_container;
 	}
 	
 	public ArrayList<GUIElement> current_hovered_element_tree() {
-		// TODO: work with windows/menus etc
-		return GUIUtility.getHoveredElementTree(root_container);
+		return GUIUtility.getHoveredElementTree(current_window_root());
 	}
 
 	       GUIElement last_pressed_element;
 	public GUIElement last_pressed_element() 				{ return last_pressed_element; }
 	public void last_pressed_element(GUIElement element) 	{ last_pressed_element = element; }
-	
-
-	public GUIElement current_window_root() {
-		// TODO Auto-generated method stub
-		return root_container;
-	}
 	
 	// ............................ -- The Rest -- ............................ //
 	
@@ -157,11 +165,12 @@ public class GUIInstance {
 	public void render() {
 		cursor(CursorType.ARROW_CURSOR);
 		
-		GUIElement.tick(this, root_container, canvas().size(), 0);	
+		GUIElement.tick(this, root_container, canvas().size(), 0, (root_container == this.current_window_root()));	
+		for (FloatingElement w : windows) GUIElement.tick(this, w.as_element(), w.position(), 0, (w == this.current_window_root()));
 		drag_and_drop_support.tick();
 		
 		if (SHOW_FPS) fps.drawFPS(canvas);
-		if (DEBUG) GUIDebugger.drawTree(this, root_container, input);
+		if (DEBUG) GUIDebugger.drawTree(this, current_window_root(), input);
 		
 		// Dunno why, but for some reason, dragging a GUISplit
 		// causes weird visual glitches to appear until input

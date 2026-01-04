@@ -401,7 +401,7 @@ public class GUIDebugger {
 		
 		if (current_debug_state == DebugState.ELEMENT_TREE) {
 			canvas.textrenderer().font_size(15);
-			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(gui.root(), "", false), 1);
+			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(gui.current_window_root(), "", false), 1);
 			canvas.textrenderer().font_size(font_size);
 		}
 		

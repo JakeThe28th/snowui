@@ -65,7 +65,7 @@ public class DragAndDropSupport {
 					)
 			);
 		held.force_update_all(); // <-- required so that, for example, scrollables set the scissor box properly
-		GUIElement.tickFloating(g, held, g.mx(), g.my(), 600);
+		GUIElement.tickFloating(g, held, g.mx(), g.my(), 600, false);
 		held.limit_rectangle(limit);
 		held.scissor_rectangle_recursive(scissor);
 		
@@ -107,7 +107,6 @@ public class DragAndDropSupport {
 	public GUIElement find_drag_target(GUIElement e) {
 		GUIElement found = null;
 		if (e.get(PredicateKey.BOUNDED) && e.is_on_screen()) {
-			if (e.draggable() && e.drag_rectangle().contains(g.mouspos())) {
 			if (e.draggable() && e.drag_rectangle().contains(g.mousepos())) {
 				found = e;
 			}	
