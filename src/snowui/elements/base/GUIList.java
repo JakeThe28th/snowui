@@ -87,6 +87,7 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	@Override
 	public void remove(GUIElement subelement) {
 		if (!elements.contains(subelement)) return;
+		drop_points.remove(elements.indexOf(subelement));
 		onRegisterSubElement(subelement);
 		removeSubElement(subelement);
 		elements.remove(subelement);
