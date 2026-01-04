@@ -8,7 +8,6 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import frost3d.interfaces.F3DCanvas;
-import frost3d.utility.Log;
 import frost3d.utility.Utility;
 import snowui.coss.enums.Color;
 

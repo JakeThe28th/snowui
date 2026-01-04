@@ -47,7 +47,7 @@ public class GUIInstance {
 		clear_color = new_color;
 		if (canvas != null) {
 			canvas.clear_color(clear_color);
-		}
+		}		
 	}
 	
 	public void size(int width, int height) {
