@@ -15,7 +15,6 @@ import frost3d.implementations.SimpleTextRenderer;
 import frost3d.implementations.VectorIconRenderer;
 import frost3d.interfaces.F3DIconRenderer;
 import frost3d.interfaces.F3DWindow;
-import frost3d.utility.Rectangle;
 import snowui.coss.COSSProperty;
 import snowui.coss.ComposingStyleSheet;
 import snowui.coss.enums.Color;
@@ -28,27 +27,16 @@ import snowui.utility.GUIUtility;
 
 public class GUIInstance {
 		
-	static final boolean SHOW_FPS = true;
-	public static final boolean DEBUG = true;
+	public static final boolean SHOW_FPS 				= true;
+	public static final boolean DEBUG 					= true;
 	
-	public FPSCounter 			fps 		= new FPSCounter();
-	public DragAndDropSupport 	drag_and_drop_support = new DragAndDropSupport(this);
+	public FPSCounter 			fps 					= new FPSCounter();
+	public DragAndDropSupport 	drag_and_drop_support 	= new DragAndDropSupport(this);
 	
-	public static final int INPUT_REPEAT_TIME = 500;
-
-	public int PREVIEW_DEPTH() {
-		return 900;
-	}
+	public static final int 	INPUT_REPEAT_TIME 		= 500;
+	public 				int 	PREVIEW_DEPTH()  { return 800; }
 	
-	Vector4f clear_color = Color.BASIC_CLEAR.val();
-	
-	public Vector4f clear_color() { return clear_color; }
-	public void clear_color(Vector4f new_color) { 
-		clear_color = new_color;
-		if (canvas != null) {
-			canvas.clear_color(clear_color);
-		}		
-	}
+	// ............................ -- Canvas Stuff -- ............................ //
 	
 	public void size(int width, int height) {
 		if (canvas == null || canvas.width() != width || canvas.height() != height) {
@@ -58,9 +46,23 @@ public class GUIInstance {
 			canvas.textrenderer(text);
 			canvas.iconrenderer(icons);
 			canvas.clear_color(clear_color);
-			//canvas.clear_color(0, 0, 0, 1);
 			root_container.scissor_rectangle_recursive(canvas.size());
 		}
+	}
+	
+	F3DIconRenderer				icons;
+	SimpleTextRenderer 			text;
+	SimpleCanvas 				canvas;
+	Vector4f 					clear_color;
+
+	public F3DIconRenderer 		iconrenderer() { return icons			; }
+	public SimpleTextRenderer 	textrenderer() { return text			; }
+	public SimpleCanvas 		canvas() 	   { return canvas			; }
+	public Vector4f 			clear_color()  { return clear_color		; }
+	
+	public void clear_color(Vector4f new_color) { 
+		clear_color = new_color;
+		if (canvas != null) canvas.clear_color(clear_color);
 	}
 	
 	public void iconrenderer(F3DIconRenderer new_icons) {
@@ -68,30 +70,18 @@ public class GUIInstance {
 		if (canvas != null) canvas.iconrenderer(new_icons);
 	}
 	
-	F3DIconRenderer				icons;
-	SimpleTextRenderer 			text;
-	SimpleCanvas 				canvas;
-	
 	public void font_size(int new_size) {
 		textrenderer().font_size(new_size);
 		iconrenderer().size(new_size);
 	}
 	
-	public F3DIconRenderer 		iconrenderer() { return icons; }
-	public SimpleTextRenderer 	textrenderer() { return text; }
-	public SimpleCanvas 		canvas() { return canvas; }
-	
-	public void push_scissor(Rectangle rectangle) {
-		canvas.push_scissor(rectangle);
-	}
-	
-	public void pop_scissor() {
-		canvas.pop_scissor();
-	}
+	// ............................ -- Input -- ............................ //
 
 	// TODO: Add tab navigation support (maybe by hiding and moving the mouse around?)
 
 	Input input;
+	public Input 	rawinput()  { return input; }
+
 	public Vector2i mouspos	() 	{ return new Vector2i(input.mouseX(), input.mouseY()); }
 	public int 		mx		() 	{ return input.mouseX(); }
 	public int 		my		() 	{ return input.mouseY(); }
@@ -111,42 +101,57 @@ public class GUIInstance {
 		}
 	}
 	
-	public Input rawinput() { return input; }
+	       CursorType   cursor;
+	public CursorType 	cursor() 						{ return this.cursor; }
+	public void 		cursor(CursorType new_cursor) 	{ this.cursor = new_cursor; }
 	
-	CursorType current_cursor = CursorType.ARROW_CURSOR;
-	public void cursor(CursorType new_cursor) {
-		this.current_cursor = new_cursor;
-	}
-	public CursorType cursor() {
-		return this.current_cursor;
-	}
+	// ............................ -- Stylesheet -- ............................ //
 	
-	public GUIInstance(F3DWindow window, Input input) {
-		this.input = input;
-		this.text = new SimpleTextRenderer();
-		text.anti_aliasing_enabled(true);
-		this.icons = new VectorIconRenderer();
-	}
-	
-	// -- ++  ...  ++ -- //
-	
-	GUIRootContainer root_container = new GUIRootContainer();
-	public void 		root(GUIElement r) 	{ root_container.root(r); }
-	public GUIElement 	root() 				{ return root_container.root(); }
-
-	ArrayList<GUIElement> windows; // TODO
-	
-	ComposingStyleSheet style = new ComposingStyleSheet();
+	       ComposingStyleSheet style;
 	public ComposingStyleSheet style() { return style; }
+	
 	public void style(ComposingStyleSheet sheet) {
 		this.style = sheet;
-		this.root_container.force_update_all();
+		force_update_all();
 		COSSProperty style_clear_color = sheet.getProperty("gui_clear_color", "base_color", null);
 		if (style_clear_color != null) this.clear_color(style_clear_color .color());
 	}
 	
+	// ............................ -- Elements -- ............................ //
+	
+	GUIRootContainer 	root_container = new GUIRootContainer();
+	
+	public void 		root(GUIElement r) 	{ 		 root_container.root(r); }
+	public GUIElement 	root() 				{ return root_container.root() ; }
+	
 	public void force_update_all() {
 		this.root_container.force_update_all();
+	}
+	
+	public ArrayList<GUIElement> current_hovered_element_tree() {
+		// TODO: work with windows/menus etc
+		return GUIUtility.getHoveredElementTree(root_container);
+	}
+
+	       GUIElement last_pressed_element;
+	public GUIElement last_pressed_element() 				{ return last_pressed_element; }
+	public void last_pressed_element(GUIElement element) 	{ last_pressed_element = element; }
+	
+
+	public GUIElement current_window_root() {
+		// TODO Auto-generated method stub
+		return root_container;
+	}
+	
+	// ............................ -- The Rest -- ............................ //
+	
+	public GUIInstance(F3DWindow window, Input input) {
+		this.input 			= input;
+		this.text 			= new SimpleTextRenderer();
+		this.icons 			= new VectorIconRenderer();
+		this.style 			= new ComposingStyleSheet();
+		this.clear_color 	= Color.BASIC_CLEAR.val();
+		text.anti_aliasing_enabled(true);
 	}
 	
 	public void render() {
@@ -173,27 +178,7 @@ public class GUIInstance {
 		canvas.draw_frame();
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(8, "Draw (canvas)");
 		
-		if (input.cursor() != current_cursor) input.cursor(current_cursor);
+		if (input.cursor() != cursor) input.cursor(cursor);
 	}
 	
-	public ArrayList<GUIElement> current_hovered_element_tree() {
-		// TODO: work with windows/menus etc
-		return GUIUtility.getHoveredElementTree(root_container);
-	}
-
-	GUIElement last_pressed_element;
-	
-	public void last_pressed_element(GUIElement element) {
-		last_pressed_element = element;
-	}
-	
-	public GUIElement last_pressed_element() {
-		return last_pressed_element;
-	}
-
-	public GUIElement current_window_root() {
-		// TODO Auto-generated method stub
-		return root_container;
-	}
-
 }
