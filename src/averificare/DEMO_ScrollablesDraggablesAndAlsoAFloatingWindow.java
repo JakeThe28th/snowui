@@ -1,5 +1,7 @@
 package averificare;
 
+import java.util.ArrayList;
+
 import org.lwjgl.glfw.GLFW;
 
 import frost3d.GLState;
@@ -7,12 +9,16 @@ import frost3d.data.BuiltinShaders;
 import frost3d.enums.IconType;
 import frost3d.implementations.SimpleWindow;
 import snowui.GUIInstance;
+import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIClickableRectangle;
 import snowui.elements.base.GUIIcon;
 import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIScrollable;
 import snowui.elements.base.GUIText;
+import snowui.elements.floating.ClickableMenuOption;
 import snowui.elements.floating.FloatingWindow;
+import snowui.elements.floating.GUIBasicMenu;
+import snowui.elements.floating.MenuOption;
 
 public class DEMO_ScrollablesDraggablesAndAlsoAFloatingWindow {
 
@@ -63,7 +69,13 @@ public class DEMO_ScrollablesDraggablesAndAlsoAFloatingWindow {
 		
 		gui.root(new GUIScrollable(list));
 		
-		gui.add_window(new FloatingWindow());
+		ArrayList<MenuOption> options = new ArrayList<MenuOption>();
+			options.add(new ClickableMenuOption(IconType.CONTROL_PAUSE, "Test!", "...r"));
+			options.add(new ClickableMenuOption(IconType.GENERIC_HOME, "Test2! Hello, This is Text", "No r"));
+			options.add(new ClickableMenuOption(null, "Te! He Text", null));
+			options.add(new ClickableMenuOption(IconType.CONTROL_PIN, "xt", "No r"));
+
+		gui.add_window(new GUIBasicMenu(options));
 		
 		while (!window.should_close()) {
 			if (window.input().keyPressed(GLFW.GLFW_KEY_LEFT_CONTROL) ) { 

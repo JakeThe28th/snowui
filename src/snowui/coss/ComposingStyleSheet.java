@@ -158,6 +158,17 @@ public class ComposingStyleSheet {
 		
 		// GUISplit
 		HELPERSetUniformMargins	  (sheet, "split_view", 			"0");
+		
+		// Menus
+		sheet.setProperty  ("basic_menu",   	   		"outline_color", 		"TRANSPARENT_BLACK");	
+		sheet.setProperty  ("basic_menu",   	   		"outline_size", 		"8");	
+		sheet.setProperty  ("basic_menu",   	   		"outline_margin", 		"12");	
+		sheet.setProperty  ("basic_menu",   	   		"background_color", 	"BLACK");	
+		sheet.setProperty  ("basic_menu_option",   		"min_width", 			"container");	
+		sheet.setProperty  ("basic_menu_option",   		"max_width", 			"container");	
+		sheet.setProperty  ("basic_menu_option_right",  "base_color", 			"TRANSPARENT_WHITE");	
+		sheet.setProperty  ("basic_menu_option_right",  "size", 				"18");	
+
 
 	}
 	
