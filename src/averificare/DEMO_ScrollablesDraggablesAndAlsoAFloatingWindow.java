@@ -18,6 +18,7 @@ import snowui.elements.base.GUIText;
 import snowui.elements.floating.GUIConfirmPopup;
 import snowui.elements.floating.GUIContextMenu;
 import snowui.elements.floating.GUIContextMenuOption;
+import snowui.elements.floating.GUIInputPopup;
 
 public class DEMO_ScrollablesDraggablesAndAlsoAFloatingWindow {
 
@@ -74,6 +75,12 @@ public class DEMO_ScrollablesDraggablesAndAlsoAFloatingWindow {
 			@Override
 			public void onConfirm() {
 				Log.send("True!");
+				GUIInputPopup input_popup = new GUIInputPopup("How long did it take her to smile?", "4 Chapters", gui) {
+					public void onFinish(String string) { 
+						Log.send("Result: " + string);
+					}
+				};
+				gui.add_window(input_popup);
 			}
 			@Override
 			public void onDeny() {
