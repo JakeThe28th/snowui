@@ -18,13 +18,23 @@ public class GUIContextMenu extends GUIList implements FloatingElement {
 	ArrayList<GUIContextMenuOption> sub_context_elements = new ArrayList<GUIContextMenuOption>();
 	
 	public GUIContextMenu(ArrayList<GUIContextMenuOption> options) {
+		this(options, 50, 50);
+	}
+	
+	public GUIContextMenu(ArrayList<GUIContextMenuOption> options, int x, int y) {
 		super(); 
+		setpos(x, y);
 		for (GUIContextMenuOption o : options) add(o);
 		for (GUIContextMenuOption o : options) sub_context_elements.add(o);
 		for (GUIContextMenuOption o : options) o.parent_menu = this;
 
 	}
 	
+	public void setpos(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	int TEXT_SPACE = 40;
 	int ICON_SPACE = 10;
 	

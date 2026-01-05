@@ -110,6 +110,7 @@ public class GUIContextMenuOption extends GUIElement {
 			} else {
 				g_sub_options.x = this.limit_rectangle().left();
 			}
+			g_sub_options.setpos(g_sub_options.x, g_sub_options.y);
 			g_sub_options.prefer_right_side = this.prefer_right_side;
 		}
 	}
