@@ -28,6 +28,7 @@ public class TXDATANavigationBar {
 		String 		  name				= "Unnamed Group #" + (tbgc++);
 		ArrayList<Tab> tabs 			= new ArrayList<>();
 		int			  tab_index 		= 0;
+		public int 	  tab_count	 () 			{ return tabs.size(); }
 		public Tab	  tab		 (int index)	{ return tabs.get(index); }
 		public Tab 	  current_tab() 			{ return tabs.size() > 0 ? tabs.get(tab_index) : null; }
 		public void	  current_tab(int index) 	{ tab_index = index; syncGUI_Navigation(); setURI(current_tab().uri); }
@@ -51,9 +52,12 @@ public class TXDATANavigationBar {
 		}
 		// ...  Mutability  ... //
 		public void deleteTab(int tab_index) {
+			if (tabs.size() == 0) return;
 			tabs.get(tab_index).ephemeral_data = null; // so it gets GC'd
 			deleted_tabs.add(tabs.get(tab_index));
 			tabs.remove(tab_index);
+			if (this.tab_index == tab_index) this.tab_index--;
+			if (this.tab_index <= 0) this.tab_index = 0;
 			syncGUI_Tabs();
 			select();
 		}
@@ -123,6 +127,7 @@ public class TXDATANavigationBar {
 	ArrayList<TabGroup> groups = new ArrayList<>();
 	int group_index = 0;
 	
+	public int 		group_count	 () 				{ return groups.size(); }
 	public TabGroup group		 (int index) 		{ return groups.get(index); }
 	public TabGroup current_group() 				{ return groups.size() > 0 ? groups.get(group_index) : null; }
 	public void		current_group(int index) 	 	{ group_index = index; current_group().select(); }
