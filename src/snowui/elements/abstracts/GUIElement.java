@@ -228,7 +228,7 @@ public abstract class GUIElement {
 	 *  sub-elements drawing information itself. */
 	public abstract void updateDrawInfo(GUIInstance gui);
 	public 		 	void tickAnimation(GUIInstance gui) {};
-	public abstract void draw(GUIInstance gui, int depth);
+	public  		void draw(GUIInstance gui, int depth) {};
 	
 	public void set(PredicateKey key, boolean value) {
 		next_state.set(key, value);
