@@ -3,7 +3,6 @@ package snowui.elements.floating;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
-import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIText;
 import snowui.elements.base.GUITextBox;
 import snowui.elements.interfaces.FloatingElement;
@@ -22,13 +21,15 @@ public class GUIInputPopup extends GUIElement implements FloatingElement {
 	int x = 0;
 	int y = 0;
 	
+	// TODO: Maybe merge the popups ? they share a lot of code...
+	
 	public GUIInputPopup(String title, String initial, GUIInstance gui) {
 		this.title = new GUIText(title);
 		this.registerSubElement(this.title);
 		this.input = new GUITextBox(initial) {
 			@Override
 			public void onFinishEditing(String o, String result) {
-				popup().onFinish(initial);
+				popup().onFinish(result);
 				gui.remove_window(popup());
 			}
 		};
