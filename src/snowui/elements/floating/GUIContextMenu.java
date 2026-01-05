@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIList;
 import snowui.elements.interfaces.FloatingElement;
@@ -73,6 +74,21 @@ public class GUIContextMenu extends GUIList implements FloatingElement {
 			if (e.g_sub_options != null) e.g_sub_options.close(gui);
 		}
 		gui.remove_window(this);
+	}
+	
+	@Override 
+	public void tickAnimation(GUIInstance gui) {
+		if (gui.primary_click_released() && !me_or_submenu_hovered()) {
+			close(gui);
+		}
+	}
+	
+	public boolean me_or_submenu_hovered() {
+		boolean b = get(PredicateKey.BOUNDED);
+		for (GUIContextMenuOption e : sub_context_elements) {
+			if (e.g_sub_options != null) b = b || e.g_sub_options.me_or_submenu_hovered();
+		}
+		return b;
 	}
 
 }
