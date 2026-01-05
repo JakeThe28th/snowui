@@ -160,15 +160,25 @@ public class ComposingStyleSheet {
 		HELPERSetUniformMargins	  (sheet, "split_view", 			"0");
 		
 		// Menus
-		sheet.setProperty  ("context_menu",   	   			"outline_color", 		"TRANSPARENT_WHITE");	
-		sheet.setProperty  ("context_menu",   	   			"outline_size", 		"1");	
-		sheet.setProperty  ("context_menu",   	   			"outline_margin", 		"5");	
-		sheet.setProperty  ("context_menu",   	   			"background_color", 	"BLACK");	
+		sheet.setProperty  ("generic_panel",   	   			"outline_color", 		"TRANSPARENT_WHITE");	
+		sheet.setProperty  ("generic_panel",   	   			"outline_size", 		"1");	
+		sheet.setProperty  ("generic_panel",   	   			"outline_margin", 		"5");	
+		sheet.setProperty  ("generic_panel",   	   			"background_color", 	"BLACK");	
+		
 		sheet.setProperty  ("context_menu_option",   		"min_width", 			"container");	
 		sheet.setProperty  ("context_menu_option",   		"max_width", 			"container");	
 		sheet.setProperty  ("context_menu_option_right",  	"base_color", 			"TRANSPARENT_WHITE");	
 		sheet.setProperty  ("context_menu_option_right",  	"size", 				"18");	
 
+		// Popups
+		sheet.setProperty  ("text_button",   	   			"outline_color", 		"TRANSPARENT_WHITE");	
+		sheet.setProperty  ("text_button",   	   			"outline_size", 		"1");	
+		sheet.setProperty  ("text_button",   	   			"outline_margin", 		"5");	
+		sheet.setProperty  ("text_button",   	   			"background_color", 	"BLACK");	
+		sheet.addContains  ("text_button", 					"text");
+		sheet.setPredicate ("text_button", 					"HOVERED=true", 		"text_button_hover");
+		HELPERSetUniformMargins(sheet, "text_button", "8");	
+		sheet.setProperty  ("text_button_hover",   	   		"background_color", 	"DESBLUE");	
 
 	}
 	

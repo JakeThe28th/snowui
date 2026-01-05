@@ -8,12 +8,14 @@ import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.enums.IconType;
 import frost3d.implementations.SimpleWindow;
+import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.elements.base.GUIClickableRectangle;
 import snowui.elements.base.GUIIcon;
 import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIScrollable;
 import snowui.elements.base.GUIText;
+import snowui.elements.floating.GUIConfirmPopup;
 import snowui.elements.floating.GUIContextMenu;
 import snowui.elements.floating.GUIContextMenuOption;
 
@@ -65,6 +67,20 @@ public class DEMO_ScrollablesDraggablesAndAlsoAFloatingWindow {
 		sub_list_2.set(new GUIIcon(IconType.GENERIC_HOME).draggable(true), 3);
 		
 		gui.root(new GUIScrollable(list));
+		
+		gui.size(window.width, window.height);
+
+		GUIConfirmPopup popup = new GUIConfirmPopup("Really use 'LP TOSS'?", gui) {
+			@Override
+			public void onConfirm() {
+				Log.send("True!");
+			}
+			@Override
+			public void onDeny() {
+				Log.send("you will be cast to the lore pit");
+			}
+		};
+		gui.add_window(popup);
 		
 //		TODO: Figure out how to segregate this code to be less horrible
 //			- Separate Options api thing from the actual elements
