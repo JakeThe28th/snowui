@@ -20,11 +20,16 @@ public class GUIContextMenuOption extends GUIElement {
 	GUIText g_right_text;
 	GUIIcon g_expand_icon;
 	
-	int left_text_start 	= 0;
-	int left_text_end 		= 0;
-	int right_text_end 		= 0;
-	int ex_icon_width 		= 0;
-	boolean init = false;
+	// Intrinsic
+	int l_icon_size = 0;
+	int l_text_size = 0;
+	int r_text_size = 0;
+	int r_icon_size = 0;
+	
+	// Set by parent
+	int l_text_x = 0;
+	int r_text_x = 0;
+	int r_icon_x = 0;
 	
 	boolean prefer_right_side = true;
 
@@ -62,51 +67,33 @@ public class GUIContextMenuOption extends GUIElement {
 		this.registerSubElement(g_expand_icon);
 	}
 	
-	int SPACE = 40;
-	int ICON_SPACE = 10;
-	
 	@Override
 	public void recalculateSize(GUIInstance gui) {
 		this.unpadded_height = GUIUtility.max_height	 (sub_elements);
-		update_alignments(true);
+		if (g_icon	   		!= null) l_icon_size = g_icon			.width();
+		if (g_left_text		!= null) l_text_size = g_left_text		.width();
+		if (g_right_text	!= null) r_text_size = g_right_text		.width();
+		if (g_expand_icon	!= null) r_icon_size = g_expand_icon	.width();
 		update_width();
 	}
 	
-	public void update_alignments(boolean allow_lower) {
-		if (g_icon	      != null)
-			left_text_start  = a(left_text_start, g_icon.width() 	+ ICON_SPACE, 					allow_lower);
-		if (g_left_text   != null) 
-			left_text_end    = a(left_text_end,   left_text_start   + g_left_text.width() + SPACE, 	allow_lower);
-		if (g_right_text  != null)
-			right_text_end   = a(right_text_end,  left_text_end 	+ g_right_text.width(), 		allow_lower);
-		if (g_expand_icon != null)
-			ex_icon_width    = a(ex_icon_width,   g_expand_icon.width(), 							allow_lower);
-		init 			 = true;
-	}
-
-	public void update_width() {
-		this.unpadded_width  = right_text_end + ex_icon_width;
-	}
-	
-	private int a(int old, int replacement, boolean allow_lower) {
-		return (allow_lower || replacement > old) ? replacement : old;
-	}
+	public void update_width() { this.unpadded_width  = r_icon_x + r_icon_size; }
 	
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
 		Rectangle b = this.aligned_limit_rectangle();
 		this.hover_rectangle(b);
 		if (g_icon != null) {
-			g_icon.limit_rectangle(new Rectangle(b.left(), b.top(), b.left() + left_text_start, b.bottom()));
+			g_icon.limit_rectangle(new Rectangle(b.left(), b.top(), b.left() + l_text_x, b.bottom()));
 		}
 		if (g_left_text != null) {
-			g_left_text.limit_rectangle(new Rectangle(b.left() + left_text_start, b.top(), b.left() + left_text_end, b.bottom()));
+			g_left_text.limit_rectangle(new Rectangle(b.left() + l_text_x, b.top(), b.left() + r_text_x, b.bottom()));
 		}
 		if (g_right_text != null) {
-			g_right_text.limit_rectangle(new Rectangle(b.left() + left_text_end, b.top(), right_text_end, b.bottom()));
+			g_right_text.limit_rectangle(new Rectangle(b.left() + r_text_x, b.top(), r_icon_x, b.bottom()));
 		}
 		if (g_expand_icon != null) {
-			g_expand_icon.limit_rectangle(new Rectangle(b.left() + right_text_end, b.top(), b.right(), b.bottom()));
+			g_expand_icon.limit_rectangle(new Rectangle(b.left() + r_icon_x, b.top(), b.right(), b.bottom()));
 		}
 	}
 	
