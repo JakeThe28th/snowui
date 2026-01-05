@@ -168,6 +168,8 @@ public class GUIList extends GUIElement implements ElementReceiver {
 		} else {
 			bounds = this.padded_limit_rectangle();
 		}
+
+		this.hover_rectangle(bounds);
 		
 		int left 	= bounds.left();
 		int top 	= bounds.top();
@@ -230,7 +232,6 @@ public class GUIList extends GUIElement implements ElementReceiver {
 			
 		}
 		
-		this.hover_rectangle(bounds);
 	}
 
 	@Override public void draw(GUIInstance gui, int depth) { }
