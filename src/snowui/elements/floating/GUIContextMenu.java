@@ -20,6 +20,8 @@ public class GUIContextMenu extends GUIList implements FloatingElement {
 		super(); 
 		for (GUIContextMenuOption o : options) add(o);
 		for (GUIContextMenuOption o : options) sub_context_elements.add(o);
+		for (GUIContextMenuOption o : options) o.parent_menu = this;
+
 	}
 	
 	int TEXT_SPACE = 40;
@@ -65,5 +67,12 @@ public class GUIContextMenu extends GUIList implements FloatingElement {
 
 	@Override public GUIElement 	as_element() 						{ return this; }
 	@Override public Rectangle 		position() 							{ return area; }
+
+	public void close(GUIInstance gui) {
+		for (GUIContextMenuOption e : sub_context_elements) {
+			if (e.g_sub_options != null) e.g_sub_options.close(gui);
+		}
+		gui.remove_window(this);
+	}
 
 }

@@ -13,6 +13,8 @@ import snowui.utility.GUIUtility;
 
 public class GUIContextMenuOption extends GUIElement {
 	
+	GUIContextMenu parent_menu = null;
+	
 	{ identifier("context_menu_option"); }
 	
 	GUIIcon g_icon;
@@ -104,11 +106,24 @@ public class GUIContextMenuOption extends GUIElement {
 			gui.add_window(g_sub_options);
 			g_sub_options.y = this.limit_rectangle().top();
 			if (prefer_right_side) {
-				g_sub_options.x = this.limit_rectangle().right();
+				g_sub_options.x = this.hover_rectangle().right() - 5;
 			} else {
 				g_sub_options.x = this.limit_rectangle().left();
 			}
 			g_sub_options.prefer_right_side = this.prefer_right_side;
+		}
+	}
+	
+	@Override
+	public void tickAnimation(GUIInstance gui) {
+		if (this.g_sub_options != null && !get(PredicateKey.BOUNDED)) {
+			if (!this.g_sub_options.get(PredicateKey.BOUNDED)) {
+				if (parent_menu != null && parent_menu.get(PredicateKey.BOUNDED)) {
+					g_sub_options.close(gui);
+					g_sub_options = null;
+				}
+			}
+		
 		}
 	}
 	
