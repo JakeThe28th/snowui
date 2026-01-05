@@ -383,10 +383,10 @@ public abstract class GUIElement {
 			
 			boolean disabled = get(PredicateKey.DISABLED);
 			
-			boolean sub_overridden = overridden || disabled;
+			overridden = overridden || disabled;
 			
-			if (!sub_overridden) sub_overridden = sub_overridden | preUpdateState(gui);
-			for (GUIElement e : sub_elements) { overridden = overridden | e.triggerUpdateState(gui, sub_overridden); }
+			if (!overridden) overridden = overridden | preUpdateState(gui);
+			for (GUIElement e : sub_elements) { overridden = overridden | e.triggerUpdateState(gui, overridden); }
 
 			Rectangle _hover_rectangle = hover_rectangle;
 			if (_hover_rectangle != null && scissor_rectangle() != null) { 
@@ -411,9 +411,7 @@ public abstract class GUIElement {
 			// keep overriding super-elements even when not hovered, so
 			// we can't just put it in the if statement up there.
 			overridden = overridden || updateState(gui);
-			
-			overridden = overridden || sub_overridden;
-			
+						
 			if (disabled) return false;
 			return overridden;
 		} else {
