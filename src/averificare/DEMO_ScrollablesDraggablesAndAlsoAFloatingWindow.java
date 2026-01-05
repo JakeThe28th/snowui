@@ -16,7 +16,6 @@ import snowui.elements.base.GUIScrollable;
 import snowui.elements.base.GUIText;
 import snowui.elements.floating.GUIContextMenu;
 import snowui.elements.floating.GUIContextMenuOption;
-import snowui.elements.interfaces.ContextMenuOption;
 
 public class DEMO_ScrollablesDraggablesAndAlsoAFloatingWindow {
 
@@ -74,12 +73,23 @@ public class DEMO_ScrollablesDraggablesAndAlsoAFloatingWindow {
 //		
 //		...Also, figure out how to handle rollover vs clicking on expandable things...
 					
-		ArrayList<ContextMenuOption> options = new ArrayList<ContextMenuOption>();
+		
+		ArrayList<GUIContextMenuOption> options3 = new ArrayList<GUIContextMenuOption>();
+			options3.add(new GUIContextMenuOption(null, "W!", null));
+			options3.add(new GUIContextMenuOption(IconType.CONTROL_SKIP_PREVIOUS, "te", "C+418"));
+			
+		ArrayList<GUIContextMenuOption> options2 = new ArrayList<GUIContextMenuOption>();
+			options2.add(new GUIContextMenuOption(null, "Wow! So Element!", null));
+			options2.add(new GUIContextMenuOption(options3, "The darkness keeps flowing"));
+			options2.add(new GUIContextMenuOption(IconType.FAVORITE_DINOSAUR, "Wow! So Temperate", "Ctrl+7"));
+		
+		ArrayList<GUIContextMenuOption> options = new ArrayList<GUIContextMenuOption>();
 			options.add(new GUIContextMenuOption(IconType.CONTROL_PAUSE, "Test!", "...r"));
 			options.add(new GUIContextMenuOption(IconType.GENERIC_HOME, "Test2! Hello, This is Text", "No r"));
 			options.add(new GUIContextMenuOption(null, "Te! He Text", null));
 			options.add(new GUIContextMenuOption(IconType.CONTROL_PIN, "xt", "No r"));
-
+			options.add(new GUIContextMenuOption(options2, "Shadows Cut Further"));
+			
 		gui.add_window(new GUIContextMenu(options));
 		
 		while (!window.should_close()) {

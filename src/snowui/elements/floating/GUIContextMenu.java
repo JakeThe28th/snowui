@@ -2,30 +2,42 @@ package snowui.elements.floating;
 
 import java.util.ArrayList;
 
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIList;
 import snowui.elements.interfaces.FloatingElement;
-import snowui.elements.interfaces.ContextMenuOption;
 
 public class GUIContextMenu extends GUIList implements FloatingElement {
+	
+	boolean prefer_right_side = true;
 
 	{ identifier("context_menu"); }
 	
-	public GUIContextMenu(ArrayList<ContextMenuOption> options) {
-		super(); for (ContextMenuOption o : options) add(o.as_element());
+	ArrayList<GUIContextMenuOption> sub_context_elements = new ArrayList<GUIContextMenuOption>();
+	
+	public GUIContextMenu(ArrayList<GUIContextMenuOption> options) {
+		super(); 
+		for (GUIContextMenuOption o : options) add(o);
+		for (GUIContextMenuOption o : options) sub_context_elements.add(o);
 	}
 	
 	private void fix_menu_offsets() {
-		int le = 0, ls = 0;
-		for (GUIElement e : sub_elements()) {
-			if (ls < ((ContextMenuOption) e).left_text_start()) ls = ((ContextMenuOption) e).left_text_start();
-			if (le < ((ContextMenuOption) e).left_text_end()) 	le = ((ContextMenuOption) e).left_text_end();
+		int le = 0, ls = 0, re = 0, ic = 0;
+		for (GUIContextMenuOption e : sub_context_elements) {
+			if (ls < e.left_text_start)  ls = e.left_text_start;
+			if (le < e.left_text_end) 	 le = e.left_text_end;
+			if (re < e.right_text_end)   re = e.right_text_end;
+			if (ic < e.ex_icon_width)	 ic = e.ex_icon_width;
 		}
-		for (GUIElement e : sub_elements()) {
-			((ContextMenuOption) e).left_text_start(ls);
-			((ContextMenuOption) e).left_text_end(le);
+		for (GUIContextMenuOption e : sub_context_elements) {
+			e.left_text_start 	= ls;
+			e.left_text_end		= le;
+			e.right_text_end	= re;
+			e.ex_icon_width		= ic;
+			e.update_width();
+			e.update_alignments(false);
 		}
 	}
 
@@ -36,9 +48,17 @@ public class GUIContextMenu extends GUIList implements FloatingElement {
 	
 	@Override
 	public void recalculateSize(GUIInstance gui) {
+		
+		// Kinda scuffed ...
+		for (int i = 0; i < 3; i++) fix_menu_offsets();
+
 		super.recalculateSize(gui);
-		area = new Rectangle(x, y, x + width(), y + height());
-		fix_menu_offsets();
+
+		if (prefer_right_side) {
+			area = new Rectangle(x, y, x + width(), y + height());
+		} else {
+			area = new Rectangle(x - width(), y, x, y + height());
+		}
 	}
 
 	@Override public GUIElement 	as_element() 						{ return this; }

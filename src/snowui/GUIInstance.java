@@ -162,11 +162,14 @@ public class GUIInstance {
 		text.anti_aliasing_enabled(true);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void render() {
 		cursor(CursorType.ARROW_CURSOR);
 		
 		GUIElement.tick(this, root_container, canvas().size(), 0, (root_container == this.current_window_root()));	
-		for (FloatingElement w : windows) GUIElement.tick(this, w.as_element(), w.position(), 0, (w == this.current_window_root()));
+		for (FloatingElement w : ((ArrayList<FloatingElement>) windows.clone())) {
+			GUIElement.tick(this, w.as_element(), w.position(), 0, (w == this.current_window_root()));
+		}
 		drag_and_drop_support.tick();
 		
 		if (SHOW_FPS) fps.drawFPS(canvas);
