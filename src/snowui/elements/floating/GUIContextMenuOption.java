@@ -45,6 +45,7 @@ public class GUIContextMenuOption extends GUIElement {
 		if (left_text != null) {
 			g_left_text = new GUIText(left_text);
 			g_left_text.set(PredicateKey.DISABLED, true);
+			g_left_text.identifier("context_menu_option_left_text");
 			this.registerSubElement(g_left_text);
 		}
 		if (right_text != null) {
@@ -94,7 +95,7 @@ public class GUIContextMenuOption extends GUIElement {
 			g_left_text.limit_rectangle(new Rectangle(b.left() + l_text_x, b.top(), b.left() + r_text_x, b.bottom()));
 		}
 		if (g_right_text != null) {
-			g_right_text.limit_rectangle(new Rectangle(b.left() + r_text_x, b.top(), r_icon_x, b.bottom()));
+			g_right_text.limit_rectangle(new Rectangle(b.left() + r_text_x, b.top(), b.left() + r_icon_x, b.bottom()));
 		}
 		if (g_expand_icon != null) {
 			g_expand_icon.limit_rectangle(new Rectangle(b.left() + r_icon_x, b.top(), b.right(), b.bottom()));

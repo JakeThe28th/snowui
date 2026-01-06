@@ -106,8 +106,8 @@ public class ComposingStyleSheet {
 		sheet.setProperty("snowui-h_contained", 		"max_height", 				"container");
 		sheet.setProperty("snowui-centered",  			"horizontal_alignment",		"middle");
 		sheet.setProperty("snowui-centered",  			"vertical_alignment", 		"middle");
-		sheet.setProperty("snowui-centered",  			"horizontal_alignment",		"middle");
-		sheet.setProperty("snowui-centered",  			"vertical_alignment", 		"middle");
+		sheet.setProperty("snowui-h_centered",  		"horizontal_alignment",		"middle");
+		sheet.setProperty("snowui-v_centered",  		"vertical_alignment", 		"middle");
 		sheet.setProperty("snowui-panel",  				"outline_color", 			"TRANSPARENT_WHITE");	
 		sheet.setProperty("snowui-panel",  				"outline_size", 			"1");	
 		sheet.setProperty("snowui-panel",  				"outline_margin", 			"5");	
@@ -159,10 +159,16 @@ public class ComposingStyleSheet {
 		sheet.addContains("confirm_popup_options", 						"snowui-centered");
 		sheet.addContains("context_menu_option", 						"snowui-w_contained");
 		sheet.addContains("context_menu_option", 						"snowui-hoverable");
-		sheet.addContains("context_menu_option_right_text", 			"snowui-transparent");
 		sheet.addContains("context_menu_option_left_icon", 				"snowui-centered");
 		sheet.addContains("context_menu_option_left_icon", 				"snowui-medium");
+		sheet.addContains("context_menu_option_left_icon", 				"icon");
 		sheet.addContains("context_menu_option_right_icon", 			"snowui-medium");
+		sheet.addContains("context_menu_option_right_icon", 			"icon");
+		sheet.addContains("context_menu_option_left_text", 				"context_menu_option_text");
+		sheet.addContains("context_menu_option_right_text", 			"context_menu_option_text");
+		sheet.addContains("context_menu_option_right_text", 			"snowui-transparent");
+		sheet.addContains("context_menu_option_text", 					"text");
+		sheet.addContains("context_menu_option_text", 					"snowui-v_centered");
 
 		sheet.addContains("tabgroup", 									"snowui-selectable_c");
 		sheet.addContains("minitab", 									"snowui-selectable_c");

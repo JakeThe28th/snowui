@@ -88,7 +88,7 @@ public class GUIContextMenu extends GUIList implements FloatingElement {
 	
 	@Override 
 	public void tickAnimation(GUIInstance gui) {
-		if (gui.primary_click_released() && !me_or_submenu_hovered()) {
+		if (gui.primary_click_released() && !me_or_submenu_hovered() && this.hover_rectangle() != null) {
 			close(gui);
 		}
 	}
