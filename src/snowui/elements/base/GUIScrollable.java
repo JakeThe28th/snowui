@@ -34,9 +34,14 @@ public class GUIScrollable extends GUIElement {
 		float content_size;
 		float screen_size;
 
-		public void scroll_amount(float amt) { if (scroll_amount == amt) return; scroll_amount = amt; this.should_update(true); onScroll(); }
-		public void content_size (int size) { content_size = size; this.should_update(true); }
-		public void screen_size  (int size) { screen_size = size; this.should_update(true); }
+		public void scroll_amount(float amt) { if (scroll_amount == amt) return; scroll_amount = amt; update(); onScroll(); }
+		public void content_size (int size) { content_size = size; update(); }	
+		public void screen_size  (int size) { screen_size = size; update(); }
+		
+		private void update() {
+			should_update(true);
+			scroll_this().should_update(true);
+		}
 		
 		public GUIScrollBar horizontalify() {
 			vertical = false;
@@ -150,8 +155,8 @@ public class GUIScrollable extends GUIElement {
 			limit_scroll_amount();
 		}
 		
-		public void page_up() 	{ scroll_amount(scroll_amount -= screen_size);  }
-		public void page_down() { scroll_amount(scroll_amount += screen_size);  }
+		public void page_up() 	{ scroll_amount(scroll_amount - screen_size);  }
+		public void page_down() { scroll_amount(scroll_amount + screen_size);  }
 		public int scroll_amount_pixels() { return (int) scroll_amount; }
 		
 		public void onScroll() { }
