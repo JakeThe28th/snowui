@@ -373,6 +373,10 @@ public class GUITextBox extends GUIElement {
 			content_undo.clear();
 			should_recalculate_size(true);
 		}
+
+		public String text() {
+			return content;
+		}
 		
 	}
 	

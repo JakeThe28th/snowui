@@ -4,6 +4,7 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
+import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIText;
 import snowui.elements.base.GUITextBox;
 import snowui.elements.interfaces.FloatingElement;
@@ -16,6 +17,27 @@ public class GUIInputPopup extends GUIElement implements FloatingElement {
 	
 	GUIText title;
 	GUITextBox input;
+	GUIList options = new GUIList();
+	
+	{
+		options.add(new GUIText("OK") {
+			@Override
+			public void onSingleClick(GUIInstance gui) {
+				popup().onFinish(input.text().text());
+				gui.remove_window(popup());
+			}
+		}.identifier("text_button"));
+		options.add(new GUIText("Cancel"){
+			@Override
+			public void onSingleClick(GUIInstance gui) {
+				popup().onFinish(null);
+				gui.remove_window(popup());
+			}
+		}.identifier("text_button"));
+		options.horizontalify();
+		options.identifier("confirm_popup_options");
+		this.registerSubElement(options);
+	}
 	
 	Rectangle area = new Rectangle(-1000, -1000, -1000, -1000);
 	
@@ -57,8 +79,9 @@ public class GUIInputPopup extends GUIElement implements FloatingElement {
 	public void updateDrawInfo(GUIInstance gui) {
 		Rectangle b = this.aligned_limit_rectangle();
 		this.hover_rectangle(b);
-		title.limit_rectangle(new Rectangle(b.left(), b.top(), b.right(), b.top() + title.height()));
-		input.limit_rectangle(new Rectangle(b.left(), b.top()+title.height(), b.right(), b.bottom()));
+		title	.limit_rectangle(new Rectangle(b.left(), 				  b.top(), 				  b.right(), 					b.top() + title.height()));
+		options	.limit_rectangle(new Rectangle(b.right()-options.width(), b.top()+title.height(), b.right(), 					b.bottom()));
+		input	.limit_rectangle(new Rectangle(b.left(), 				  b.top()+title.height(), b.right()-options.width(), 	b.bottom()));
 	}
 	
 	public void onFinish(String string) { }
