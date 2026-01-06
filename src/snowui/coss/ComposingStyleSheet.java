@@ -253,7 +253,7 @@ public class ComposingStyleSheet {
 		if (properties_of_this_type.get(property) == null) {
 			COSSProperty result = null;
 			COSSType type_info = getType(type);
-			for (String contained_type : type_info.contains()) {
+			for (String contained_type : type_info.contains().reversed()) {
 				if (contained_type.equals(type)) continue;
 				
 				result = getPropertyNoDefault(contained_type, property, predicate);
