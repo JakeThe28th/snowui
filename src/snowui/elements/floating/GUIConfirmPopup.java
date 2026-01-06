@@ -2,6 +2,7 @@ package snowui.elements.floating;
 
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIList;
 import snowui.elements.base.GUIText;
@@ -9,7 +10,7 @@ import snowui.elements.interfaces.FloatingElement;
 
 public class GUIConfirmPopup extends GUIElement implements FloatingElement {
 	
-	{ identifier("generic_panel"); }
+	{ identifier("confirm_popup"); }
 	
 	private GUIConfirmPopup popup() { return this; }
 	
@@ -32,7 +33,7 @@ public class GUIConfirmPopup extends GUIElement implements FloatingElement {
 			}
 		}.identifier("text_button"));
 		options.horizontalify();
-		options.identifier("centered");
+		options.identifier("confirm_popup_options");
 		this.registerSubElement(options);
 	}
 	
@@ -44,6 +45,8 @@ public class GUIConfirmPopup extends GUIElement implements FloatingElement {
 	public GUIConfirmPopup(String title, GUIInstance gui) {
 		this.title = new GUIText(title);
 		this.registerSubElement(this.title);
+		this.title.identifier("popup_title");
+		this.title.set(PredicateKey.DISABLED, true);
 		this.x = gui.canvas().size().width()/2;
 		this.y = gui.canvas().size().height()/2;
 	}

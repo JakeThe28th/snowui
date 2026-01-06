@@ -13,7 +13,7 @@ public class GUIContextMenu extends GUIList implements FloatingElement {
 	
 	boolean prefer_right_side = true;
 
-	{ identifier("generic_panel.context_menu"); }
+	{ identifier("context_menu"); }
 	
 	ArrayList<GUIContextMenuOption> sub_context_elements = new ArrayList<GUIContextMenuOption>();
 	

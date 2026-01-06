@@ -2,6 +2,7 @@ package snowui.elements.floating;
 
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIText;
 import snowui.elements.base.GUITextBox;
@@ -9,7 +10,7 @@ import snowui.elements.interfaces.FloatingElement;
 
 public class GUIInputPopup extends GUIElement implements FloatingElement {
 	
-	{ identifier("generic_panel"); }
+	{ identifier("input_popup"); }
 	
 	private GUIInputPopup popup() { return this; }
 	
@@ -26,6 +27,8 @@ public class GUIInputPopup extends GUIElement implements FloatingElement {
 	public GUIInputPopup(String title, String initial, GUIInstance gui) {
 		this.title = new GUIText(title);
 		this.registerSubElement(this.title);
+		this.title.identifier("popup_title");
+		this.title.set(PredicateKey.DISABLED, true);
 		this.input = new GUITextBox(initial) {
 			@Override
 			public void onFinishEditing(String o, String result) {

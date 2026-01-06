@@ -67,118 +67,107 @@ public class ComposingStyleSheet {
 	
 	public static void setDefaults(ComposingStyleSheet sheet) {
 
-		sheet.setProperty("default", "base_color", 				"BASIC_PANEL");
+		// -- Default -- //
+		
+		sheet.setProperty("default", "base_color", 				"WHITE");
 		sheet.setProperty("default", "outline_color", 			"BLACK");
 		sheet.setProperty("default", "preview_color", 			"css_rgba(187, 161, 255, 0.5)");
-		
 		sheet.setProperty("default", "background_color", 		"css_rgba(0,0,0,0)");
 		sheet.setProperty("default", "background_margin", 		"4");
-
-		HELPERSetUniformMargins		(sheet, "default", "2");
-		HELPERSetUniformSizeLimit	(sheet, "default", "flex");
-		
 		sheet.setProperty("default", "horizontal_alignment",	"left"); 	// Left, right, middle
 		sheet.setProperty("default", "vertical_alignment", 		"top");	 	// Top, bottom, middle
-
-
 		sheet.setProperty("default", "outline_size", 			"0");
-		sheet.setProperty("default", "size", 					"16"); 		// Symbol size, scroll bar size, etc
-		
+		sheet.setProperty("default", "size", 					"18"); 		// Symbol size, scroll bar size, etc
 		sheet.setProperty("default", "outline_margin", 			"3");
-		
 		sheet.setProperty("default", "list_spacing", 			"0");
 		sheet.setProperty("default", "list_indent", 			"0");
-
-		// -- Predicates -- //
 		
-		sheet.setPredicate("default", "HOVERED=true", 				"hover");
-		sheet.setPredicate("default", "HOVERED=true, DOWN=true", 	"down");
-		sheet.setPredicate("default", "SELECTED=true", 				"selected");
-
+		HELPERSetUniformMargins		(sheet, "default", "2");				// Sets [left/top/right/bottom]_margin
+		HELPERSetUniformSizeLimit	(sheet, "default", "flex");				// sets [{min/max}/{width/height}]
+	
 		// -- Built-in types -- //
 		
-		sheet.setProperty("contained", "min_width", "container");
-		sheet.setProperty("contained", "max_width", "container");
-		sheet.setProperty("contained", "min_height", "container");
-		sheet.setProperty("contained", "max_height", "container");
+		sheet.setProperty("snowui-accent_bg", 	  		"background_color", 		"DESBLUE");
+		sheet.setProperty("snowui-accent_bg", 			"background_margin", 		"2");
+		sheet.setProperty("snowui-accent", 	  			"base_color", 				"DESBLUE");
+		sheet.setProperty("snowui-hover_accent", 		"base_color", 				"DARKDESBLUE");
+		sheet.setProperty("snowui-down_accentown", 		"base_color", 				"DARKDESBLUE");
+		sheet.setProperty("snowui-dark", 	  			"base_color", 				"BASIC_PANEL");
+		sheet.setProperty("snowui-hover_dark", 			"base_color", 				"BLACK");
+		sheet.setProperty("snowui-down_dark", 			"base_color", 				"BLACK");
+		sheet.setProperty("snowui-down", 	  			"background_color", 		"BASIC_PANEL_DOWN");
+		sheet.setProperty("snowui-hover", 	  			"background_color", 		"BASIC_PANEL_HOVER");
+		sheet.setProperty("snowui-selected", 			"outline_size", 			"2");
+		sheet.setProperty("snowui-selected", 			"outline_color", 			"DESYELLOW");
+		sheet.setProperty("snowui-selected_c", 			"outline_margin", 			"0");
+		sheet.setProperty("snowui-w_contained", 		"min_width", 				"container");
+		sheet.setProperty("snowui-w_contained", 		"max_width", 				"container");
+		sheet.setProperty("snowui-h_contained", 		"min_height", 				"container");
+		sheet.setProperty("snowui-h_contained", 		"max_height", 				"container");
+		sheet.setProperty("snowui-centered",  			"horizontal_alignment",		"middle");
+		sheet.setProperty("snowui-centered",  			"vertical_alignment", 		"middle");
+		sheet.setProperty("snowui-centered",  			"horizontal_alignment",		"middle");
+		sheet.setProperty("snowui-centered",  			"vertical_alignment", 		"middle");
+		sheet.setProperty("snowui-panel",  				"outline_color", 			"TRANSPARENT_WHITE");	
+		sheet.setProperty("snowui-panel",  				"outline_size", 			"1");	
+		sheet.setProperty("snowui-panel",  				"outline_margin", 			"5");	
+		sheet.setProperty("snowui-panel",  				"background_color", 		"BLACK");
+		sheet.setProperty("snowui-small", 				"size", 					"8");
+		sheet.setProperty("snowui-medium", 				"size", 					"12");
+		sheet.setProperty("snowui-black", 				"base_color", 				"BLACK");
+		sheet.setProperty("snowui-transparent", 		"base_color", 				"TRANSPARENT_WHITE");
 		
-		sheet.setProperty("centered", "horizontal_alignment",		"middle");
-		sheet.setProperty("centered", "vertical_alignment", 		"middle");
+		HELPERSetUniformMargins(sheet, 					"snowui-panel", 			"8");
+		HELPERSetUniformMargins(sheet, 					"snowui-margin_medium", 	"4");
+		HELPERSetUniformMargins(sheet, 					"snowui-margin_large", 		"10");
 		
-		sheet.setProperty("down", 	  "base_color", 				"BASIC_PANEL_DOWN");
-		
-		sheet.setProperty("hover", 	  "base_color", 				"BASIC_PANEL_HOVER");
-		sheet.setProperty("hover", 	  "outline_size", 				"2");
-		sheet.setProperty("hover", 	  "outline_color", 				"BLUE");
-		// sheet.setProperty("hover", 	  "background_color", 			"RED");
+		sheet.addContains("snowui-panel_hoverable", 								"snowui-panel");
+		sheet.addContains("snowui-contained", 										"snowui-w_contained");
+		sheet.addContains("snowui-contained", 										"snowui-h_contained");
+		sheet.addContains("snowui-selected_c", 										"snowui-selected");
 
+		sheet.setPredicate("default", 					"SELECTED=true", 			"snowui-selected");
+		sheet.setPredicate("snowui-selectable_c", 		"SELECTED=true", 			"snowui-selected_c");
+		sheet.setPredicate("snowui-hoverable", 			"HOVERED=true", 			"snowui-hover");
+		sheet.setPredicate("snowui-hoverable", 			"HOVERED=true, DOWN=true", 	"snowui-down");
+		sheet.setPredicate("snowui-accent", 			"HOVERED=true", 			"snowui-hover_accent");
+		sheet.setPredicate("snowui-accent", 			"HOVERED=true, DOWN=true", 	"snowui-down_accent");
+		sheet.setPredicate("snowui-panel_hoverable", 	"HOVERED=true", 			"snowui-accent_bg");
 		
-		sheet.setProperty("selected", "outline_size", 				"2");
-		sheet.setProperty("selected", "outline_color", 				"DESYELLOW");
+		// -- Built-in Elements -- //
 		
-		// text
-		sheet.setProperty("text", 	  		"base_color", 			"WHITE");	
-		sheet.setProperty("text", 	  		"size", 				"18");	
+		// In order to allow for stylesheets to override properties in types
+		// indirectly, by containing types that override those properties,
+		// no default element style should have properties directly set in it.
 		
-		// slider
-		sheet.setProperty("slider_handle", 	"base_color", 			"DESBLUE");
-		sheet.setProperty("slider_handle", 	"size", 				"18");
-		sheet.setProperty("slider", 		"size", 				"8");
+		sheet.addContains("text", 										"snowui-hoverable");
+		sheet.addContains("icon", 										"snowui-hoverable");
+		sheet.addContains("slider", 									"snowui-small");
+		sheet.addContains("slider_handle", 								"snowui-accent");
+		sheet.addContains("scrollbar", 									"snowui-dark");
+		sheet.addContains("scroll_handle", 								"snowui-accent");
+		sheet.addContains("scroll_handle", 								"snowui-small");
+		sheet.addContains("scroll_handle", 								"snowui-margin_medium");
+		sheet.addContains("title_bar", 									"snowui-dark");
+		sheet.addContains("textbox-text", 								"snowui-black");
+		sheet.addContains("textbox", 									"snowui-margin_large");
+		sheet.addContains("textbox-text", 								"snowui-margin_medium");
 		
-		// text box
-		sheet.setPredicate ("textbox", 			 "SELECTED=true", 	"textbox_selected");
-		sheet.addContains  ("textbox", 								"textbox-style");
-		sheet.addContains  ("textbox_selected", 					"textbox-style");
+		sheet.addContains("context_menu", 								"snowui-panel");
+		sheet.addContains("input_popup", 								"snowui-panel");
+		sheet.addContains("confirm_popup", 								"snowui-panel");
+		sheet.addContains("confirm_popup_options", 						"snowui-centered");
+		sheet.addContains("context_menu_option", 						"snowui-w_contained");
+		sheet.addContains("context_menu_option", 						"snowui-hoverable");
+		sheet.addContains("context_menu_option_right_text", 			"snowui-transparent");
+		sheet.addContains("context_menu_option_left_icon", 				"snowui-centered");
+		sheet.addContains("context_menu_option_left_icon", 				"snowui-medium");
+		sheet.addContains("context_menu_option_right_icon", 			"snowui-medium");
 
-		sheet.setProperty  ("textbox-text", 	 "base_color", 		"BLACK");	
-		sheet.setProperty  ("textbox-text", 	 "size", 			"18");	
-		sheet.setProperty  ("textbox-style", 	 "base_color", 		"AQUA");	
-		sheet.setProperty  ("textbox_selected",  "base_color", 		"DESYELLOW");	
-		sheet.setProperty  ("textbox_selected",  "outline_color", 	"RED");	
-		sheet.setProperty  ("textbox_selected",  "outline_size", 	"3");	
-		sheet.setProperty  ("textbox_selected",  "outline_margin",	"6");	
-		
-		HELPERSetUniformMargins	  (sheet, "textbox-text", 			"4");
-		HELPERSetUniformSizeLimit (sheet, "textbox-style", 			"container");
-		HELPERSetUniformMargins	  (sheet, "textbox-style", 			"10");
+		sheet.addContains("tabgroup", 									"snowui-selectable_c");
+		sheet.addContains("minitab", 									"snowui-selectable_c");
 
-		// scroll area
-		sheet.setProperty("scroll_handle", 	"base_color", 			"DESBLUE");
-		sheet.setProperty("scrollbar", 		"base_color", 			"BASIC_PANEL_DARK");
-		sheet.setProperty("scrollbar", 	 	"size", 				"20");
-//		sheet.setProperty("scroll_area", 	"horizontal_alignment",	"right");
-//		sheet.setProperty("scroll_area", 	"vertical_alignment",	"bottom");
-//		HELPERSetUniformMargins(sheet,   	"scrollbar", 			"4"); // TODO
-		HELPERSetUniformMargins(sheet,   	"scroll_handle", 		"5");
-		
-		// Dockers
-		sheet.addContains  ("title_bar_text", 						"text");
-		sheet.setProperty  ("title_bar",    "base_color", 			"BLACK");	
-		sheet.setProperty  ("dockable",     "base_color", 			"BASIC_PANEL_DARK");	
-		
-		// GUISplit
-		HELPERSetUniformMargins	  (sheet, "split_view", 			"0");
-		
-		// Menus
-		sheet.setProperty  ("generic_panel",   	   			"outline_color", 		"TRANSPARENT_WHITE");	
-		sheet.setProperty  ("generic_panel",   	   			"outline_size", 		"1");	
-		sheet.setProperty  ("generic_panel",   	   			"outline_margin", 		"5");	
-		sheet.setProperty  ("generic_panel",   	   			"background_color", 	"BLACK");	
-		
-		sheet.setProperty  ("context_menu_option",   		"min_width", 			"container");	
-		sheet.setProperty  ("context_menu_option",   		"max_width", 			"container");	
-		sheet.setProperty  ("context_menu_option_right",  	"base_color", 			"TRANSPARENT_WHITE");	
-		sheet.setProperty  ("context_menu_option_right",  	"size", 				"18");	
-
-		// Popups
-		sheet.setProperty  ("text_button",   	   			"outline_color", 		"TRANSPARENT_WHITE");	
-		sheet.setProperty  ("text_button",   	   			"outline_size", 		"1");	
-		sheet.setProperty  ("text_button",   	   			"outline_margin", 		"5");	
-		sheet.setProperty  ("text_button",   	   			"background_color", 	"BLACK");	
-		sheet.addContains  ("text_button", 					"text");
-		sheet.setPredicate ("text_button", 					"HOVERED=true", 		"text_button_hover");
-		HELPERSetUniformMargins(sheet, "text_button", "8");	
-		sheet.setProperty  ("text_button_hover",   	   		"background_color", 	"DESBLUE");	
+		sheet.addContains("text_button", 								"snowui-panel_hoverable");
 
 	}
 	

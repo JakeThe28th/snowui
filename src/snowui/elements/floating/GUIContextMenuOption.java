@@ -39,6 +39,7 @@ public class GUIContextMenuOption extends GUIElement {
 		if (icon != null) {
 			g_icon = new GUIIcon(icon);
 			g_icon.set(PredicateKey.DISABLED, true);
+			g_icon.identifier("context_menu_option_left_icon");
 			this.registerSubElement(g_icon);
 		}
 		if (left_text != null) {
@@ -49,7 +50,7 @@ public class GUIContextMenuOption extends GUIElement {
 		if (right_text != null) {
 			g_right_text = new GUIText(right_text);
 			g_right_text.set(PredicateKey.DISABLED, true);
-			g_right_text.identifier("context_menu_option_right");
+			g_right_text.identifier("context_menu_option_right_text");
 			this.registerSubElement(g_right_text);
 		}
 	}
@@ -66,6 +67,7 @@ public class GUIContextMenuOption extends GUIElement {
 		this.sub_options = o;
 		this.g_expand_icon = new GUIIcon(IconType.GENERIC_ARROW_RIGHT);
 		g_expand_icon.set(PredicateKey.DISABLED, true);
+		g_expand_icon.identifier("context_menu_option_right_icon");
 		this.registerSubElement(g_expand_icon);
 	}
 	
