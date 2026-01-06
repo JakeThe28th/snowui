@@ -131,4 +131,8 @@ public class GUIContextMenuOption extends GUIElement {
 		}
 	}
 	
+	public void close_menu(GUIInstance gui) {
+		if (parent_menu != null) parent_menu.close(gui);
+	}
+	
 };
