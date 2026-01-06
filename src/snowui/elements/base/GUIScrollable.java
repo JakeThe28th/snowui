@@ -15,17 +15,22 @@ public class GUIScrollable extends GUIElement {
 	private class GUIScrollBar extends GUIElement {
 		
 		GUIClickableRectangle scroll_handle = new GUIClickableRectangle() {
+			{ identifier("scroll_handle"); }
 			@Override public void onPress(GUIInstance gui) {
 				mouse_x_offset = scroll_handle.padded_limit_rectangle().left() - gui.mx();
 				mouse_y_offset = scroll_handle.padded_limit_rectangle().top() - gui.my();
 
 				scrolling = true;
 			}
+			@Override
+			public void recalculateSize(GUIInstance gui) {
+				this.unpadded_height = style().size().pixels();
+				this.unpadded_width = style().size().pixels();
+			}
 		};
 		
 		{
 			registerSubElement(scroll_handle);
-			scroll_handle.identifier("scroll_handle");
 			identifier("scrollbar");
 		}
 		
@@ -50,8 +55,8 @@ public class GUIScrollable extends GUIElement {
 		
 		@Override
 		public void recalculateSize(GUIInstance gui) {
-			this.unpadded_height = style().size().pixels();
-			this.unpadded_width = style().size().pixels();
+			this.unpadded_height = scroll_handle.height();
+			this.unpadded_width = scroll_handle.width();
 		}
 
 		@Override
@@ -229,8 +234,8 @@ public class GUIScrollable extends GUIElement {
 		int screen_width 	= limit_rectangle().width();
 		int screen_height 	= limit_rectangle().height();
 		
-		int scrollbar_width = horizontal_scrollbar.style().size().pixels();
-		int scrollbar_height = vertical_scrollbar.style().size().pixels();
+		int scrollbar_width = horizontal_scrollbar.width();
+		int scrollbar_height = vertical_scrollbar.height();
 		boolean scrolling_y = false;
 		boolean scrolling_x = false;
 
