@@ -18,6 +18,8 @@ import snowui.elements.abstracts.GUIElement;
 // TODO : ctrl + arrows = move forward and backward word
 // TODO : up/down arrow also
 
+// TODO : add scrollbars, (!wrap) = horizontally, (wrap) = vertically
+
 public class GUITextBox extends GUIElement {
 	
 	GUITextBox textbox_this() { return this; }
@@ -26,244 +28,23 @@ public class GUITextBox extends GUIElement {
 	
 	public class EditableText extends GUIElement {
 		
-		static record ContentState(String content, int cursor) {}
+		// --- text editing functionality stuff --- //
 		
-		int cursor = 20;
-		
-		int select_start = 0;
-		int select_end =  0;
-
-		private int select_end() {
-			if (select_end > select_start) return select_end;
-			return select_start;
-		}
-
-		private int select_start() {
-			if (select_end > select_start) return select_start;
-			return select_end;
-		}
-		
-		{ identifier("textbox-text"); }
-		
-		String content;
-		String preselect_content;
-		
-		NavigableLimitedStack<ContentState> content_undo = new NavigableLimitedStack<>();
-
-		public EditableText(String text) {
-			content(text);
-		}
-		
-		@Override public void onLimitRectangleChange() {
-			super.onLimitRectangleChange();
-			this.should_recalculate_size(true);
-		}
-
-		@Override
-		public void recalculateSize(GUIInstance gui) {
-			// N/A because of wrapping...
-			gui.font_size(style().size().pixels());
-			Vector2i size = gui.canvas().textrenderer().size(content);
-			this.unpadded_width = size.x;
-			this.unpadded_height = size.y;
-			
-			// TODO: figure out how to make this DRY compliant 
-			// [and also remember to update this whenever the word wrap logic in draw() changes]
-			
-			int xx = 0, yy = 0, i = 0;
-			int line_height = unpadded_height;
-			
-			int text_width = this.unpadded_width;
-			if (this.hover_rectangle() != null) text_width = this.hover_rectangle().width();
-			
-			while(i < content.length()) {
-				int next_breakable_index = i;
-				int next_size = 0;
-				while (next_breakable_index < content.length()) {
-					if (content.charAt(next_breakable_index) == ' ') break;
-					if (content.charAt(next_breakable_index) == '-') break;
-					next_size += gui.textrenderer().advance(content, next_breakable_index);
-					next_breakable_index ++;
-				}
-				if (next_size < text_width && xx + next_size > text_width) {
-					xx = 0;
-					yy += line_height;
-				}
-				while (i < next_breakable_index + 1 && i < content.length()) {
-					int advance = gui.textrenderer().advance(content, i);
-					if (xx + advance > text_width || content.charAt(i) == '\n') {
-						xx = 0;
-						yy += line_height;
-					}
-					xx += advance;
-					i++;
-				}
-			}
-			
-			this.unpadded_height += yy;
-			
-		}
-
-		@Override
-		public void updateDrawInfo(GUIInstance gui) {
-			this.hover_rectangle(padded_limit_rectangle());
-		}
-		
-		private void setcursor(int new_position, boolean shift) {
-			cursor = new_position;
-			setinputtime();
-			if (!shift) {
-				select_start = cursor + 1;
-			}
-			select_end = cursor + 1;
-		}
-		
-		private void fix_cursor_pos() {
-			if (cursor < -1) cursor = -1;
-			if (cursor >= content.length()) cursor = content.length()-1;
-		}
-		
-		public void content(String new_content) {
-			if (content == null || !content.equals(new_content)) {
-				content = new_content;
-				content_undo.push(new ContentState(content, cursor));
-				fix_cursor_pos();
-				setinputtime();
-				onTextChange(content);
-				this.should_recalculate_size(true);
-			}
-		}
-		
-		private boolean delete_selection() {
-			if (select_end() - select_start() > 0) {
-				int start 	= select_start();
-				int end 	= select_end();
-				setcursor(start, false);
-				content(content.substring(0, start) + content.substring(end));
-				return true;
-			}
-			return false;
-		}
-
-		public String selected_string() {
-			return content.substring(select_start(), select_end());
-		}
-		
-		@Override
-		public void draw(GUIInstance gui, int depth) {
-			
-			Rectangle b = this.hover_rectangle();
-			SimpleTextRenderer text = gui.textrenderer();
-			int xx = 0;
-			int yy = 0;
-			int i = 0;
-			int line_height = text.size(content).y;
-			gui.canvas().color(style().base_color().color());
-			
-			gui.font_size(style().size().pixels());
-			
-			if (is_selected() && -1 == cursor && blink()) {
-				text.character(gui.canvas(), b.left(), b.top() + yy, depth, '|');
-			}
-			
-			while(i < content.length()) {
-				
-				int next_breakable_index = i;
-				int next_size = 0;
-				while (next_breakable_index < content.length()) {
-					if (content.charAt(next_breakable_index) == ' ') break;
-					if (content.charAt(next_breakable_index) == '-') break;
-					next_size += text.advance(content, next_breakable_index);
-					next_breakable_index ++;
-				}
-				
-				// 'next_size' reflects the length of the current word, assuming
-				// words are delimited by the above breakable characters.
-				
-				// If next_size >= b.width, then it's too big to fit and will
-				// be split by character in the loop anyways, so do nothing.
-				
-				if (next_size < b.width() && xx + next_size > b.width()) {
-					xx = 0;
-					yy += line_height;
-				}
-				
-				while (i < next_breakable_index + 1 && i < content.length()) {
-					int advance = text.advance(content, i);
-					if (xx + advance > b.width() || content.charAt(i) == '\n') {
-						xx = 0;
-						yy += line_height;
-					}
-					if (is_selected()) {
-					if (i >= select_start() && i < select_end() || gui.primary_click_down() || gui.primary_click_pressed() || preselect_mouse != null) {
-						int offset = 2;	
-						Rectangle letter_rect = new Rectangle(
-								b.left() + xx, 
-								b.top() + yy + offset, 
-								b.left() + xx + advance,  
-								b.top() + yy + offset+ line_height
-							);
-						
-						if (gui.primary_click_down() && letter_rect.contains(gui.mousepos())) {
-							setcursor(i, true);
-						}
-						
-						if (preselect_mouse != null && letter_rect.contains(preselect_mouse)) {
-							setcursor(i, false);
-							preselect_mouse = null;
-						}
-							
-						if (gui.primary_click_pressed() && letter_rect.contains(gui.mousepos())) {
-							if (gui.rawinput().keyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-								setcursor(i, true);
-							} else {
-								select_start = cursor + 1;
-							}
-						}
-						
-						if (i >= select_start() && i < select_end()) {
-							gui.canvas().color(Color.TRANSPARENT_AQUA.val());
-							gui.canvas().rect(letter_rect, depth);
-							gui.canvas().color(style().base_color().color());
-						}
-					}	
-					}
-					text.character(gui.canvas(), b.left() + xx, b.top() + yy, depth + 2, content.charAt(i));
-					if (is_selected() && i == cursor && blink()) {
-						text.character(gui.canvas(), b.left() + xx + (advance/2), b.top() + yy, depth, '|');
-					}
-					xx += advance;
-					i++;
-				}
-				
-			}
-			
-			performTextEditing(gui);
-			
-		}
-		
+		/** Handles all text input that doesn't require knowing what character was clicked */
 		private void performTextEditing(GUIInstance gui) {
 			try {
-				
 				if (is_selected()) {
 					Input i = gui.rawinput();
 					
 					boolean shift = i.keyDown(GLFW.GLFW_KEY_LEFT_SHIFT);
 					
-					if (i.keyPressed(GLFW.GLFW_KEY_LEFT) || i.keyRepeated(GLFW.GLFW_KEY_LEFT)) {
-						setcursor(cursor-1, shift);
-					}
-					if (i.keyPressed(GLFW.GLFW_KEY_RIGHT) || i.keyRepeated(GLFW.GLFW_KEY_RIGHT)) {
-						setcursor(cursor+1, shift);
-					}
-					
-					if (i.keyPressed(GLFW.GLFW_KEY_HOME)) {
-						setcursor(0, shift);
-					}
+					if (keyTyped(i, GLFW.GLFW_KEY_LEFT  )) 	setcursor(cursor-1, shift);
+					if (keyTyped(i, GLFW.GLFW_KEY_RIGHT )) 	setcursor(cursor+1, shift);
+					if (keyTyped(i, GLFW.GLFW_KEY_HOME  )) 	setcursor(0, shift);
 					
 					fix_cursor_pos();
 					
-					if (i.keyPressed(GLFW.GLFW_KEY_BACKSPACE) || i.keyRepeated(GLFW.GLFW_KEY_BACKSPACE)) {
+					if (keyTyped(i, GLFW.GLFW_KEY_BACKSPACE)) {
 						boolean had_selection = delete_selection();
 						if (!had_selection && cursor > -1) {
 							setcursor(cursor-1, false);
@@ -271,7 +52,7 @@ public class GUITextBox extends GUIElement {
 						}
 					}
 					
-					if (i.keyPressed(GLFW.GLFW_KEY_DELETE) || i.keyRepeated(GLFW.GLFW_KEY_DELETE)) {
+					if (keyTyped(i, GLFW.GLFW_KEY_DELETE)) {
 						if (content.length() > 1) {
 							content(content.substring(0, cursor + 1) + content.substring(cursor + 2));
 						} else if (content.length() > 0) {
@@ -279,7 +60,7 @@ public class GUITextBox extends GUIElement {
 						}
 					}
 					
-					if (i.keyPressed(GLFW.GLFW_KEY_ENTER) || i.keyRepeated(GLFW.GLFW_KEY_ENTER)) {
+					if (keyTyped(i, GLFW.GLFW_KEY_ENTER)) {
 						if (finish_on_enter()) {
 							deselect();
 						} else {
@@ -299,7 +80,7 @@ public class GUITextBox extends GUIElement {
 						i.input_string("");
 					}
 					
-					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_Z) || i.keyRepeated(GLFW.GLFW_KEY_Z)) {
+					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && keyTyped(i, GLFW.GLFW_KEY_Z)) {
 						if (content_undo.index() > 0) {
 							ContentState state = content_undo.prev();
 							content = state.content;
@@ -307,7 +88,7 @@ public class GUITextBox extends GUIElement {
 						}
 					}
 					
-					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_Y) || i.keyRepeated(GLFW.GLFW_KEY_Y)) {
+					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && keyTyped(i, GLFW.GLFW_KEY_Y)) {
 						if (content_undo.index() < content_undo.size() -1) {
 							ContentState state = content_undo.next();
 							content = state.content;
@@ -331,98 +112,313 @@ public class GUITextBox extends GUIElement {
 					if (i.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && i.keyPressed(GLFW.GLFW_KEY_A)) {
 						select_start = 0;
 						select_end = content.length();
-					}
-					
-//					gui.canvas().color(Color.BLACK.val());
-//					gui.canvas().text(10, 10, depth, content_undo.index() + "");
-//					gui.canvas().text(10, 40, depth, content_undo.size() + "");
-				
+					}			
 					
 				}
-				
-				} catch (Exception e) {
-					Log.trace(e);
-					String old_content = content;
-					Input.setClipboardString(old_content);
-					content = "Error while modifying text. Previous contents have been copied to your clipboard.";
-					content += "\n\n--- ERROR ---\n\n";
-					content += Utility.getStackTrace(e);
-					content += "\n\n--- PREVIOUS CONTENT ---\n\n";
-					content += old_content;
-				}
-		}
-
-		long last_input_time = System.currentTimeMillis();
-
-		private boolean blink() {
-			if (System.currentTimeMillis() - last_input_time < 500) return true;
-			return (System.nanoTime() / 1000000000) % 2 == 0;
+			} catch (Exception e) {
+				Log.trace(e);
+				String old_content = content;
+				Input.setClipboardString(old_content);
+				content = "Error while modifying text. Previous contents have been copied to your clipboard.";
+				content += "\n\n--- ERROR ---\n\n";
+				content += Utility.getStackTrace(e);
+				content += "\n\n--- PREVIOUS CONTENT ---\n\n";
+				content += old_content;
+			}
 		}
 		
-		private void setinputtime() {
-			last_input_time = System.currentTimeMillis();
+		static record ContentState(String content, int cursor) {}
+		NavigableLimitedStack<ContentState> content_undo = new NavigableLimitedStack<>();
+		
+		int cursor, select_start, select_end;
+		
+		String content;
+		String preselect_content;
+
+		private int select_end  () { return (select_end > select_start) ? select_end   : select_start; }
+		private int select_start() { return (select_end > select_start) ? select_start : select_end;   }
+		
+		private void setcursor(int new_position, boolean shift) {
+			setinputtime();
+			cursor = new_position;
+			if (!shift) select_start = cursor + 1;
+			select_end = cursor + 1;
+		}
+		
+		private void fix_cursor_pos() {
+			if (cursor < -1) cursor = -1;
+			if (cursor >= content.length()) cursor = content.length()-1;
+		}
+		
+		public void content(String new_content) {
+			if (content == null || !content.equals(new_content)) {
+				content = new_content;
+				content_undo.push(new ContentState(content, cursor));
+				fix_cursor_pos();
+				setinputtime();
+				onTextChange(content);
+				should_recalculate_size(true);
+			}
+		}
+		
+		private boolean delete_selection() {
+			if (select_end() - select_start() > 0) {
+				int start 	= select_start();
+				int end 	= select_end();
+				setcursor(start, false);
+				content(content.substring(0, start) + content.substring(end));
+				return true;
+			}
+			return false;
 		}
 
-		@Override 
-		public void onSingleClick(GUIInstance gui) {
-			select(gui);
+		public String selected_string() {
+			return content.substring(select_start(), select_end());
+		}
+		
+		boolean keyTyped(Input i, int key) { return i.keyPressed(key) || i.keyRepeated(key); }
+		
+		// --- ----------  gui stuff  ---------- --- //
+		
+		/** Draws the text, or returns the height of the text. 
+		 *  Also, handles actions that rely on clicking a specific character of text. */
+		private Vector2i performTextDrawing(Rectangle b, Rectangle outer, GUIInstance gui, int depth, boolean draw) {
+			
+			SimpleTextRenderer text = gui.textrenderer();
+			int line_height = text.size(content).y;
+			
+			int xx = 0, yy = 0, i = 0;
+			
+			int cursor_width = 0;
+			
+			if (draw) {
+				gui.canvas().color(style().base_color().color());
+				gui.font_size(style().size().pixels());
+				// If the cursor is at the start, it won't be drawn in the while loop.
+				if (is_selected() && -1 == cursor && blink()) {
+					text.character(gui.canvas(), b.left(), b.top() + yy, depth, '|');
+				}
+				cursor_width = text.size("|").x / 2;
+			}
+			
+			boolean clicking = draw && (gui.primary_click_down() || gui.primary_click_pressed() || preselect_mouse != null);
+
+			Rectangle[] characters = null;
+			if (clicking) { characters = new Rectangle[content.length()]; }
+						
+			while(i < content.length()) {
+				
+				int next_breakable_index = i;
+				int next_size = 0;
+				while (next_breakable_index < content.length()) {
+					if (content.charAt(next_breakable_index) == ' ') break;
+					if (content.charAt(next_breakable_index) == '-') break;
+					next_size += text.advance(content, next_breakable_index);
+					next_breakable_index ++;
+				}
+				
+				// 'next_size' reflects the length of the current word, assuming
+				// words are delimited by the above breakable characters.
+				
+				// If next_size >= b.width, then it's too big to fit and will
+				// be split by character in the loop anyways, so do nothing.
+				
+				boolean wrapped = false;
+				
+				if (next_size < b.width() && xx + next_size > b.width()) {
+					xx = 0;
+					yy += line_height;
+					wrapped = true;
+				}
+								
+				while (i < next_breakable_index + 1 && i < content.length()) {
+					int advance = text.advance(content, i);
+					if (content.charAt(i) == '\n') {
+						advance = 0;
+					}
+					if (xx + advance > b.width() || content.charAt(i) == '\n') {
+						xx = 0;
+						yy += line_height;
+						wrapped = true;
+					}
+					if (draw) {
+						if (is_selected()) {
+						if (i >= select_start() && i < select_end() || clicking) {
+							int offset = 2;	
+							
+							int left 	= b.left() + xx;
+							int top		= b.top() + yy + offset;
+							int right 	= b.left() + xx + advance;
+							int bottom 	= b.top() + yy + offset+ line_height;
+							
+							if (xx == 0) left 	= outer.left();
+							if (yy == 0) top 	= outer.top();
+							
+							if (i == content.length()-1) right 	= outer.right();
+
+							Rectangle letter_rect = new Rectangle(left, top, right, bottom);
+							
+							if (clicking) characters[i] = letter_rect;
+							
+							if (wrapped) {
+								wrapped = false;
+								if (clicking) characters[i-1] =
+									new Rectangle(
+										characters[i-1]	.left(), 
+										characters[i-1]	.top(), 
+										outer			.right(), 
+										characters[i-1]	.bottom()
+									);
+							}
+							
+							if (i >= select_start() && i < select_end()) {
+								gui.canvas().color(Color.TRANSPARENT_AQUA.val());
+								gui.canvas().rect(letter_rect, depth);
+								gui.canvas().color(style().base_color().color());
+							}
+						}	
+						}
+						text.character(gui.canvas(), b.left() + xx, b.top() + yy, depth + 2, content.charAt(i));
+						if (is_selected() && i == cursor && blink()) {
+							text.character(gui.canvas(), (b.left() - cursor_width) + xx + (advance), b.top() + yy, depth, '|');
+						}
+					}
+					xx += advance;
+					i++;
+				}
+			}
+			
+			if (characters != null) for (int c = 0; c < content.length(); c++) {
+				
+				Rectangle letter_rect = characters[c];
+				if (letter_rect == null) continue;
+				
+				if (gui.primary_click_down() && letter_rect.contains(gui.mousepos())) {
+					// DEBUG : display bounding box of clicked character
+//					gui.canvas().color(Color.RED.val());
+//					gui.canvas().rect(letter_rect, depth);
+//					gui.canvas().color(style().base_color().color());
+					setcursor(c, true);
+				}
+				
+				if (preselect_mouse != null && letter_rect.contains(preselect_mouse)) {
+					setcursor(c, false);
+					preselect_mouse = null;
+				}
+					
+				if (gui.primary_click_pressed() && letter_rect.contains(gui.mousepos())) {
+					if (gui.rawinput().keyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+						setcursor(c, true);
+					} else {
+						select_start = cursor + 1;
+					}
+				}
+			}
+			
+			if (!draw) {
+				return new Vector2i(xx, yy + line_height);
+			} else {
+				return null;
+			}
+		}
+	
+		{ identifier("textbox-text"); }
+		
+		@Override
+		public int width() {
+			if (!wrap) {
+				return super.width();
+			} else {
+				throw new IllegalStateException("Attempted to get the width of a wrapped textbox");
+			}
+		}
+		
+		boolean wrap 		= false;
+		int		wrap_width 	= 0;
+		
+		public void wrap_width(int val, GUIInstance gui) {
+			val = style().unpadw(val);
+			wrap = true;
+			if (wrap_width != val) {
+				wrap_width = val;
+				this.unpadded_width = val;
+				this.unpadded_height = performTextDrawing(new Rectangle(0,0,wrap_width,0), null, gui, -1, false).y;
+				textbox_this().should_recalculate_size(true);
+			}
+		}
+		
+		public EditableText(String text) {
+			content(text);
+		}
+		
+		@Override
+		public void recalculateSize(GUIInstance gui) {			
+			if (wrap) {
+				// In case the content updated, the height is be recalculated here so the parent knows if it needs to update.
+				this.unpadded_height = performTextDrawing(new Rectangle(0,0,wrap_width,0), null, gui, -1, false).y;
+				textbox_this().should_recalculate_size(true);
+			} else {
+				gui.font_size(style().size().pixels());
+				Vector2i size = gui.canvas().textrenderer().size(content);
+				this.unpadded_width = size.x;
+				this.unpadded_height = size.y;
+			}
 		}
 
-		public void force_text(String string) {
-			content = string;
-			content_undo.clear();
-			should_recalculate_size(true);
+		@Override
+		public void updateDrawInfo(GUIInstance gui) {
+			this.hover_rectangle(padded_limit_rectangle());
 		}
+		
+		@Override
+		public void draw(GUIInstance gui, int depth) {
+			performTextDrawing(hover_rectangle(), limit_rectangle(), gui, depth, true);
+			performTextEditing(gui);
+		}
+		
+		long last_input_time = System.currentTimeMillis();
+		private void setinputtime() { last_input_time = System.currentTimeMillis(); }
 
-		public String text() {
-			return content;
-		}
+		private boolean blink() { return (System.currentTimeMillis() - last_input_time < 500) || ((System.nanoTime() / 1000000000) % 2 == 0); }
+		
+
+		@Override public void onSingleClick(GUIInstance gui) { select(gui); }
+
+		public void 	force_text(String string) 	{ content(string); }
+		public String	text() 						{ return content; }
 		
 	}
+	
+	// --== -------------- Outer text box -------------- ==-- //
+	
+	public GUITextBox(String text) {
+		this.text = new EditableText(text);
+		this.registerSubElement(this.text);
+	}
+	
+	EditableText text;
+	public EditableText text() { return text; }
+
+	{ identifier("textbox"); }
 	
 	boolean finish_on_enter = false;
 	boolean hide_background	= false;
 	
 	private Vector2i preselect_mouse;
 	
-	public boolean finish_on_enter() {
-		return finish_on_enter;
-	}
-	
-	public void finish_on_enter(boolean b) {
-		finish_on_enter = b;
-	}
-	
-	public void hide_background(boolean b) {
-		hide_background = b;
-	}
-	
-	boolean is_selected() {
-		return selected == this;
-	}
+	public boolean 	finish_on_enter() 			{ return finish_on_enter		; }
+	public void 	finish_on_enter(boolean b) 	{ 		 finish_on_enter = b	; }
+	public void 	hide_background(boolean b) 	{ 		 hide_background = b	; }
+		   boolean	is_selected() 				{ return selected == this		; }
 	
 	public void select(GUIInstance gui) {
 		if (selected == this) return;
+		selected = this;
 		text.preselect_content = text.content;
 		gui.rawinput().input_string("");
-		selected = this;
 		set(PredicateKey.SELECTED, true);
 		text.setcursor(0, false);
 		preselect_mouse = gui.mousepos();
-	}
-	
-	@Override 
-	public void onSingleClick(GUIInstance gui) {
-		select(gui);
-	}
-
-	@Override
-	public boolean updateState(GUIInstance gui) {
-		if (hover_rectangle() != null)
-		if (gui.primary_click_released() && !hover_rectangle().contains(gui.mousepos())) {
-			deselect();
-		}
-		return false;
 	}
 	
 	public void deselect() {
@@ -432,18 +428,22 @@ public class GUITextBox extends GUIElement {
 		onFinishEditing(text.preselect_content, text.content);
 	}
 
-	EditableText text;
-	
-	{ identifier("textbox"); }
-	
-	public GUITextBox(String text) {
-		this.text = new EditableText(text);
-		this.registerSubElement(this.text);
+	@Override 
+	public void onSingleClick(GUIInstance gui) { select(gui); }
+
+	@Override
+	public boolean updateState(GUIInstance gui) {
+		if (hover_rectangle() != null && gui.primary_click_released() && !hover_rectangle().contains(gui.mousepos())) deselect();
+		return false;
 	}
 	
 	@Override
 	public void recalculateSize(GUIInstance gui) {
-		this.unpadded_width = text.width();
+		if (text.wrap) {
+			// N/A
+		} else {
+			this.unpadded_width = text.width();
+		}
 		this.unpadded_height = text.height();
 	}
 
@@ -460,7 +460,17 @@ public class GUITextBox extends GUIElement {
 			gui.canvas().rect(hover_rectangle(), depth);
 		}
 	}
+
+	public void set_text(String string) {
+		text.force_text(string);
+	}
+
+	public void wrap_width(int width, GUIInstance gui) {
+		text.wrap_width(style().unpadw(width), gui);
+	}
 	
+	// --== -------------- Callbacks -------------- ==-- //
+
 	public void onTextChange(String new_text) {
 		
 	}
@@ -469,14 +479,6 @@ public class GUITextBox extends GUIElement {
 	 *  cause {ConcurrentModificationException}s. TODO: maybe fix that lol */
 	public void onFinishEditing(String old_text, String new_text) {
 		
-	}
-	
-	public EditableText text() {
-		return text;
-	}
-
-	public void set_text(String string) {
-		text.force_text(string);
 	}
 
 }

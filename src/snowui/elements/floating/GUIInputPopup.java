@@ -60,8 +60,7 @@ public class GUIInputPopup extends GUIElement implements FloatingElement {
 		};
 		this.input.finish_on_enter(true);
 		this.registerSubElement(this.input);
-		this.x = gui.canvas().size().width()/2;
-		this.y = gui.canvas().size().height()/2;
+		center(gui);
 	}
 
 	@Override public GUIElement as_element() { return this; }
@@ -69,10 +68,30 @@ public class GUIInputPopup extends GUIElement implements FloatingElement {
 
 	@Override
 	public void recalculateSize(GUIInstance gui) {
-		this.unpadded_width = input.width();
-		if (title.width() > this.unpadded_width) this.unpadded_width = title.width();
-		this.unpadded_height = input.height() + title.height();
-		area = new Rectangle(x-(unpadded_width/2),y-(unpadded_height/2),x+(unpadded_width/2),y+(unpadded_height/2));
+		updateArea(gui);
+	}
+	
+	void updateArea(GUIInstance gui) {
+		this.unpadded_width = gui.canvas().width() / 2;
+		if (title.style() != null) {
+			if (title.width() > this.unpadded_width) this.unpadded_width = title.width();
+			this.unpadded_height = input.height() + title.height();
+		}
+		int hh = unpadded_height/2;
+		int re = unpadded_height%2;
+		area = new Rectangle(x-(unpadded_width/2),y-hh,x+(unpadded_width/2),y+(hh+re));
+	}
+	
+	void center(GUIInstance gui) {
+		this.x = gui.canvas().size().width()/2;
+		this.y = gui.canvas().size().height()/2;
+	}
+	
+	@Override
+	public void tickAnimation(GUIInstance gui) {
+		super.tickAnimation(gui);
+		updateArea(gui);
+		center(gui);
 	}
 
 	@Override
@@ -81,7 +100,10 @@ public class GUIInputPopup extends GUIElement implements FloatingElement {
 		this.hover_rectangle(b);
 		title	.limit_rectangle(new Rectangle(b.left(), 				  b.top(), 				  b.right(), 					b.top() + title.height()));
 		options	.limit_rectangle(new Rectangle(b.right()-options.width(), b.top()+title.height(), b.right(), 					b.bottom()));
-		input	.limit_rectangle(new Rectangle(b.left(), 				  b.top()+title.height(), b.right()-options.width(), 	b.bottom()));
+		
+		Rectangle input_area   = new Rectangle(b.left(), 				  b.top()+title.height(), b.right()-options.width(), 	b.bottom());
+		input	.wrap_width     (input_area.width(), gui);
+		input	.limit_rectangle(input_area);
 	}
 	
 	public void onFinish(String string) { }
