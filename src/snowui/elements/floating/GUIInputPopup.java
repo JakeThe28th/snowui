@@ -73,6 +73,9 @@ public class GUIInputPopup extends GUIElement implements FloatingElement {
 	
 	void updateArea(GUIInstance gui) {
 		this.unpadded_width = gui.canvas().width() / 2;
+		if (gui.canvas().width() < 800) {
+			this.unpadded_width = (int) (gui.canvas().width() / 1.2f);
+		}
 		if (title.style() != null) {
 			if (title.width() > this.unpadded_width) this.unpadded_width = title.width();
 			this.unpadded_height = input.height() + title.height();
