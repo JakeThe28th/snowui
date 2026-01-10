@@ -241,6 +241,9 @@ public class GUITextBox extends GUIElement {
 						yy += line_height;
 						wrapped = true;
 					}
+					if (wrapped && content.charAt(i) == ' ') {
+						advance = 0;
+					}
 					if (draw) {
 						if (is_selected()) {
 						if (i >= select_start() && i < select_end() || clicking) {
