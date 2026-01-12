@@ -103,5 +103,32 @@ public class DrawUtility {
 		return new Vector4f(color.x, color.y, color.z, color.w * amt);
 	}
 
+	public static Vector2i drawStringsCentered(int xoff, int yoff, int margin, int line_sep, F3DCanvas canvas, String mode_info) {
+		canvas.color(Color.BLACK.val());
+		int width = 0;
+		int height = 0;
+		for (String line : mode_info.split("\n")) {
+			Vector2i size = canvas.textrenderer().size(line.trim());
+			if (size.x > width) width = size.x;
+			height += size.y + line_sep;
+		}
+		Vector2i size = new Vector2i(width, height).div(2);
+		int xx = canvas.width() / 2;
+		int yy = canvas.height() / 2;
+		xx += xoff;
+		yy += yoff;
+		canvas.rect(xx-(size.x+margin), yy-(size.y+margin), xx+size.x+margin, yy+size.y+margin, 0);
+		
+		canvas.color(Color.WHITE.val());
+		
+		int offset_yy = 0;
+		String[] lines = mode_info.split("\n");
+		for (String line : lines) {
+			canvas.text(xx-size.x, (yy-size.y)+offset_yy, 0, line.trim());
+			offset_yy += (size.y*2) / lines.length;
+		}	
+		return size.mul(2);
+	}
+
 
 }

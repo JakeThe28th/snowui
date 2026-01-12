@@ -7,6 +7,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import org.joml.Vector2i;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
@@ -228,6 +229,8 @@ public class GUIDebugger {
 	}
 	
 	static boolean element_tree_fade_after_interact = false;
+	static boolean element_tree_only_show_hovered = false;
+	static GUIElement element_tree_locked_element = null;
 	
 	public static boolean show_debug = false;
 	static boolean used_modifier = false;
@@ -321,6 +324,18 @@ public class GUIDebugger {
 					element_tree_fade_after_interact = !element_tree_fade_after_interact;
 					used_modifier = true;
 				}
+				if (input.keyPressed(GLFW.GLFW_KEY_9)) {
+					element_tree_only_show_hovered = !element_tree_only_show_hovered;
+					used_modifier = true;
+				}
+				if (input.keyPressed(GLFW.GLFW_KEY_8)) {
+					if (element_tree_locked_element == GUIUtility.getHoveredElement(e)) {
+						element_tree_locked_element = null;
+					} else {
+						element_tree_locked_element = GUIUtility.getHoveredElement(e);
+					}
+					used_modifier = true;
+				}
 			}
 		}
 		
@@ -389,19 +404,25 @@ public class GUIDebugger {
 			NumberFormat f = DecimalFormat.getInstance();
 			f.setMinimumIntegerDigits(3);
 			f.setMinimumFractionDigits(3);
-			state.add("ยง`Last updated: " + f.format(hovered.last_update_elapsed_time()/1000f) + " seconds ago");
-			state.add("ยง`Last draw update: " + f.format(hovered.last_draw_update_elapsed_time()/1000f) + " seconds ago");
-			state.add("ยง`Last state update: " + f.format(hovered.last_state_update_elapsed_time()/1000f) + " seconds ago");
-			state.add("ยง`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("ง`Last updated: " + f.format(hovered.last_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("ง`Last draw update: " + f.format(hovered.last_draw_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("ง`Last state update: " + f.format(hovered.last_state_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("ง`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
 			// Misc
-			state.add("ยง>Is on screen: " + e.is_on_screen());
+			state.add("ง>Is on screen: " + e.is_on_screen());
 			state.add("Render Queue Items: " + ((SimpleCanvas) canvas).queue_size());
 			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, state);
 		}
 		
 		if (current_debug_state == DebugState.ELEMENT_TREE) {
 			canvas.textrenderer().font_size(15);
-			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(gui.current_window_root(), "", false), 1);
+			if (element_tree_locked_element != null) {
+				DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(element_tree_locked_element, "", false), 1);
+			} else if (element_tree_only_show_hovered) {
+				DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(GUIUtility.getHoveredElement(gui.current_window_root()), "", false), 1);
+			} else {
+				DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, getElementTreeText(gui.current_window_root(), "", false), 1);
+			}
 			canvas.textrenderer().font_size(font_size);
 		}
 		
@@ -412,28 +433,77 @@ public class GUIDebugger {
 		
 		if (GUIInstance.DEBUG) GUIDebugger.endprofile(9, "Draw (Debugger)");
 		
+
+		// Keybinds / info
+		if (input.keyDown(GLFW.GLFW_KEY_LEFT_ALT)) {
+			if (input.keyDown(GLFW.GLFW_KEY_SLASH)) {
+				
+				used_modifier = true;
+
+				String mode_info = "No information available";
+				
+				if (current_debug_state == DebugState.FRAMETIME_CHART) {
+					mode_info = 
+					"""
+						[0] Increase width of frametime column
+						[9] Increase number of frametime columns
+						[8] Change y-axis label interval
+						[7] Shuffle label colors
+						[6] Hide/Show non-GUI frametimes
+						[-] Zoom out to higher frametimes
+						[+] Zoom in to lower frametimes
+					""";
+				}
+				
+				if (current_debug_state == DebugState.ELEMENT_TREE) {
+					mode_info = 
+					"""
+						[0] Toggle Update Time Fading
+						[9] Toggle Only Show Hovered
+						[8] Lock list to sub-elements of the
+						.   currently hovered element (undo by
+						.   pressing again over the same element)
+					""";
+				}
+				
+				int margin = 15;
+				int line_sep = 3;
+
+				Vector2i size = DrawUtility.drawStringsCentered(0, 0, margin, line_sep, canvas, mode_info);
+						
+				int offset_y = 15 + (margin*2) + (canvas.textrenderer().size("Line").y/2);
+				
+				DrawUtility.drawStringsCentered(0, (-size.y/2) - offset_y, margin, 0, canvas,
+						"[1] Frametimes [2] Update times [3] Drag&Drop [4] Element Tree");
+								
+				DrawUtility.drawStringsCentered(0, (size.y/2) + offset_y, margin, 0, canvas,
+						"[Alt+`] Toggle FPS [Ctrl] Show hover rectangle");
+
+			}
+		}
+		
 	}
 	
 	private static ArrayList<String> getElementTreeText(GUIElement root, String pre, boolean hidden) {
 		ArrayList<String> result = new ArrayList<String>();
 		if (root == null) {
-			result.add("ยงc" + pre + "snowui.??? NULL");
+			result.add("งc" + pre + "snowui.??? NULL");
 			return result;
 		}
 		
 		hidden = hidden || root.get(PredicateKey.HIDDEN);
 		
-		String color = "ยงh";
+		String color = "งh";
 		if (root.get(PredicateKey.BOUNDED)) color = "";
-		if (root instanceof GUISplit) color = "ยงc";
-		if (root.get(PredicateKey.HOVERED)) color = "ยงb";
-		if (root.get(PredicateKey.DISABLED)) color = "ยง7";
-		if (root.get(PredicateKey.DISABLED) && root.get(PredicateKey.BOUNDED)) color = "ยง9";
-		if (hidden) color = "ยง8";
+		if (root instanceof GUISplit) color = "งc";
+		if (root.get(PredicateKey.HOVERED)) color = "งb";
+		if (root.get(PredicateKey.DISABLED)) color = "ง7";
+		if (root.get(PredicateKey.DISABLED) && root.get(PredicateKey.BOUNDED)) color = "ง9";
+		if (hidden) color = "ง8";
 		
 		if (element_tree_fade_after_interact) {
 			float elapsed = (float) (root.last_update_elapsed_time());
-			color = "ยง[opacity=" + Utility.clampf(((1000f-elapsed) / 1000f), 0, 1) + "]" + color;
+			color = "ง[opacity=" + Utility.clampf(((1000f-elapsed) / 1000f), 0, 1) + "]" + color;
 		}
 		
 		result.add(color + space(root.listStyles(), 30) + pre + "[" + root.hashCode() + "] " + root.getClass().getName());
