@@ -389,12 +389,12 @@ public class GUIDebugger {
 			NumberFormat f = DecimalFormat.getInstance();
 			f.setMinimumIntegerDigits(3);
 			f.setMinimumFractionDigits(3);
-			state.add("ง`Last updated: " + f.format(hovered.last_update_elapsed_time()/1000f) + " seconds ago");
-			state.add("ง`Last draw update: " + f.format(hovered.last_draw_update_elapsed_time()/1000f) + " seconds ago");
-			state.add("ง`Last state update: " + f.format(hovered.last_state_update_elapsed_time()/1000f) + " seconds ago");
-			state.add("ง`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("ยง`Last updated: " + f.format(hovered.last_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("ยง`Last draw update: " + f.format(hovered.last_draw_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("ยง`Last state update: " + f.format(hovered.last_state_update_elapsed_time()/1000f) + " seconds ago");
+			state.add("ยง`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
 			// Misc
-			state.add("ง>Is on screen: " + e.is_on_screen());
+			state.add("ยง>Is on screen: " + e.is_on_screen());
 			state.add("Render Queue Items: " + ((SimpleCanvas) canvas).queue_size());
 			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, state);
 		}
@@ -417,26 +417,26 @@ public class GUIDebugger {
 	private static ArrayList<String> getElementTreeText(GUIElement root, String pre, boolean hidden) {
 		ArrayList<String> result = new ArrayList<String>();
 		if (root == null) {
-			result.add("งc" + pre + "snowui.??? NULL");
+			result.add("ยงc" + pre + "snowui.??? NULL");
 			return result;
 		}
 		
 		hidden = hidden || root.get(PredicateKey.HIDDEN);
 		
-		String color = "งh";
+		String color = "ยงh";
 		if (root.get(PredicateKey.BOUNDED)) color = "";
-		if (root instanceof GUISplit) color = "งc";
-		if (root.get(PredicateKey.HOVERED)) color = "งb";
-		if (root.get(PredicateKey.DISABLED)) color = "ง7";
-		if (root.get(PredicateKey.DISABLED) && root.get(PredicateKey.BOUNDED)) color = "ง9";
-		if (hidden) color = "ง8";
+		if (root instanceof GUISplit) color = "ยงc";
+		if (root.get(PredicateKey.HOVERED)) color = "ยงb";
+		if (root.get(PredicateKey.DISABLED)) color = "ยง7";
+		if (root.get(PredicateKey.DISABLED) && root.get(PredicateKey.BOUNDED)) color = "ยง9";
+		if (hidden) color = "ยง8";
 		
 		if (element_tree_fade_after_interact) {
 			float elapsed = (float) (root.last_update_elapsed_time());
-			color = "ง[opacity=" + Utility.clampf(((1000f-elapsed) / 1000f), 0, 1) + "]" + color;
+			color = "ยง[opacity=" + Utility.clampf(((1000f-elapsed) / 1000f), 0, 1) + "]" + color;
 		}
 		
-		result.add(color + space(root.listStyles(), 30) + pre + root.getClass().getName());
+		result.add(color + space(root.listStyles(), 30) + pre + "[" + root.hashCode() + "] " + root.getClass().getName());
 		boolean special = false;
 		
 		if (root instanceof GUISplit) {
