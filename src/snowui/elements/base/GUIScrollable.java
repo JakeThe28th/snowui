@@ -234,8 +234,8 @@ public class GUIScrollable extends GUIElement {
 		int screen_width 	= limit_rectangle().width();
 		int screen_height 	= limit_rectangle().height();
 		
-		int scrollbar_width = horizontal_scrollbar.width();
-		int scrollbar_height = vertical_scrollbar.height();
+		int scrollbar_width = vertical_scrollbar.width();
+		int scrollbar_height = horizontal_scrollbar.height();
 		boolean scrolling_y = false;
 		boolean scrolling_x = false;
 
