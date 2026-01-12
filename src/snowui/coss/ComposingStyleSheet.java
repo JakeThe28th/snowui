@@ -153,6 +153,9 @@ public class ComposingStyleSheet {
 		sheet.addContains("textbox", 									"snowui-margin_large");
 		sheet.addContains("textbox-text", 								"snowui-margin_medium");
 		
+		sheet.addContains("dockable", 									"snowui-w_contained");
+		sheet.addContains("dockable", 									"snowui-h_contained");
+		
 		sheet.addContains("context_menu", 								"snowui-panel");
 		sheet.addContains("input_popup", 								"snowui-panel");
 		sheet.addContains("confirm_popup", 								"snowui-panel");
