@@ -52,7 +52,10 @@ public class TXDATANavigationBar {
 		}
 		// ...  Mutability  ... //
 		public void deleteTab(int tab_index) {
-			if (tabs.size() == 0) return;
+			if (tabs.size() == 0) {
+				deleteGroup();
+				return;
+			}
 			tabs.get(tab_index).ephemeral_data = null; // so it gets GC'd
 			deleted_tabs.add(tabs.get(tab_index));
 			tabs.remove(tab_index);
@@ -163,6 +166,15 @@ public class TXDATANavigationBar {
 	public void addGroup() {
 		groups.add(new TabGroup());
 		syncGUI_Groups();
+	}
+	
+	public void deleteGroup() {
+		if (current_group() != null && groups.size() > 1) {
+			TabGroup og = current_group();
+			previous_group();
+			groups.remove(og);
+			syncGUI_Groups();
+		}
 	}
 
 	// -- Callbacks -- //
