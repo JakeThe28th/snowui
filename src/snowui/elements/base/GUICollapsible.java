@@ -13,6 +13,7 @@ public class GUICollapsible extends GUIElement {
 	public GUICollapsible this_collapsible() { return this; }
 	
 	protected GUIIcon collapse_icon = new GUIIcon(IconType.GENERIC_ARROW_RIGHT) {
+		{ identifier("collapse_icon"); }
 		@Override public void onSingleClick(GUIInstance gui) {
 			collapsed(!collapsed);
 			icon(collapsed ? IconType.GENERIC_ARROW_RIGHT : IconType.GENERIC_ARROW_DOWN);

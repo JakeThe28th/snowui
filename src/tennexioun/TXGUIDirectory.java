@@ -65,7 +65,9 @@ public abstract class TXGUIDirectory extends GUICollapsible implements ElementRe
 	
 	protected void is_directory(boolean is_directory) {
 		this.is_directory = is_directory;
+		this.collapse_icon.identifier("directory_icon_directory");
 		if (!is_directory) {
+			this.collapse_icon.identifier("directory_icon_file");
 			this.collapse_icon.icon(IconType.GENERIC_EDIT);
 			this.collapse_icon.set(PredicateKey.DISABLED, true);
 		}

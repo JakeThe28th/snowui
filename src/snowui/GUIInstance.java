@@ -92,6 +92,10 @@ public class GUIInstance {
 	public boolean 	primary_click_down	  () { return input.mouseButtonDown	    (GLFW_MOUSE_BUTTON_LEFT); }
 	public boolean 	primary_click_released() { return input.mouseButtonReleased (GLFW_MOUSE_BUTTON_LEFT); }
 
+	public boolean 	secondary_click_pressed () { return input.mouseButtonPressed  (GLFW_MOUSE_BUTTON_RIGHT); }
+	public boolean 	secondary_click_down	() { return input.mouseButtonDown	  (GLFW_MOUSE_BUTTON_RIGHT); }
+	public boolean 	secondary_click_released() { return input.mouseButtonReleased (GLFW_MOUSE_BUTTON_RIGHT); }
+	
 	public static final float SCROLL_SCALE = 25;
 	
 	public Vector2f scroll() { 

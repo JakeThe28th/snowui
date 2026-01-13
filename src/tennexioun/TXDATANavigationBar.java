@@ -65,6 +65,9 @@ public class TXDATANavigationBar {
 			select();
 		}
 		public void deleteTab() {
+			if (current_group().equals(this)) {
+				onCloseCurrentTab();
+			}
 			deleteTab(tab_index);
 		}
 		public void insertTab(Tab tab) {
@@ -180,6 +183,14 @@ public class TXDATANavigationBar {
 	// -- Callbacks -- //
 	
 	public void onURIChange(String old_uri, String new_uri) {
+		
+	}
+	
+	public void onManualURIChange(String old_uri, String new_uri) {
+		
+	}
+	
+	public void onCloseCurrentTab() {
 		
 	}
 

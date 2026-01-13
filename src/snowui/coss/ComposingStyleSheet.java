@@ -114,6 +114,7 @@ public class ComposingStyleSheet {
 		sheet.setProperty("snowui-panel",  				"background_color", 		"BLACK");
 		sheet.setProperty("snowui-small", 				"size", 					"8");
 		sheet.setProperty("snowui-medium", 				"size", 					"12");
+		sheet.setProperty("snowui-medium_x", 			"size", 					"16");
 		sheet.setProperty("snowui-black", 				"base_color", 				"BLACK");
 		sheet.setProperty("snowui-transparent", 		"base_color", 				"TRANSPARENT_WHITE");
 		
@@ -133,6 +134,9 @@ public class ComposingStyleSheet {
 		sheet.setPredicate("snowui-accent", 			"HOVERED=true", 			"snowui-hover_accent");
 		sheet.setPredicate("snowui-accent", 			"HOVERED=true, DOWN=true", 	"snowui-down_accent");
 		sheet.setPredicate("snowui-panel_hoverable", 	"HOVERED=true", 			"snowui-accent_bg");
+
+		sheet.addContains("snowui-centered_01", 									"snowui-centered");
+		sheet.addContains("snowui-centered_01", 									"snowui-medium_x");
 		
 		// -- Built-in Elements -- //
 		
@@ -175,7 +179,17 @@ public class ComposingStyleSheet {
 
 		sheet.addContains("tabgroup", 									"snowui-selectable_c");
 		sheet.addContains("minitab", 									"snowui-selectable_c");
+		
 
+		sheet.addContains("collapse_icon", 								"icon");
+		sheet.addContains("collapse_icon", 								"snowui-centered");
+		sheet.addContains("collapse_icon", 								"snowui-medium");
+		
+		sheet.addContains("directory_icon", 							"collapse_icon");
+		sheet.addContains("directory_icon_file", 						"directory_icon");
+		sheet.addContains("directory_icon_directory", 					"directory_icon");
+		sheet.addContains("directory_icon_file", 						"snowui-transparent");
+		
 		sheet.addContains("text_button", 								"snowui-panel_hoverable");
 
 	}

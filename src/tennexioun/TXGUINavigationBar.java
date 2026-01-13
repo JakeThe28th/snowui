@@ -24,6 +24,7 @@ public class TXGUINavigationBar extends GUIElement {
 		@Override
 		public void onFinishEditing(String old_text, String new_text) {
 			linked.setURI(new_text);
+			linked.onManualURIChange(old_text, new_text);
 		}
 	};
 	
