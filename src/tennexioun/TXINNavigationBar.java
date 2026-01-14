@@ -7,6 +7,8 @@ import snowui.GUIInstance;
 import snowui.elements.base.GUITextBox;
 
 public class TXINNavigationBar {
+	
+	public static boolean input_disabled = false;
 
 	Input input;
 	TXDATANavigationBar navigation_bar;
@@ -24,6 +26,7 @@ public class TXINNavigationBar {
 	}
 	
 	public void tick() {
+		if (input_disabled) return;
 		if (GUITextBox.selected != null) return;
 		// Tab bar controls
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
