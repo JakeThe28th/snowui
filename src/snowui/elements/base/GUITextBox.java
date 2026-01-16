@@ -264,7 +264,6 @@ public class GUITextBox extends GUIElement {
 							if (clicking) characters[i] = letter_rect;
 							
 							if (wrapped) {
-								wrapped = false;
 								if (clicking) characters[i-1] =
 									new Rectangle(
 										characters[i-1]	.left(), 
@@ -286,6 +285,7 @@ public class GUITextBox extends GUIElement {
 							text.character(gui.canvas(), (b.left() - cursor_width) + xx + (advance), b.top() + yy, depth, '|');
 						}
 					}
+					wrapped = false;
 					xx += advance;
 					i++;
 				}
