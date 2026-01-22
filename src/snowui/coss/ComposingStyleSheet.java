@@ -117,7 +117,8 @@ public class ComposingStyleSheet {
 		sheet.setProperty("snowui-medium_x", 			"size", 					"16");
 		sheet.setProperty("snowui-black", 				"base_color", 				"BLACK");
 		sheet.setProperty("snowui-transparent", 		"base_color", 				"TRANSPARENT_WHITE");
-		
+		sheet.setProperty("snowui-miniature", 			"size", 					"1");
+
 		HELPERSetUniformMargins(sheet, 					"snowui-panel", 			"8");
 		HELPERSetUniformMargins(sheet, 					"snowui-margin_medium", 	"4");
 		HELPERSetUniformMargins(sheet, 					"snowui-margin_large", 		"10");
@@ -191,6 +192,9 @@ public class ComposingStyleSheet {
 		sheet.addContains("directory_icon_file", 						"snowui-transparent");
 		
 		sheet.addContains("text_button", 								"snowui-panel_hoverable");
+		
+		sheet.addContains("section_line", 								"snowui-w_contained");
+		sheet.addContains("section_line", 								"snowui-miniature");
 
 	}
 	
