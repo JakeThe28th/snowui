@@ -1,5 +1,7 @@
 package snowui.utility;
 
+import frost3d.utility.Utility;
+
 public class AnimationTimer {
 	
 	long start;
@@ -21,6 +23,14 @@ public class AnimationTimer {
 	
 	public float get() {
 		return ((float) getElapsedMS()) / ((float) length);
+	}
+	
+	public float sget(int iter) {
+		float result = get();
+		for (int i = 0; i < iter; i++) {
+			result = (float) Utility.lerp(result, 1, get());
+		}
+		return result;
 	}
 
 	public void start() {
