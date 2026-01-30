@@ -1,6 +1,7 @@
 package snowui.elements.base;
 
 import org.joml.Vector2i;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
 import frost3d.Input;
@@ -68,6 +69,10 @@ public class GUITextBox extends GUIElement {
 						}
 					}
 					
+					if (keyTyped(i, GLFW.GLFW_KEY_TAB)) {
+						i.input_string(i.input_string() + "\t");
+					}
+					
 					if (i.input_string() != "") {
 						delete_selection();
 						int t_cursor = cursor;
@@ -85,6 +90,8 @@ public class GUITextBox extends GUIElement {
 							ContentState state = content_undo.prev();
 							content = state.content;
 							cursor = state.cursor;
+							invalidate_brittle();
+							onTextChange(content);
 						}
 					}
 					
@@ -93,6 +100,8 @@ public class GUITextBox extends GUIElement {
 							ContentState state = content_undo.next();
 							content = state.content;
 							cursor = state.cursor;
+							invalidate_brittle();
+							onTextChange(content);
 						}
 					}
 					
@@ -126,7 +135,7 @@ public class GUITextBox extends GUIElement {
 				content += old_content;
 			}
 		}
-		
+
 		static record ContentState(String content, int cursor) {}
 		NavigableLimitedStack<ContentState> content_undo = new NavigableLimitedStack<>();
 		
@@ -153,6 +162,7 @@ public class GUITextBox extends GUIElement {
 		public void content(String new_content) {
 			if (content == null || !content.equals(new_content)) {
 				content = new_content;
+				invalidate_brittle();
 				content_undo.push(new ContentState(content, cursor));
 				fix_cursor_pos();
 				setinputtime();
@@ -180,6 +190,32 @@ public class GUITextBox extends GUIElement {
 		
 		// --- ----------  gui stuff  ---------- --- //
 		
+		// TODO: Refactor/Remove this eventually
+		Vector4f[] brittle_colormap;
+		Vector2i[] brittle_coordinates;
+		
+		boolean update_coords = true;
+		
+		private void invalidate_brittle() {
+			brittle_colormap = null;
+			if (brittle_coordinates != null) {
+				brittle_coordinates = new Vector2i[content.length()];
+				update_coords = true;
+			}
+		}
+		
+		/** Sets colors. These colors will go away when the text is modified. */
+		public void brittle_color(int index, Vector4f color) {
+			if (brittle_colormap == null) {
+				brittle_colormap = new Vector4f[content.length()];
+			}
+			brittle_colormap[index] = color;
+		}
+		
+		public Vector2i brittle_coordinate(int index) {
+			return brittle_coordinates[index];
+		}
+		
 		/** Draws the text, or returns the height of the text. 
 		 *  Also, handles actions that rely on clicking a specific character of text. */
 		private Vector2i performTextDrawing(Rectangle b, Rectangle outer, GUIInstance gui, int depth, boolean draw) {
@@ -189,7 +225,11 @@ public class GUITextBox extends GUIElement {
 			
 			int xx = 0, yy = 0, i = 0;
 			
+			int max_xx = xx;
+			
 			int cursor_width = 0;
+			
+			int tab_width = 4 * text.advance(" ", 0);
 			
 			if (draw) {
 				gui.canvas().color(style().base_color().color());
@@ -224,19 +264,24 @@ public class GUITextBox extends GUIElement {
 				// be split by character in the loop anyways, so do nothing.
 				
 				boolean wrapped = false;
-				
-				if (next_size < b.width() && xx + next_size > b.width()) {
-					xx = 0;
-					yy += line_height;
-					wrapped = true;
+
+				if (wrap) {
+					if (next_size < b.width() && xx + next_size > b.width()) {
+						xx = 0;
+						yy += line_height;
+						wrapped = true;
+					}
 				}
-								
+				
 				while (i < next_breakable_index + 1 && i < content.length()) {
 					int advance = text.advance(content, i);
 					if (content.charAt(i) == '\n') {
 						advance = 0;
 					}
-					if (xx + advance > b.width() || content.charAt(i) == '\n') {
+					if (content.charAt(i) == '\t') {
+						advance = tab_width;
+					}
+					if ((wrap && xx + advance > b.width()) || content.charAt(i) == '\n') {
 						xx = 0;
 						yy += line_height;
 						wrapped = true;
@@ -280,13 +325,24 @@ public class GUITextBox extends GUIElement {
 							}
 						}	
 						}
+						
+						// Set color
+						if (brittle_colormap != null && brittle_colormap[i] != null) gui.canvas().color(brittle_colormap[i]);
 						text.character(gui.canvas(), b.left() + xx, b.top() + yy, depth + 2, content.charAt(i));
+						// Reset color
+						if (brittle_colormap != null && brittle_colormap[i] != null) gui.canvas().color(style().base_color().color());
+						
+						if (brittle_coordinates != null && update_coords && draw) {
+							brittle_coordinates[i] = new Vector2i(b.left() + xx, b.top() + yy);
+						}
+						
 						if (is_selected() && i == cursor && blink()) {
 							text.character(gui.canvas(), (b.left() - cursor_width) + xx + (advance), b.top() + yy, depth, '|');
 						}
 					}
 					wrapped = false;
 					xx += advance;
+					if (max_xx < xx) max_xx = xx;
 					i++;
 				}
 			}
@@ -318,8 +374,10 @@ public class GUITextBox extends GUIElement {
 				}
 			}
 			
+			if (draw) update_coords = false;
+			
 			if (!draw) {
-				return new Vector2i(xx, yy + line_height);
+				return new Vector2i(max_xx, yy + line_height);
 			} else {
 				return null;
 			}
@@ -361,10 +419,16 @@ public class GUITextBox extends GUIElement {
 				this.unpadded_height = performTextDrawing(new Rectangle(0,0,wrap_width,0), null, gui, -1, false).y;
 				textbox_this().should_recalculate_size(true);
 			} else {
-				gui.font_size(style().size().pixels());
-				Vector2i size = gui.canvas().textrenderer().size(content);
-				this.unpadded_width = size.x;
+//				gui.font_size(style().size().pixels());
+//				Vector2i size = gui.canvas().textrenderer().size(content);
+//				this.unpadded_width = size.x;
+//				int newline_count = 1;
+//				for (int i = 0; i < content.length(); i++) if (content.charAt(i) == '\n') newline_count++;
+//				this.unpadded_height = size.y * newline_count;
+				Vector2i size = performTextDrawing(null, null, gui, -1, false);
 				this.unpadded_height = size.y;
+				this.unpadded_width  = size.x;
+
 			}
 		}
 
@@ -482,6 +546,14 @@ public class GUITextBox extends GUIElement {
 	 *  cause {ConcurrentModificationException}s. TODO: maybe fix that lol */
 	public void onFinishEditing(String old_text, String new_text) {
 		
+	}
+	
+	public void save_character_coordinates(boolean b) {
+		if (b) {
+			text.brittle_coordinates = new Vector2i[text.content.length()];
+		} else {
+			text.brittle_coordinates = null;
+		}
 	}
 
 }
