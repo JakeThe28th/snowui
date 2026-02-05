@@ -43,6 +43,40 @@ public class GUITextBox extends GUIElement {
 					if (keyTyped(i, GLFW.GLFW_KEY_RIGHT )) 	setcursor(cursor+1, shift);
 					if (keyTyped(i, GLFW.GLFW_KEY_HOME  )) 	setcursor(0, shift);
 					
+					// Kinda scuffed implementation of going up and down lines...
+					if (brittle_coordinates != null && (keyTyped(i, GLFW.GLFW_KEY_DOWN) || keyTyped(i, GLFW.GLFW_KEY_UP))) { 
+						Vector2i[] c = brittle_coordinates;
+						
+						Vector2i v = c[cursor];
+						v.x = c[cursor_for_vertical_navigation].x;
+
+						int target_height = 0;
+						
+						if (keyTyped(i, GLFW.GLFW_KEY_DOWN)) {
+							for (int n = cursor+1; n < c.length; n++) if (c[n].y > v.y) { target_height = c[n].y; break; }
+						}
+						
+						if (keyTyped(i, GLFW.GLFW_KEY_UP)) {
+							for (int n = cursor-1; n > 0; n--)        if (c[n].y < v.y) { target_height = c[n].y; break; }
+						}
+						
+						int new_cursor = cursor;
+						
+						if (keyTyped(i, GLFW.GLFW_KEY_DOWN)) {
+							for (int n = cursor+1; n < c.length; n++) 
+								if (c[n].y == target_height) { new_cursor = n; if (c[n].x >= v.x) { break; } }
+						}
+						
+						if (keyTyped(i, GLFW.GLFW_KEY_UP)) {
+							for (int n = cursor-1; n > 0; n--) 
+								if (c[n].y == target_height) { new_cursor = n; if (c[n].x <= v.x) { break; } }
+						}
+						
+						int old = cursor_for_vertical_navigation;
+						setcursor(new_cursor, shift); 
+						cursor_for_vertical_navigation = old;
+					}
+					
 					fix_cursor_pos();
 					
 					if (keyTyped(i, GLFW.GLFW_KEY_BACKSPACE)) {
@@ -139,6 +173,8 @@ public class GUITextBox extends GUIElement {
 		static record ContentState(String content, int cursor) {}
 		NavigableLimitedStack<ContentState> content_undo = new NavigableLimitedStack<>();
 		
+		int cursor_for_vertical_navigation;
+		
 		int cursor, select_start, select_end;
 		
 		String content;
@@ -152,6 +188,7 @@ public class GUITextBox extends GUIElement {
 			cursor = new_position;
 			if (!shift) select_start = cursor + 1;
 			select_end = cursor + 1;
+			cursor_for_vertical_navigation = cursor;
 		}
 		
 		private void fix_cursor_pos() {
@@ -213,6 +250,7 @@ public class GUITextBox extends GUIElement {
 		}
 		
 		public Vector2i brittle_coordinate(int index) {
+			if (index >= brittle_coordinates.length) return null;
 			return brittle_coordinates[index];
 		}
 		
@@ -220,6 +258,8 @@ public class GUITextBox extends GUIElement {
 		 *  Also, handles actions that rely on clicking a specific character of text. */
 		private Vector2i performTextDrawing(Rectangle b, Rectangle outer, GUIInstance gui, int depth, boolean draw) {
 			
+			gui.font_size(style().size().pixels());
+
 			SimpleTextRenderer text = gui.textrenderer();
 			int line_height = text.size(content).y;
 			
@@ -230,10 +270,9 @@ public class GUITextBox extends GUIElement {
 			int cursor_width = 0;
 			
 			int tab_width = 4 * text.advance(" ", 0);
-			
+						
 			if (draw) {
 				gui.canvas().color(style().base_color().color());
-				gui.font_size(style().size().pixels());
 				// If the cursor is at the start, it won't be drawn in the while loop.
 				if (is_selected() && -1 == cursor && blink()) {
 					text.character(gui.canvas(), b.left(), b.top() + yy, depth, '|');
@@ -279,7 +318,8 @@ public class GUITextBox extends GUIElement {
 						advance = 0;
 					}
 					if (content.charAt(i) == '\t') {
-						advance = tab_width;
+						//advance = tab_width;
+						advance = (((xx / tab_width) + 1) * tab_width) - xx;
 					}
 					if ((wrap && xx + advance > b.width()) || content.charAt(i) == '\n') {
 						xx = 0;
@@ -373,7 +413,7 @@ public class GUITextBox extends GUIElement {
 					}
 				}
 			}
-			
+						
 			if (draw) update_coords = false;
 			
 			if (!draw) {
@@ -439,8 +479,11 @@ public class GUITextBox extends GUIElement {
 		
 		@Override
 		public void draw(GUIInstance gui, int depth) {
+			performTextEditing(gui); // With the introduction of brittle properties, 
+									 // this needs to run *before* drawing, since otherwise
+									 // the brittle coordinate map won't update until
+									 // the next loop.
 			performTextDrawing(hover_rectangle(), limit_rectangle(), gui, depth, true);
-			performTextEditing(gui);
 		}
 		
 		long last_input_time = System.currentTimeMillis();
