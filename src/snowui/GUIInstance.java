@@ -31,6 +31,8 @@ public class GUIInstance {
 	public static final boolean SHOW_FPS 				= true;
 	public static final boolean DEBUG 					= true;
 	
+	public int dbg_queue_size;
+	
 	public FPSCounter 			fps 					= new FPSCounter();
 	public DragAndDropSupport 	drag_and_drop_support 	= new DragAndDropSupport(this);
 	
@@ -175,6 +177,8 @@ public class GUIInstance {
 			GUIElement.tick(this, w.as_element(), w.position(), 0, (w == this.current_window_root()));
 		}
 		drag_and_drop_support.tick();
+		
+		dbg_queue_size = canvas().queue_size();
 		
 		if (SHOW_FPS) fps.drawFPS(canvas);
 		if (DEBUG) GUIDebugger.drawTree(this, current_window_root(), input);

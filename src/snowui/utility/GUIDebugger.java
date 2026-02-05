@@ -238,7 +238,7 @@ public class GUIDebugger {
 	static int font_size = 18;
 	
 	public static void drawTree(GUIInstance gui, GUIElement e, Input input) {
-				
+						
 		if (input.keyReleased(GLFW_KEY_LEFT_ALT) && !used_modifier) {
 			show_debug = !show_debug;
 		}
@@ -410,7 +410,7 @@ public class GUIDebugger {
 			state.add("§`Last special update: " + f.format(hovered.last_element_update_elapsed_time()/1000f) + " seconds ago");
 			// Misc
 			state.add("§>Is on screen: " + e.is_on_screen());
-			state.add("Render Queue Items: " + ((SimpleCanvas) canvas).queue_size());
+			state.add("Render Queue Items: " + gui.dbg_queue_size);
 			DrawUtility.drawStrings(canvas, 5, canvas.height()-5, 1000, state);
 		}
 		
