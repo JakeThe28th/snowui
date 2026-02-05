@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
+import snowui.coss.enums.Constant;
 import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
-import snowui.elements.base.GUIClickableRectangle;
 import snowui.elements.base.GUIText;
 import snowui.utility.GUIUtility;
 
@@ -30,17 +30,11 @@ public class GUITabList extends GUIElement {
 	ArrayList<Tab> tabs = new ArrayList<>();
 	ArrayList<GUIElement> clickables = new ArrayList<>();
 	
-	public void add(String tabname, GUIElement hidden) {
+	public GUIElement add(String tabname, GUIElement hidden) {
 		GUIElement clickable = new GUIElement() {
-			public GUIElement this_clickable() { return this; }
 			{ identifier("tab"); }
-			GUIText name = new GUIText(tabname) { 
-				@Override public void onSingleClick(GUIInstance gui) { this_clickable().onSingleClick(gui); }
-			};
-			GUIClickableRectangle rect = new GUIClickableRectangle() { 
-				@Override public void onSingleClick(GUIInstance gui) { this_clickable().onSingleClick(gui); }
-			};
-			{ this.registerSubElement(rect); this.registerSubElement(name); }
+			GUIText name = new GUIText(tabname) { { identifier("tab_name"); } };
+			{ this.registerSubElement(name); name.set(PredicateKey.DISABLED, true);}
 			@Override
 			public void recalculateSize(GUIInstance gui) {
 				this.unpadded_height = name.height();
@@ -50,7 +44,6 @@ public class GUITabList extends GUIElement {
 			public void updateDrawInfo(GUIInstance gui) {
 				this.hover_rectangle(padded_limit_rectangle());
 				name.limit_rectangle(padded_limit_rectangle());
-				rect.limit_rectangle(padded_limit_rectangle());
 			}
 			@Override
 			public void onSingleClick(GUIInstance gui) {
@@ -59,6 +52,7 @@ public class GUITabList extends GUIElement {
 			@Override public void draw(GUIInstance gui, int depth) {}
 		};
 		this.add(clickable, hidden);
+		return clickable;
 	}
 
 	public void add(GUIElement clickable, GUIElement hidden) {
@@ -68,6 +62,15 @@ public class GUITabList extends GUIElement {
 		tabs.add(new Tab(clickable, hidden));
 		hidden.set(PredicateKey.HIDDEN, true);
 		select_tab(current_tab);
+	}
+	
+	public void replace_hidden(GUIElement clickable, GUIElement new_hidden) {
+		int index = indexOfClickable(clickable);
+		Tab tab = tabs.get(index);
+		this.removeSubElement(tab.tab_hidden);
+		this.registerSubElement(new_hidden);
+		tab.tab_hidden = new_hidden;
+		tab.tab_hidden.set(PredicateKey.HIDDEN, current_tab != index);
 	}
 	
 	public void remove(int index) {
@@ -93,8 +96,10 @@ public class GUITabList extends GUIElement {
 		this.current_tab = index;
 		this.should_update(true);
 		tabs.get(current_tab).tab_hidden.set(PredicateKey.HIDDEN, false);
+		tabs.get(current_tab).clickable().set(PredicateKey.SELECTED, true);
 		for (int tab = 0; tab < tabs.size(); tab++) {
 			if (tab != current_tab) tabs.get(tab).tab_hidden.set(PredicateKey.HIDDEN, true);
+			if (tab != current_tab) tabs.get(tab).clickable().set(PredicateKey.SELECTED, false);
 		}
 	}
 
@@ -115,21 +120,39 @@ public class GUITabList extends GUIElement {
 		
 		int tab_size = b.width() / tab_count;
 		int tab_length = GUIUtility.max_height(clickables);
+	
 		
 		for (int tab = 0; tab < tabs.size(); tab++) {
-			tabs.get(tab).tab_clickable.limit_rectangle(new Rectangle(
-					b.left() + tab_size * tab,
-					b.top(),
-					b.left() + tab_size * (tab+1),
-					b.top() + tab_length
-				));
+			if (style().halign().constant().equals(Constant.TOP)) {
+				tabs.get(tab).tab_clickable.limit_rectangle(new Rectangle(
+						b.left() + tab_size * tab,
+						b.top(),
+						b.left() + tab_size * (tab+1),
+						b.top() + tab_length
+					));
+				
+				tabs.get(tab).tab_hidden.limit_rectangle(new Rectangle(
+						b.left(),
+						b.top() + tab_length,
+						b.right(),
+						b.bottom()
+					));
+			} else {
+				tabs.get(tab).tab_clickable.limit_rectangle(new Rectangle(
+						b.left() + tab_size * tab,
+						b.bottom() - tab_length,
+						b.left() + tab_size * (tab+1),
+						b.bottom()
+					));
+				
+				tabs.get(tab).tab_hidden.limit_rectangle(new Rectangle(
+						b.left(),
+						b.top(),
+						b.right(),
+						b.bottom() - tab_length
+					));
+			}
 			
-			tabs.get(tab).tab_hidden.limit_rectangle(new Rectangle(
-					b.left(),
-					b.top() + tab_length,
-					b.right(),
-					b.bottom()
-				));
 		}
 	}
 
