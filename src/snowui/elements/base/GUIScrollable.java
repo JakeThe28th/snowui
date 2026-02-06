@@ -218,8 +218,18 @@ public class GUIScrollable extends GUIElement {
 
 	@Override
 	public void recalculateSize(GUIInstance gui) {
-		this.unpadded_height = 17;	// n/a, so...
-		this.unpadded_width = 17;	// n/a, so...
+		this.unpadded_height = root.height();
+		this.unpadded_width = root.width();
+		
+		if (limit_rectangle() != null) {
+			if (this.unpadded_height >= limit_rectangle().height()) {
+				unpadded_width += vertical_scrollbar.width();
+			}
+			if (this.unpadded_width >= limit_rectangle().width()) {
+				unpadded_height += horizontal_scrollbar.width();
+			}
+		}
+		
 	}
 	
 	@Override
