@@ -29,7 +29,7 @@ public record COSSType(
 		String target = null;
 		for (String current_key : predicates().keySet()) {
 			COSSPredicate current = predicates().get(current_key);
-			if (current.match_count(predicate) > max_match && predicate.matches(predicate)) {
+			if (current.match_count(predicate) > max_match && current.matches(predicate)) {
 				target = current_key;
 				max_match = current.match_count(predicate);
 			}
