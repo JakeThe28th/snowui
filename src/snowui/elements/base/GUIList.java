@@ -99,7 +99,11 @@ public class GUIList extends GUIElement implements ElementReceiver {
 		for (GUIElement element : (ArrayList<GUIElement>) elements.clone()) {
 			remove(element);
 		}
-	}	
+	}
+
+	public int indexOf(GUIElement element) {
+		return elements.indexOf(element);
+	}
 	
 	public int length() 			{ return elements.size();     }
 	public GUIElement get(int index) { return elements.get(index); }
