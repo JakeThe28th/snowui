@@ -470,6 +470,7 @@ public class GUITextBox extends GUIElement {
 				this.unpadded_width  = size.x;
 
 			}
+
 		}
 
 		@Override

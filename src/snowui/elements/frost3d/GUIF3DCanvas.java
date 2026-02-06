@@ -29,11 +29,15 @@ public class GUIF3DCanvas extends GUIElement {
 	public void fillmode	(FillMode  neo) { this.fillmode = neo; }
 	public void flip		(boolean   neo)	{ this.flip 	= neo; }
 	
-	F3DCanvas canvas			= null;
-	Rectangle draw_rectangle	= null;
+	protected F3DCanvas canvas			= null;
+	protected Rectangle draw_rectangle	= null;
 	
 	public GUIF3DCanvas(F3DCanvas canvas) {
 		this.canvas = canvas;
+	}
+	
+	public void force_update_canvas_rectangle() {
+		this.should_update(true);
 	}
 	
 	public Vector2i internal_mouse(GUIInstance gui) {

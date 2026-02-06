@@ -124,7 +124,8 @@ public class ComposingStyleSheet {
 		HELPERSetUniformMargins(sheet, 					"snowui-panel", 			"8");
 		HELPERSetUniformMargins(sheet, 					"snowui-margin_medium", 	"4");
 		HELPERSetUniformMargins(sheet, 					"snowui-margin_large", 		"10");
-		
+		HELPERSetUniformMargins(sheet, 					"snowui-margin_none", 		"0");
+
 		sheet.addContains("snowui-panel_hoverable", 								"snowui-panel");
 		sheet.addContains("snowui-contained", 										"snowui-w_contained");
 		sheet.addContains("snowui-contained", 										"snowui-h_contained");
@@ -146,6 +147,7 @@ public class ComposingStyleSheet {
 		sheet.addContains("snowui-highlight_on_select_highlight", 	  				"snowui-accent_bg");
 		sheet.addContains("snowui-highlight_on_select_highlight", 	  				"snowui-no_outline");
 		sheet.addContains("snowui-highlight_on_select_highlight", 	  				"snowui-no_bg_margin");
+		sheet.addContains("f3d_canvas", 	  										"snowui-no_bg_margin");
 
 
 		// -- Built-in Elements -- //
