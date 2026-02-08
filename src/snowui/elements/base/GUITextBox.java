@@ -103,6 +103,10 @@ public class GUITextBox extends GUIElement {
 						}
 					}
 					
+					if (keyTyped(i, GLFW.GLFW_KEY_ESCAPE)) {
+						deselect();
+					}
+					
 					if (keyTyped(i, GLFW.GLFW_KEY_TAB)) {
 						i.input_string(i.input_string() + "\t");
 					}
