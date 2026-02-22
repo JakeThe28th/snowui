@@ -149,7 +149,6 @@ public class ComposingStyleSheet {
 		sheet.addContains("snowui-highlight_on_select_highlight", 	  				"snowui-no_bg_margin");
 		sheet.addContains("f3d_canvas", 	  										"snowui-no_bg_margin");
 
-
 		// -- Built-in Elements -- //
 		
 		// In order to allow for stylesheets to override properties in types

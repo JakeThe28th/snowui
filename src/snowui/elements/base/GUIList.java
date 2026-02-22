@@ -18,7 +18,7 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	boolean vertical = true;
 	boolean wrap = false;
 	
-	ArrayList<GUIElement> elements = new ArrayList<>();
+	protected ArrayList<GUIElement> elements = new ArrayList<>();
 	
 	{ sub_elements = elements; }
 	

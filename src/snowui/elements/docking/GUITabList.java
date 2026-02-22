@@ -123,7 +123,7 @@ public class GUITabList extends GUIElement {
 	
 		
 		for (int tab = 0; tab < tabs.size(); tab++) {
-			if (style().halign().constant().equals(Constant.TOP)) {
+			if (style().valign().constant().equals(Constant.TOP)) {
 				tabs.get(tab).tab_clickable.limit_rectangle(new Rectangle(
 						b.left() + tab_size * tab,
 						b.top(),

@@ -87,7 +87,7 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	GUIElement temporary_replacement = new GUIText("(Drag docker here to return)");
 	
 	{
-		temporary_replacement.identifier("centered");
+		temporary_replacement.identifier("snowui-centered");
 	}
 	
 	@Override
