@@ -10,6 +10,10 @@ public class GUIIcon extends GUIElement {
 	
 	IconType icon = null;
 	
+	public IconType icon() {
+		return icon;
+	}
+	
 	public GUIIcon icon(IconType new_icon) {
 		this.icon = new_icon;
 		return this;
