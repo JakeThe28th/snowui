@@ -79,8 +79,9 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	public boolean canDropHere(GUIInstance gui, GUIElement element) {
 		return 
 			element instanceof GUIDockable && 
-			this.aligned_limit_rectangle().contains(gui.mousepos()) &&
-     	   !this.aligned_limit_rectangle().internal(edge, edge, 1-edge, 1-edge).contains(gui.mousepos());
+			this.aligned_limit_rectangle().contains(gui.mousepos());
+		//  Don't if the mouse is hovering over the 'middle' part: 
+		//  && !this.aligned_limit_rectangle().internal(edge, edge, 1-edge, 1-edge).contains(gui.mousepos());
 	}
 	
 	SubElementReplaceable original_parent;
@@ -114,59 +115,72 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	public void drop(GUIInstance gui, GUIElement element) {
 		Rectangle b = this.aligned_limit_rectangle();
 		Rectangle left_side 	= b.internal(0, 		0, 		  edge, 	1);
-//		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
+		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
 		Rectangle right_side 	= b.internal(1 - edge, 	0, 		1, 			1);
 		Rectangle top_side 		= b.internal(edge, 		0, 		1-edge, 	edge);
 		Rectangle bottom_side 	= b.internal(edge, 		1-edge, 1-edge, 	1);
+				
+		GUIDockable insert = (GUIDockable) element;
 		
-		// TODO: Tab List Stuff
-		
-//		GUIDockable insert = (GUIDockable) element;
-//		
-//		if (middle.contains(gui.mousepos())) 	{ 
-//			if (parent() instanceof GUITabList) {
-//				((GUITabList) parent()).add(insert.titlebar.title.text(), insert);
-//			}
-//			if (parent() instanceof GUISplit) {
-//				GUITabList tabs = new GUITabList();
-//				((SubElementReplaceable) parent()).replace(this, tabs);
-//				tabs.add(		titlebar.title.text(), this);
-//				tabs.add(insert.titlebar.title.text(), insert);
-//			}
-//		}
-		
-		SubElementReplaceable p_replace = null;
+		GUIDockableTabList 		p_tablist = null;
+		SubElementReplaceable 	p_replace = null; // either this's parent, or its parent (GUIDockableTabList)'s parent
+		GUIElement				replace   = this; // either this, or this's parent (GUIDockableTabList)
+
+		if (parent() instanceof GUIDockableTabList	  ) p_tablist = (GUIDockableTabList)	parent();
 		
 		// If this is in a GUISplit, it should insert the added element next to itself.
-		if (parent() instanceof SubElementReplaceable) p_replace = (SubElementReplaceable) parent();
+		if (parent() instanceof SubElementReplaceable ) p_replace = (SubElementReplaceable) parent();
 		
-		// If this is in a GUITabList, it should insert the added element next to that tab list.
-//		if (parent() instanceof GUITabList) {
-//			if (parent().parent() instanceof SubElementReplaceable) {
-//				p_replace = (SubElementReplaceable) parent().parent();
-//			}
-//		}
-
-		Vector2i mp = gui.mousepos();
-		if (p_replace != null) {
-			if (left_side	.contains(mp)) p_replace.replace(this, new GUISplit(element, this));
-			if (right_side	.contains(mp)) p_replace.replace(this, new GUISplit(this, element));
-			if (top_side	.contains(mp)) p_replace.replace(this, new GUISplit(element, this).verticalify());
-			if (bottom_side	.contains(mp)) p_replace.replace(this, new GUISplit(this, element).verticalify());
+		if (middle.contains(gui.mousepos())) { 
+			if (p_tablist == null && parent() instanceof GUISplit) {
+				// If the parent is a GUISplit instead of a 
+				// tab list, create a tab list.
+				p_tablist = new GUIDockableTabList();
+				p_replace.replace(this, p_tablist);
+				p_tablist.addDocker(this);
+			}
+			// Add the dropped element to the parent tab list.
+			if (p_tablist != null) p_tablist.addDocker(insert);
+			
+			return;
 		}
+		
+		Vector2i mp = gui.mousepos();
+		
+		if (p_tablist != null) {
+			// If this is in a GUIDockableTabList, then the parent of 
+			// that list should never be another tab list. So
+			// only the parent's parent is checked.
+			if (p_tablist.parent() instanceof SubElementReplaceable) {
+				// If this is in a GUIDockableTabList, it should insert the 
+				// added element next to the parent GUIDockableTabList if that
+				// GUIDockableTabList is in a GUISplit.
+				p_replace = (SubElementReplaceable) p_tablist.parent();
+				replace = p_tablist;
+			}
+		} 
+		
+		// Insert the added element in a split next to either this element or this's parent tab list.
+		if (p_replace != null) {
+			if (left_side	.contains(mp)) p_replace.replace(replace, new GUISplit(element, replace));
+			if (right_side	.contains(mp)) p_replace.replace(replace, new GUISplit(replace, element));
+			if (top_side	.contains(mp)) p_replace.replace(replace, new GUISplit(element, replace).verticalify());
+			if (bottom_side	.contains(mp)) p_replace.replace(replace, new GUISplit(replace, element).verticalify());
+		}
+		
 	}
 
 	@Override
 	public void dropPreview(GUIInstance gui, GUIElement element) {
 		Rectangle b = this.aligned_limit_rectangle();
 		Rectangle left_side 	= b.internal(0, 		0, 		  edge, 	1);
-//		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
+		Rectangle middle 		= b.internal(	 edge, 	edge, 	1-edge, 	1-edge);
 		Rectangle right_side 	= b.internal(1 - edge, 	0, 		1, 			1);
 		Rectangle top_side 		= b.internal(edge, 		0, 		1-edge, 	edge);
 		Rectangle bottom_side 	= b.internal(edge, 		1-edge, 1-edge, 	1);
 		Rectangle draw = null;
 		if (left_side	.contains(gui.mousepos())) 	{ draw = left_side	; }
-//		if (middle		.contains(gui.mousepos())) 	{ draw = middle		; }
+		if (middle		.contains(gui.mousepos())) 	{ draw = middle		; }
 		if (right_side	.contains(gui.mousepos())) 	{ draw = right_side	; }
 		if (top_side	.contains(gui.mousepos())) 	{ draw = top_side	; }
 		if (bottom_side	.contains(gui.mousepos())) 	{ draw = bottom_side; }

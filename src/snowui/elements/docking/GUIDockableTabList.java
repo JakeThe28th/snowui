@@ -9,9 +9,11 @@ import snowui.coss.enums.PredicateKey;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUIIcon;
 import snowui.elements.base.GUIText;
+import snowui.elements.interfaces.SubElementReplaceable;
+import snowui.elements.interfaces.components.SubElementReplaceQueue;
 import snowui.utility.GUIUtility;
 
-public class GUIDockableTabList extends GUIElement {
+public class GUIDockableTabList extends GUIElement implements SubElementReplaceable {
 	
 	/* Specific tab list for Dockables *only*.
 	 * 
@@ -59,28 +61,27 @@ public class GUIDockableTabList extends GUIElement {
 		//   if you want to, for example, hide the
 		//   titlebar to avoid duplicating it you 
 		//   need to handle that there.
-		public GUIDockable element(); 
+		public GUIElement element(); 
 	}
 	
 	ArrayList<TabInfo> tabs = new ArrayList<>();
 	
 	public void addDocker(GUIDockable docker) {
+		addDocker(tabs.size(), docker);
+	}
+	
+	public void addDocker(int index, GUIDockable docker) {
 		for (TabInfo tab : tabs) if (tab.element() == docker) {
 			throw new IllegalStateException("Attempted to add a docker to a tab group it's already in.");
 		}
-		
 		TabInfo new_tab = new TabInfo() {
 			@Override public IconType 		icon		() { return docker.titlebar().icon.icon(); }
 			@Override public String 		title		() { return docker.titlebar().title.text(); }
 			@Override public GUIDockable 	element		() { return docker; }
 		};
-		
-		tabs.add(new_tab);
-		
+		tabs.add(index, new_tab);
 		refreshTabDisplayElements();
-		
-		setCurrentTab(tabs.size()-1);
-		
+		setCurrentTab(index);
 	}
 	
 	// -- == ----- Element State ----- == -- //
@@ -134,16 +135,16 @@ public class GUIDockableTabList extends GUIElement {
 	int current_tab_index;
 	
 	private void setCurrentTab(int i) {
+		if (current_tab_content != null) tab_display_elements.get(current_tab_index).set(PredicateKey.SELECTED, false);
 		if (current_tab_content != null) removeSubElement(current_tab_content);
 		current_tab_content = tabs.get(i).element();
 		registerSubElement(current_tab_content);
 		
-		tab_display_elements.get(current_tab_index).set(PredicateKey.SELECTED, false);
 		current_tab_index = i;
 		tab_display_elements.get(current_tab_index).set(PredicateKey.SELECTED, true);
 	}
 	
-	// -- == --------------------------------------- == -- //
+	// -- == ------- GUI Code ------- == -- //
 
 	@Override
 	public void recalculateSize(GUIInstance gui) {
@@ -244,5 +245,100 @@ public class GUIDockableTabList extends GUIElement {
 		current_tab_content.limit_rectangle(l);
 		
 	}
+	
+	// -- == ------- Docking ------- == -- //
 
+	/* Most of the work for docking is actually done in
+	 * GUIDockable (gee who woulda thunk...), it's responsible for:
+	 * 	
+	 * 		- Adding a sub-docker to its' parent if 
+	 * 		  its' parent is <this> and the docker
+	 * 		  was dragged to its' center
+	 * 
+	 * 		- Replacing itself in its parent with a 
+	 *        placeholder when it's dragged but not 
+	 *        yet dropped
+	 *        
+	 * 		- Removing itself from its' parent when
+	 * 		  dragged and dropped to somewhere else
+	 * 
+	 * That means this class doesn't actually have to implement
+	 * ElementReceiver...
+	 */
+
+
+	@Override
+	public void replace(GUIElement original, GUIElement replacement) {
+		
+		// NOTE: This method is only meant to facilitate 
+		// the replacement with a dummy element a Dockable
+		// does while it's being dragged.
+		
+		if (replacement instanceof GUISplit) {
+			throw new IllegalStateException("Unexpected GUISplit in " + this.getClass().getName());
+		}
+		
+		TabInfo og_tab = null;
+		for (TabInfo tab : tabs) if (tab.element().equals(original)) og_tab = tab;
+		
+		if (og_tab != null) {
+			int og_index = tabs.indexOf(og_tab);
+			tabs.remove(og_tab);
+			if (replacement != null) {
+				if (replacement instanceof GUIDockable) {
+					// Putting the docker back after stopping dragging it
+					addDocker(og_index, (GUIDockable) replacement);
+				} else {
+					// Dummy element
+					IconType og_icon = og_tab.icon();
+					String og_title = og_tab.title();
+					TabInfo new_tab = new TabInfo() {
+						@Override public IconType 		icon		() { return og_icon; }
+						@Override public String 		title		() { return og_title + "*"; }
+						@Override public GUIElement 	element		() { return replacement; }
+					};
+					tabs.add(og_index, new_tab);
+				}
+			} else {
+					// Removing element after dropping it somewhere else
+					og_index = tabs.size() - 1;
+			}
+			if (current_tab_content != null) removeSubElement(current_tab_content);
+			current_tab_content = null;
+			refreshTabDisplayElements();
+			if (og_index >= 0) {
+				setCurrentTab(og_index);
+			} else {
+				current_tab_content = new GUIText("No Tabs.").identifier("snowui-centered");
+				registerSubElement(current_tab_content);
+			}
+			
+		}
+		
+	}
+
+	SubElementReplaceQueue replace_queue = new SubElementReplaceQueue();
+	@Override public SubElementReplaceQueue queue() { return replace_queue; }
+	
+	@Override
+	public void tickAnimation(GUIInstance gui) {
+		collapse();
+		replace_queue.dequeue(this);
+	}
+	
+	private void collapse() {
+		// If there are no tabs, then this might as well just not exist
+		if (tabs.size() == 0) {
+			if (parent() instanceof SubElementReplaceable) {
+				((SubElementReplaceable) parent()).queue().queue_replace(this, null);
+			}
+		}
+		// If there's only one tab, then this should just become that tab
+		if (tabs.size() == 1) {
+			if (parent() instanceof SubElementReplaceable) {
+				((SubElementReplaceable) parent()).queue().queue_replace(this, tabs.get(0).element());
+			}
+		}
+	}
+	
 }

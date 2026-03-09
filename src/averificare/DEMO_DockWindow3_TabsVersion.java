@@ -54,14 +54,14 @@ public class DEMO_DockWindow3_TabsVersion {
 			gui.render();
 			window.tick();
 			
-			i++;
+			// i++;
 			if (i > 0	  ) docker_tabs.alignTabBarLeft();
 			if (i > 60 * 1) docker_tabs.alignTabBarTop();
 			if (i > 60 * 2) docker_tabs.alignTabBarRight();
 			if (i > 60 * 3) docker_tabs.alignTabBarBottom();
 			if (i > 60 * 4) i = 0;
 			
-			if (i == 0) {
+			if (i == 1) {
 				m = !m;
 				if (m) {
 					docker_tabs.setDisplayModeToFull();
