@@ -15,6 +15,8 @@ import snowui.utility.GUIUtility;
 
 public class GUIDockableTabList extends GUIElement implements SubElementReplaceable {
 	
+	{ identifier("dockable_tab_list"); }
+	
 	/* Specific tab list for Dockables *only*.
 	 * 
 	 * It will probably be less'v a pain in the 
@@ -40,7 +42,7 @@ public class GUIDockableTabList extends GUIElement implements SubElementReplacea
 																	refreshTabDisplayElements(); 				}
 	
 	enum	TabAlignment								{ LEFT, TOP, RIGHT, BOTTOM }
-	private TabAlignment	tab_bar_alignment = TabAlignment.TOP;
+	private TabAlignment	tab_bar_alignment = TabAlignment.LEFT;
 	public 	TabAlignment 	tab_bar_alignment			() { return tab_bar_alignment; 							}
 	public 	void 			alignTabBarLeft				() { tab_bar_alignment = TabAlignment.LEFT;				}
 	public 	void 			alignTabBarTop				() { tab_bar_alignment = TabAlignment.TOP;				}

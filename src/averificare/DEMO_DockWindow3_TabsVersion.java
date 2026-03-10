@@ -39,7 +39,7 @@ public class DEMO_DockWindow3_TabsVersion {
 				}
 				
 				// TODO: Test Without
-				docker_tabs.identifier("contained");
+				docker_tabs.identifier("flexed");
 
 		main_split.first(docker_a);
 		main_split.second(docker_tabs);
@@ -54,7 +54,7 @@ public class DEMO_DockWindow3_TabsVersion {
 			gui.render();
 			window.tick();
 			
-			// i++;
+			i++;
 			if (i > 0	  ) docker_tabs.alignTabBarLeft();
 			if (i > 60 * 1) docker_tabs.alignTabBarTop();
 			if (i > 60 * 2) docker_tabs.alignTabBarRight();
@@ -102,6 +102,11 @@ public class DEMO_DockWindow3_TabsVersion {
 		gui.style().setProperty("contained", "max_width", "container");
 		gui.style().setProperty("contained", "min_height", "container");
 		gui.style().setProperty("contained", "max_height", "container");
+		
+		gui.style().setProperty("flexed", "min_width", "flex");
+		gui.style().setProperty("flexed", "max_width", "flex");
+		gui.style().setProperty("flexed", "min_height", "flex");
+		gui.style().setProperty("flexed", "max_height", "flex");
 		
 	}
 }

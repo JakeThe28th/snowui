@@ -208,6 +208,8 @@ public class ComposingStyleSheet {
 		
 		sheet.addContains("tab", 										"snowui-hoverable-slim");
 		sheet.addContains("tab", 										"snowui-highlight_on_select");
+		
+		sheet.addContains("dockable_tab_list", 							"snowui-contained");
 
 	}
 	
