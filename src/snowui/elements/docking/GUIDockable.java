@@ -2,6 +2,7 @@ package snowui.elements.docking;
 
 import org.joml.Vector2i;
 
+import frost3d.enums.IconType;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
@@ -25,13 +26,23 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	}
 	
 	public GUIDockable() { }
-	public GUIDockable(String title) {
+	
+	public GUIDockable(String title, IconType icon) {
 		titlebar.title.text(title);
+		titlebar.icon.icon(icon);
 	}
-
-	public GUIDockable(String title, GUIElement root) {
-		this(title);
+	
+	public GUIDockable(String title) {
+		this(title, IconType.GENERIC_EDIT);
+	}
+	
+	public GUIDockable(String title, IconType icon, GUIElement root) {
+		this(title, icon);
 		root(root);
+	}
+	
+	public GUIDockable(String title, GUIElement root) {
+		this(title, IconType.GENERIC_EDIT, root);
 	}
 	
 	public void root(GUIElement root) {

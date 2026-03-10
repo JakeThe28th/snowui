@@ -121,6 +121,7 @@ public class GUIDockableTabList extends GUIElement implements SubElementReplacea
 				case FULL: 		display = new GUIText(tab.title()) { @Override public void onSingleClick() { setCurrentTab(tab_index); }} ; break;
 				case ICON_ONLY: display = new GUIIcon(tab.icon()) { @Override public void onSingleClick() { setCurrentTab(tab_index); }} ; break;
 			}
+			display.identifier("dockable_tab");
 			tab_display_elements.add(display);
 			registerSubElement(display);
 		}
@@ -136,7 +137,7 @@ public class GUIDockableTabList extends GUIElement implements SubElementReplacea
 	
 	int current_tab_index;
 	
-	private void setCurrentTab(int i) {
+	public void setCurrentTab(int i) {
 		if (current_tab_content != null) tab_display_elements.get(current_tab_index).set(PredicateKey.SELECTED, false);
 		if (current_tab_content != null) removeSubElement(current_tab_content);
 		current_tab_content = tabs.get(i).element();

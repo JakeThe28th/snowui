@@ -120,6 +120,9 @@ public class ComposingStyleSheet {
 		sheet.setProperty("snowui-miniature", 			"size", 					"1");
 		sheet.setProperty("snowui-no_bg_margin", 	  	"background_margin", 		"0");
 		sheet.setProperty("snowui-no_outline", 			"outline_size", 			"0");
+		sheet.setProperty("snowui-solid_select_b", 		"background_color", 		"#2b2c2e");
+		sheet.setProperty("snowui-solid_select_s", 		"background_color", 		"#515257");
+		sheet.setProperty("snowui-solid_select_s", 		"outline_size", 			"0");
 
 		HELPERSetUniformMargins(sheet, 					"snowui-panel", 			"8");
 		HELPERSetUniformMargins(sheet, 					"snowui-margin_medium", 	"4");
@@ -139,6 +142,7 @@ public class ComposingStyleSheet {
 		sheet.setPredicate("snowui-accent", 			"HOVERED=true, DOWN=true", 	"snowui-down_accent");
 		sheet.setPredicate("snowui-panel_hoverable", 	"HOVERED=true", 			"snowui-accent_bg");
 		sheet.setPredicate("snowui-highlight_on_select", "SELECTED=true", 			"snowui-highlight_on_select_highlight");
+		sheet.setPredicate("snowui-solid_select", 		"SELECTED=true", 			"snowui-solid_select_s");
 
 		sheet.addContains("snowui-centered_01", 									"snowui-centered");
 		sheet.addContains("snowui-centered_01", 									"snowui-medium_x");
@@ -148,6 +152,7 @@ public class ComposingStyleSheet {
 		sheet.addContains("snowui-highlight_on_select_highlight", 	  				"snowui-no_outline");
 		sheet.addContains("snowui-highlight_on_select_highlight", 	  				"snowui-no_bg_margin");
 		sheet.addContains("f3d_canvas", 	  										"snowui-no_bg_margin");
+		sheet.addContains("snowui-solid_select", 	  								"snowui-solid_select_b");
 
 		// -- Built-in Elements -- //
 		
@@ -210,6 +215,8 @@ public class ComposingStyleSheet {
 		sheet.addContains("tab", 										"snowui-highlight_on_select");
 		
 		sheet.addContains("dockable_tab_list", 							"snowui-contained");
+		sheet.addContains("dockable_tab", 								"snowui-solid_select");
+		sheet.addContains("dockable_tab", 								"snowui-hoverable");
 
 	}
 	
