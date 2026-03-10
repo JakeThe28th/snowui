@@ -30,6 +30,8 @@ public enum Color {
 	TRANSPARENT_AQUA(new Vector4f(0, 1, 0.75f, 0.25f)),
 	TRANSPARENT_RED(new Vector4f(1,0,0,0.25f)),
 	
+	HOT_PINK(Utility.fromHex("#FF69B4")),
+	
 	BASIC_PANEL			(Utility.fromHex("#414141")),
 	BASIC_PANEL_HOVER	(Utility.fromHex("#4A4A4A")),
 	BASIC_PANEL_DOWN	(Utility.fromHex("#959595")),
