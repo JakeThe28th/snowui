@@ -27,6 +27,8 @@ public class GUITabList extends GUIElement {
 	
 	int current_tab = 0;
 	
+	public int current_tab() { return current_tab; }
+	
 	ArrayList<Tab> tabs = new ArrayList<>();
 	ArrayList<GUIElement> clickables = new ArrayList<>();
 	
@@ -77,12 +79,20 @@ public class GUITabList extends GUIElement {
 		Tab remove = tabs.get(index);
 		remove(remove);
 	}
-	
+
 	public void remove(Tab remove) {
 		clickables.remove(remove.clickable());
 		tabs.remove(remove);
 		this.removeSubElement(remove.tab_clickable);
 		this.removeSubElement(remove.tab_hidden);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void clear() {
+		for (Tab t : (ArrayList<Tab>) tabs.clone()) {
+			remove(t);
+		}
+		current_tab = 0;
 	}
 	
 	public int indexOfClickable(GUIElement clickable) {

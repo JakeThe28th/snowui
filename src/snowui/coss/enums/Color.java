@@ -15,6 +15,8 @@ public enum Color {
 	DESBLUE(new Vector4f(0.5f,0.5f,1,1)),
 	DESYELLOW(new Vector4f(1f,1f,.5f,1)),
 	
+	DESYELLOW25(new Vector4f(1f,1f,.5f,0.25f)),
+	
 	DARKDESBLUE(new Vector4f(0.25f,0.25f,0.5f,1)),
 	
 	TRANSPARENT_WHITE(new Vector4f(1,1,1,.5f)),
@@ -27,11 +29,12 @@ public enum Color {
 	YELLOW(new Vector4f(1, 1, 0, 1)),
 	GOLD(new Vector4f(1, 0.66f, 0, 1)),
 	AQUA(new Vector4f(0, 1, 0.75f, 1)),
+	PURPLE(new Vector4f(1, 0, 1, 1)),
 	TRANSPARENT_AQUA(new Vector4f(0, 1, 0.75f, 0.25f)),
 	TRANSPARENT_RED(new Vector4f(1,0,0,0.25f)),
-	
+
 	HOT_PINK(Utility.fromHex("#FF69B4")),
-	
+
 	BASIC_PANEL			(Utility.fromHex("#414141")),
 	BASIC_PANEL_HOVER	(Utility.fromHex("#4A4A4A")),
 	BASIC_PANEL_DOWN	(Utility.fromHex("#959595")),

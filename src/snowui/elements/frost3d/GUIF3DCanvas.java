@@ -84,4 +84,8 @@ public class GUIF3DCanvas extends GUIElement {
 		}
 	}
 
+	public Rectangle draw_rectangle() {
+		return draw_rectangle;
+	}
+	
 }
