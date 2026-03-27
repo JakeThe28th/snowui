@@ -15,6 +15,14 @@ import snowui.utility.GUIUtility;
 
 public class GUIDockable extends GUIElement implements ElementReceiver {
 	
+	boolean show_titlebar = true;
+	
+	public void show_titlebar(boolean b) {
+		if (show_titlebar != b) this.should_update(true);
+		show_titlebar = b;
+		titlebar.set(PredicateKey.HIDDEN, !b);
+	}
+	
 	GUIElement 	root;
 	GUITitleBar titlebar = new GUITitleBar();
 	
@@ -70,16 +78,23 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 	public void updateDrawInfo(GUIInstance gui) {
 		Rectangle b = aligned_limit_rectangle();
 		this.hover_rectangle(b);
-		titlebar.limit_rectangle(new Rectangle(b.left(), b.top(), b.right(), b.top() + titlebar.height()));
-		root.limit_rectangle(new Rectangle(b.left(), b.top() + titlebar.height(), b.right(), b.bottom()));
+		if (show_titlebar) {
+			titlebar.limit_rectangle(new Rectangle(b.left(), b.top(), b.right(), b.top() + titlebar.height()));
+			root.limit_rectangle(new Rectangle(b.left(), b.top() + titlebar.height(), b.right(), b.bottom()));
+		} else {
+			root.limit_rectangle(new Rectangle(b.left(), b.top(), b.right(), b.bottom()));
+		}
 	}
 
 	@Override public void draw(GUIInstance gui, int depth) {
-		// gui.canvas().color(style().base_color().color());
-		gui.canvas().color(titlebar.style().base_color().color());
-		gui.canvas().rect(this.titlebar.limit_rectangle(), depth);
-		gui.canvas().color(style().base_color().color());
-		gui.canvas().rect(this.root.limit_rectangle(), depth);
+		if (show_titlebar && titlebar.style().base_color().color().w > 0) {
+			gui.canvas().color(titlebar.style().base_color().color());
+			gui.canvas().rect(this.titlebar.limit_rectangle(), depth);
+		}
+		if (style().base_color().color().w > 0) {
+			gui.canvas().color(style().base_color().color());
+			gui.canvas().rect(this.root.limit_rectangle(), depth);
+		}
 	}
 	
 	@Override public Rectangle drag_rectangle() {
