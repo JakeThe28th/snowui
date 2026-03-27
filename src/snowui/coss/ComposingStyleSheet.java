@@ -218,6 +218,8 @@ public class ComposingStyleSheet {
 		sheet.addContains("dockable_tab", 								"snowui-solid_select");
 		sheet.addContains("dockable_tab", 								"snowui-hoverable");
 
+		sheet.addContains("masonry_list", 								"snowui-w_contained");
+		
 	}
 	
 	// -- ++  ...  ++ -- //
