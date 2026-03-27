@@ -12,7 +12,6 @@ import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
 import frost3d.Input;
-import frost3d.implementations.SimpleCanvas;
 import frost3d.interfaces.F3DCanvas;
 import frost3d.utility.Utility;
 import snowui.GUIInstance;

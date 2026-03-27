@@ -1,6 +1,5 @@
 package snowui.utility;
 
-import frost3d.utility.Log;
 import frost3d.utility.Utility;
 
 public class AnimationTimer {
