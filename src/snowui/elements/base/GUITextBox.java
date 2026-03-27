@@ -99,8 +99,9 @@ public class GUITextBox extends GUIElement {
 						if (finish_on_enter()) {
 							deselect();
 						} else {
-							i.input_string(i.input_string() + "\n");
+							if (allow_multiline()) i.input_string(i.input_string() + "\n");
 						}
+						onEnterPressed(content);
 					}
 					
 					if (keyTyped(i, GLFW.GLFW_KEY_ESCAPE)) {
@@ -353,6 +354,7 @@ public class GUITextBox extends GUIElement {
 							if (clicking) characters[i] = letter_rect;
 							
 							if (wrapped) {
+								if (i >= 1)
 								if (clicking) characters[i-1] =
 									new Rectangle(
 										characters[i-1]	.left(), 
@@ -518,12 +520,15 @@ public class GUITextBox extends GUIElement {
 	
 	boolean finish_on_enter = false;
 	boolean hide_background	= false;
+	boolean allow_multiline = true;
 	
 	private Vector2i preselect_mouse;
 	
 	public boolean 	finish_on_enter() 			{ return finish_on_enter		; }
 	public void 	finish_on_enter(boolean b) 	{ 		 finish_on_enter = b	; }
 	public void 	hide_background(boolean b) 	{ 		 hide_background = b	; }
+	public boolean 	allow_multiline() 			{ return allow_multiline		; }
+	public void 	allow_multiline(boolean b) 	{ 		 allow_multiline = b	; }
 		   boolean	is_selected() 				{ return selected == this		; }
 	
 	public void select(GUIInstance gui) {
@@ -593,6 +598,10 @@ public class GUITextBox extends GUIElement {
 	/** NOTE: Editing the sub_elements array of a parent during this callback will
 	 *  cause {ConcurrentModificationException}s. TODO: maybe fix that lol */
 	public void onFinishEditing(String old_text, String new_text) {
+		
+	}
+	
+	public void onEnterPressed(String content) {
 		
 	}
 	
