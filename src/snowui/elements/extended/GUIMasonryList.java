@@ -2,7 +2,6 @@ package snowui.elements.extended;
 
 import java.util.ArrayList;
 
-import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.elements.abstracts.GUIElement;
@@ -73,12 +72,14 @@ public class GUIMasonryList extends GUIElement {
 		
 		int max_y = 0;
 		
+		int column = 0;
+		
 		for (int i = 0; i < elements.size(); i++) {
 
 			int ww = item_width;
 			int hh = (int) ((elements.get(i).height() / (double) elements.get(i).width()) * ww);
 			
-			if (i-columns > 0) {
+			if (i-columns >= 0) {
 				yy = heightmap[(i-columns)];
 			}
 
@@ -88,7 +89,11 @@ public class GUIMasonryList extends GUIElement {
 			elements.get(i).limit_rectangle(new Rectangle(xx, yy, xx + ww, yy + hh));
 			
 			xx += item_width;
-			if (xx >= item_width * columns) xx = b.left();
+			column++;
+			if (column >= columns) {
+				column = 0;
+				xx = b.left();
+			}
 
 		}
 		
