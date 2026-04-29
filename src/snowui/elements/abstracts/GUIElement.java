@@ -183,8 +183,18 @@ public abstract class GUIElement {
 	protected int unpadded_width = 0;
 	protected int unpadded_height = 0;
 	
-	public int width() { return style.padw(unpadded_width); }
-	public int height() { return style.padh(unpadded_height); }
+	public int width() { ensure_non_null_style(); return style.padw(unpadded_width); }
+	public int height() { ensure_non_null_style(); return style.padh(unpadded_height); }
+	
+	private void ensure_non_null_style() {
+		if (style == null) {
+			throw new Error("Style of " +  "(" + this.getClass().getSimpleName() + ";" + identifier + ")" + " is null. " + parent_tree());
+		}
+	}
+	
+	private String parent_tree() {
+		return parent() != null ? parent().parent_tree() + " -> " + identifier : identifier;
+	}
 	
 	public int floatwidth() { return width(); }
 	public int floatheight() { return height(); }
@@ -458,6 +468,7 @@ public abstract class GUIElement {
 	private final void triggerDraw(GUIInstance gui, int depth) {
 		if (is_on_screen()) {
 			if (scissor_rectangle() != null) gui.canvas().push_scissor(scissor_rectangle());
+			ensure_non_null_style();
 			if (style().outline_size().integer() != 0) {
 				drawOutline(gui, depth+2);
 			}
