@@ -182,6 +182,8 @@ public class GUITextBox extends GUIElement {
 		
 		int cursor, select_start, select_end;
 		
+		public int cursor() { return cursor; }
+		
 		String content;
 		String preselect_content;
 
@@ -256,7 +258,9 @@ public class GUITextBox extends GUIElement {
 		
 		public Vector2i brittle_coordinate(int index) {
 			if (index >= brittle_coordinates.length) return null;
-			return brittle_coordinates[index];
+			Vector2i coord = brittle_coordinates[index];
+			if (coord == null) return null;
+			return new Vector2i(coord.x + hover_rectangle().left(), coord.y + hover_rectangle().top());
 		}
 		
 		/** Draws the text, or returns the height of the text. 
@@ -379,7 +383,7 @@ public class GUITextBox extends GUIElement {
 						if (brittle_colormap != null && brittle_colormap[i] != null) gui.canvas().color(style().base_color().color());
 						
 						if (brittle_coordinates != null && update_coords && draw) {
-							brittle_coordinates[i] = new Vector2i(b.left() + xx, b.top() + yy);
+							brittle_coordinates[i] = new Vector2i(xx, yy);
 						}
 						
 						if (is_selected() && i == cursor && blink()) {
@@ -503,7 +507,7 @@ public class GUITextBox extends GUIElement {
 
 		public void 	force_text(String string) 	{ content(string); }
 		public String	text() 						{ return content; }
-		
+				
 	}
 	
 	// --== -------------- Outer text box -------------- ==-- //
@@ -612,5 +616,5 @@ public class GUITextBox extends GUIElement {
 			text.brittle_coordinates = null;
 		}
 	}
-
+	
 }
