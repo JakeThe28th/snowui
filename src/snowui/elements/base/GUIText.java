@@ -12,6 +12,7 @@ public class GUIText extends GUIElement {
 	String text = null;
 	
 	public void text(String new_text) {
+		if (text == new_text) return;
 		this.text = new_text;
 		this.should_recalculate_size(true);
 	}
@@ -25,7 +26,7 @@ public class GUIText extends GUIElement {
 	@Override
 	public void recalculateSize(GUIInstance gui) {
 		gui.font_size(style().size().pixels());
-		Vector2i size = gui.canvas().textrenderer().size(text);
+		Vector2i size = gui.canvas().textrenderer().size(text());
 		this.unpadded_width = size.x;
 		this.unpadded_height = size.y;
 	}
