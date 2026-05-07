@@ -1,6 +1,8 @@
 package snowui.frost3d;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import frost3d.GLShaderProgram;
 
@@ -52,20 +54,27 @@ public class ModularGUIShader {
 		register("rounded_corners", 
 			new ShaderInject(
 				"""
-				if (f_texcoord.x < corner_size && f_texcoord.y < corner_size) {
-					if (distance(vec2(corner_size,corner_size), f_texcoord) > corner_size) FragColor.a = 0;
+				float corner_size_float = float(corner_size_pixels) / 100;
+
+				float ratio = rect_width / float(rect_height);
+				vec2 space = vec2(f_texcoord.x * ratio, f_texcoord.y);
+
+				if (space.x < corner_size_float && space.y < corner_size_float) {
+					if (distance(vec2(corner_size_float,corner_size_float), space) > corner_size_float) FragColor.a = 0;
 				}
-				if (f_texcoord.x < corner_size && f_texcoord.y > 1-corner_size) {
-					if (distance(vec2(corner_size,1-corner_size), f_texcoord) > corner_size) FragColor.a = 0;
+				if (space.x < corner_size_float && space.y > 1-corner_size_float) {
+					if (distance(vec2(corner_size_float,1-corner_size_float), space) > corner_size_float) FragColor.a = 0;
 				}
-				if (f_texcoord.x > 1-corner_size && f_texcoord.y < corner_size) {
-					if (distance(vec2(1-corner_size,corner_size), f_texcoord) > corner_size) FragColor.a = 0;
+				if (space.x > 1-corner_size_float && space.y < corner_size_float) {
+					if (distance(vec2(1-corner_size_float,corner_size_float), space) > corner_size_float) FragColor.a = 0;
 				}
-				if (f_texcoord.x > 1-corner_size && 1-f_texcoord.y < corner_size) {
-					if (distance(vec2(1-corner_size,1-corner_size), f_texcoord) > corner_size) FragColor.a = 0;
+				if (space.x > 1-corner_size_float && 1-space.y < corner_size_float) {
+					if (distance(vec2(1-corner_size_float,1-corner_size_float), space) > corner_size_float) FragColor.a = 0;
 				}
 				""",
-				"uniform float corner_size = .25;"
+				"uniform int corner_size_pixels = 10;",
+				"uniform int rect_width = 100;",
+				"uniform int rect_height = 100;"
 			));
 	}
 //	
@@ -80,13 +89,33 @@ public class ModularGUIShader {
 //		and how that's projected to the screen?
 //		
 	public GLShaderProgram program() {
-//		if (program == null) {
-////			String uniform_injects = "";
-////			String code_injects = "";
-//			for (String inject : injects.keySet()) {
-////				uniform_injects += "//" + inject;
-//			}
-//		}
+		if (program == null) {
+
+			String fragment_inject_uniforms = "";
+			String fragment_inject_code 	= "";
+			
+			for (String inject : injects.keySet()) {
+
+				for (String uniform : injects.get(inject).uniform_declarations) {
+					fragment_inject_uniforms += uniform + "\n";
+				}
+				
+				fragment_inject_code += injects.get(inject).content + "\n";
+			}
+			
+			String vertex_inject_uniforms 	= "";
+			String vertex_inject_code 		= "";
+
+			String fragment = base_fragment;
+			fragment = fragment.replaceAll( Pattern.quote("[[INJECT_UNIFORMS]]") , Matcher.quoteReplacement(fragment_inject_uniforms	));
+			fragment = fragment.replaceAll( Pattern.quote("[[INJECT_CODE]]")	 , Matcher.quoteReplacement(fragment_inject_code		));
+			
+			String vertex = base_vertex;
+			vertex   = vertex  .replaceAll( Pattern.quote("[[INJECT_UNIFORMS]]") , Matcher.quoteReplacement(vertex_inject_uniforms	));
+			vertex   = vertex  .replaceAll( Pattern.quote("[[INJECT_CODE]]")	 , Matcher.quoteReplacement(vertex_inject_code		));
+			
+			program = new GLShaderProgram(vertex, fragment); 
+		}
 		return program;
 	}
 

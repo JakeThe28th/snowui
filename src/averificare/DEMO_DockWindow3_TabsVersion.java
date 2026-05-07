@@ -3,13 +3,17 @@ package averificare;
 import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
 import frost3d.implementations.SimpleWindow;
-import frost3d.utility.Log;
 import snowui.GUIInstance;
 import snowui.elements.docking.GUIDockable;
 import snowui.elements.docking.GUIDockableTabList;
 import snowui.elements.docking.GUISplit;
 
 public class DEMO_DockWindow3_TabsVersion {
+	
+//	TODO: 
+//		modular shader for radio text and rounded corners
+//		make docked tabs accept dockers to left and right instead of the abs themselves handling that
+//		better stylesheeet for docked tabs
 
 	public static void main(String[] args) {
 		
