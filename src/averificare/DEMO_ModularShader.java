@@ -1,7 +1,11 @@
 package averificare;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import frost3d.GLState;
 import frost3d.data.BuiltinShaders;
+import frost3d.implementations.SimpleTexture;
 import frost3d.implementations.SimpleWindow;
 import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
@@ -13,7 +17,7 @@ import snowui.frost3d.ModularGUIShader;
 
 public class DEMO_ModularShader {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException, IOException {
 		GLState.initializeGLFW();
 		SimpleWindow window = new SimpleWindow(500, 400, "GUI Test");
 		BuiltinShaders.init();
@@ -27,6 +31,10 @@ public class DEMO_ModularShader {
 			}
 		};
 		
+		ModularGUIShader shader = new ModularGUIShader();
+		
+		SimpleTexture texture = new SimpleTexture("khronos.png");
+		
 		GUIElement root_element = new GUIElement() {
 			{ registerSubElement(slider); }
 			Rectangle demo_rect;
@@ -37,23 +45,22 @@ public class DEMO_ModularShader {
 			}
 			@Override
 			public void draw(GUIInstance gui, int depth) {
-				gui.canvas().color(Color.BLACK.val());
+				gui.canvas().push_shader(shader.program());
+				gui.canvas().color(Color.WHITE.val());
 				gui.canvas().uniform("rect_width", demo_rect.width());
 				gui.canvas().uniform("rect_height", demo_rect.height());
-				gui.canvas().rect(demo_rect, depth);
+				gui.canvas().rect(demo_rect, depth, texture);
+				gui.canvas().pop_shader();
 			}
 		};
 
 		gui.root(root_element);
-		
-		ModularGUIShader shader = new ModularGUIShader();
+		gui.clear_color(Color.WHITE.val());		
 		
 		while (!window.should_close()) {
 			gui.size(window.width, window.height);
-			gui.canvas().push_shader(shader.program());
 			gui.render();
 			window.tick();
-			gui.canvas().pop_shader();
 		}
 		
 		window.end();

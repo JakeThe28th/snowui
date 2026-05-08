@@ -54,40 +54,31 @@ public class ModularGUIShader {
 		register("rounded_corners", 
 			new ShaderInject(
 				"""
-				float corner_size_float = float(corner_size_pixels) / 100;
+				// scale the texture coordinates to match the rectangle size
+				vec2 scaled_texc = f_texcoord * vec2(rect_width, rect_height);
 
-				float ratio = rect_width / float(rect_height);
-				vec2 space = vec2(f_texcoord.x * ratio, f_texcoord.y);
+				float space_height = rect_height;
+				float space_width  = rect_width;
 
-				if (space.x < corner_size_float && space.y < corner_size_float) {
-					if (distance(vec2(corner_size_float,corner_size_float), space) > corner_size_float) FragColor.a = 0;
+				if (scaled_texc.x < corner_size_pixels && scaled_texc.y < corner_size_pixels) {
+					if (distance(vec2(corner_size_pixels,corner_size_pixels), scaled_texc) > corner_size_pixels) FragColor.a = 0;
 				}
-				if (space.x < corner_size_float && space.y > 1-corner_size_float) {
-					if (distance(vec2(corner_size_float,1-corner_size_float), space) > corner_size_float) FragColor.a = 0;
+				if (scaled_texc.x < corner_size_pixels && scaled_texc.y > space_height-corner_size_pixels) {
+					if (distance(vec2(corner_size_pixels,space_height-corner_size_pixels), scaled_texc) > corner_size_pixels) FragColor.a = 0;
 				}
-				if (space.x > 1-corner_size_float && space.y < corner_size_float) {
-					if (distance(vec2(1-corner_size_float,corner_size_float), space) > corner_size_float) FragColor.a = 0;
+				if (scaled_texc.x > space_width-corner_size_pixels && scaled_texc.y < corner_size_pixels) {
+					if (distance(vec2(space_width-corner_size_pixels,corner_size_pixels), scaled_texc) > corner_size_pixels) FragColor.a = 0;
 				}
-				if (space.x > 1-corner_size_float && 1-space.y < corner_size_float) {
-					if (distance(vec2(1-corner_size_float,1-corner_size_float), space) > corner_size_float) FragColor.a = 0;
+				if (scaled_texc.x > space_width-corner_size_pixels && space_height-scaled_texc.y < corner_size_pixels) {
+					if (distance(vec2(space_width-corner_size_pixels,space_height-corner_size_pixels), scaled_texc) > corner_size_pixels) FragColor.a = 0;
 				}
 				""",
-				"uniform int corner_size_pixels = 10;",
-				"uniform int rect_width = 100;",
-				"uniform int rect_height = 100;"
+				"uniform int corner_size_pixels = 100;",
+				"uniform int rect_width 		= 100;",
+				"uniform int rect_height 		= 100;"
 			));
 	}
-//	
-//	unrelated but hmm
-//		ok so, level editor
-//			layer -- unique objects with their own serialization and editors
-//		NPC / Object / Entity / Mob...
-//			Defined separately, tand hthen referenced in level, not defined in level?
-//			so like, each NPC is like a '.npc' file..?
-//					
-//		special layer (like WorldDefinition or something) defines how input affects movement 
-//		and how that's projected to the screen?
-//		
+
 	public GLShaderProgram program() {
 		if (program == null) {
 
