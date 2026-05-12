@@ -89,7 +89,6 @@ public class ModularGUIShader {
 			String fragment_code 	 = "";
 			
 			for (Class<?> key : modules.keySet()) {
-				Log.send("enabled=" + enabled.get(key));
 				if (enabled.get(key) != true) continue;
 				ShaderModule m = modules.get(key);
 				String condition = "use_" + key.getSimpleName();
