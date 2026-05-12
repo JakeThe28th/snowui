@@ -5,6 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import frost3d.GLShaderProgram;
+import frost3d.interfaces.F3DCanvas;
+import frost3d.utility.Log;
 
 public class ModularGUIShader {
 	
@@ -32,78 +34,96 @@ public class ModularGUIShader {
 			in vec2 f_texcoord;
 			uniform vec4 mix_color;
 
-			[[INJECT_UNIFORMS]]
+			[[UNIFORMS]]
 
 			void main() {
 				FragColor = texture(texture_image, f_texcoord) * mix_color;
-				[[INJECT_CODE]]
+				[[CODE]]
 				if (FragColor.a < 0.001) discard;
 			} 
 		""";
 	
 	GLShaderProgram program = null;
-	
-	static record ShaderInject(String content, String... uniform_declarations) {}	
-	
-	HashMap<String, ShaderInject> injects = new HashMap<>();
-	HashMap<String, Boolean> injects_on = new HashMap<>();
+		
+	HashMap<Class<? extends ShaderModule>, ShaderModule> modules = new HashMap<>();
+	HashMap<Class<? extends ShaderModule>, Boolean	   > enabled = new HashMap<>();
 
-	public void register(String name, ShaderInject inject) { injects.put(name, inject); }
-	//TODO: modular shader
+	@SuppressWarnings("unchecked")
+	public <T> T module(Class<? extends T> clazz) {
+		return (T) modules.get(clazz);
+	}
+	
+	/** Whether or not to use the given module for the next-queued item.<br>
+	 *  NOTE: The module must be 'enable'd for this to do anything. */
+	public void use(F3DCanvas canvas, Class<?> key, boolean val) {
+		String condition = "use_" + key.getSimpleName();
+		canvas.uniform(condition, val ? 1 : 0);
+	}
+	
+	/** Enables the module, and recompiles the shader. */
+	public void enable(Class<? extends ShaderModule> key) {
+		enabled.put(key, true);
+		program = null;
+	}
+	
+	/** Disables the module, and recompiles the shader. */
+	public void disable(Class<? extends ShaderModule> key) {
+		enabled.put(key, false);
+		program = null;
+	}
+
+	public void register(ShaderModule module) {
+		modules.put(module.getClass(), module); 
+		enable(module.getClass());
+	}
+	
 	{
-		register("rounded_corners", 
-			new ShaderInject(
-				"""
-				// scale the texture coordinates to match the rectangle size
-				vec2 scaled_texc = f_texcoord * vec2(rect_width, rect_height);
-
-				float space_height = rect_height;
-				float space_width  = rect_width;
-
-				if (scaled_texc.x < corner_size_pixels && scaled_texc.y < corner_size_pixels) {
-					if (distance(vec2(corner_size_pixels,corner_size_pixels), scaled_texc) > corner_size_pixels) FragColor.a = 0;
-				}
-				if (scaled_texc.x < corner_size_pixels && scaled_texc.y > space_height-corner_size_pixels) {
-					if (distance(vec2(corner_size_pixels,space_height-corner_size_pixels), scaled_texc) > corner_size_pixels) FragColor.a = 0;
-				}
-				if (scaled_texc.x > space_width-corner_size_pixels && scaled_texc.y < corner_size_pixels) {
-					if (distance(vec2(space_width-corner_size_pixels,corner_size_pixels), scaled_texc) > corner_size_pixels) FragColor.a = 0;
-				}
-				if (scaled_texc.x > space_width-corner_size_pixels && space_height-scaled_texc.y < corner_size_pixels) {
-					if (distance(vec2(space_width-corner_size_pixels,space_height-corner_size_pixels), scaled_texc) > corner_size_pixels) FragColor.a = 0;
-				}
-				""",
-				"uniform int corner_size_pixels = 100;",
-				"uniform int rect_width 		= 100;",
-				"uniform int rect_height 		= 100;"
-			));
+		register(new SM_RoundCorners());
 	}
 
 	public GLShaderProgram program() {
 		if (program == null) {
 
-			String fragment_inject_uniforms = "";
-			String fragment_inject_code 	= "";
+			String fragment_uniforms = "";
+			String fragment_code 	 = "";
 			
-			for (String inject : injects.keySet()) {
-
-				for (String uniform : injects.get(inject).uniform_declarations) {
-					fragment_inject_uniforms += uniform + "\n";
-				}
-				
-				fragment_inject_code += injects.get(inject).content + "\n";
+			for (Class<?> key : modules.keySet()) {
+				Log.send("enabled=" + enabled.get(key));
+				if (enabled.get(key) != true) continue;
+				ShaderModule m = modules.get(key);
+				String condition = "use_" + key.getSimpleName();
+				for (String uniform : m.fragment_uniforms()) fragment_uniforms += uniform 		    + "\n";				
+				if  (				  m.has_fragment_code()) fragment_code     += "if ("+condition+" == 1) {\n" + m.fragment_code() + "\n}\n";
+															 fragment_uniforms += "uniform int " + condition + " = 0;";
 			}
 			
-			String vertex_inject_uniforms 	= "";
-			String vertex_inject_code 		= "";
+			String vertex_uniforms 	= "";
+			String vertex_code 		= "";
 
+			for (Class<?> key : modules.keySet()) {
+				if (enabled.get(key) != true) continue;
+				ShaderModule m = modules.get(key);
+				String condition = "use_" + key.getSimpleName();
+				for (String uniform : m.vertex_uniforms()) vertex_uniforms += uniform 	      + "\n";				
+				if  (				  m.has_vertex_code()) vertex_code     += "if ("+condition+" == 1) {\n" + m.vertex_code() + "\n}\n";
+														   vertex_uniforms += "uniform int " + condition + " = 0;";
+			}
+			
 			String fragment = base_fragment;
-			fragment = fragment.replaceAll( Pattern.quote("[[INJECT_UNIFORMS]]") , Matcher.quoteReplacement(fragment_inject_uniforms	));
-			fragment = fragment.replaceAll( Pattern.quote("[[INJECT_CODE]]")	 , Matcher.quoteReplacement(fragment_inject_code		));
+			fragment = fragment.replaceAll( Pattern.quote("[[UNIFORMS]]") , Matcher.quoteReplacement(fragment_uniforms	));
+			fragment = fragment.replaceAll( Pattern.quote("[[CODE]]")	 , Matcher.quoteReplacement(fragment_code		));
 			
 			String vertex = base_vertex;
-			vertex   = vertex  .replaceAll( Pattern.quote("[[INJECT_UNIFORMS]]") , Matcher.quoteReplacement(vertex_inject_uniforms	));
-			vertex   = vertex  .replaceAll( Pattern.quote("[[INJECT_CODE]]")	 , Matcher.quoteReplacement(vertex_inject_code		));
+			vertex   = vertex  .replaceAll( Pattern.quote("[[UNIFORMS]]") , Matcher.quoteReplacement(vertex_uniforms	));
+			vertex   = vertex  .replaceAll( Pattern.quote("[[CODE]]")	 , Matcher.quoteReplacement(vertex_code		));
+			
+//			try {
+//				Files.writeString(Paths.get("vert.txt"), vertex);
+//				Files.writeString(Paths.get("fragment.txt"), fragment);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			
 			program = new GLShaderProgram(vertex, fragment); 
 		}

@@ -8,6 +8,7 @@ import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.*;
 
+import frost3d.GLShaderProgram;
 import frost3d.Input;
 import frost3d.enums.CursorType;
 import frost3d.implementations.SimpleCanvas;
@@ -49,6 +50,7 @@ public class GUIInstance {
 			canvas.textrenderer(text);
 			canvas.iconrenderer(icons);
 			canvas.clear_color(clear_color);
+			if (shader != null) canvas.push_shader(shader);
 			root_container.scissor_rectangle_recursive(canvas.size());
 		}
 	}
@@ -57,7 +59,8 @@ public class GUIInstance {
 	SimpleTextRenderer 			text;
 	SimpleCanvas 				canvas;
 	Vector4f 					clear_color;
-
+	GLShaderProgram				shader;
+	
 	public F3DIconRenderer 		iconrenderer() { return icons			; }
 	public SimpleTextRenderer 	textrenderer() { return text			; }
 	public SimpleCanvas 		canvas() 	   { return canvas			; }
@@ -66,6 +69,14 @@ public class GUIInstance {
 	public void clear_color(Vector4f new_color) { 
 		clear_color = new_color;
 		if (canvas != null) canvas.clear_color(clear_color);
+	}
+	
+	public void shader(GLShaderProgram program) {
+		shader = program;
+		if (canvas != null) {
+			canvas.pop_shader();
+			canvas.push_shader(program);
+		}
 	}
 	
 	public void iconrenderer(F3DIconRenderer new_icons) {

@@ -14,6 +14,8 @@ import snowui.coss.enums.Color;
 import snowui.elements.abstracts.GUIElement;
 import snowui.elements.base.GUISlider;
 import snowui.frost3d.ModularGUIShader;
+import snowui.frost3d.SM_RoundCorners;
+import frost3d.GLShaderProgram;
 
 public class DEMO_ModularShader {
 
@@ -24,14 +26,15 @@ public class DEMO_ModularShader {
 		
 		GUIInstance gui = new GUIInstance(window, window.input());
 		
+				ModularGUIShader shader = new ModularGUIShader();
+
 		GUISlider slider = new GUISlider() {
 			@Override
 			public void onChange(float newv) {
-				gui.canvas().uniform("corner_size_pixels", (int) (newv*100));
+				shader.module(SM_RoundCorners.class).corner_size_pixels(gui.canvas(), (int) (newv * 100));
 			}
 		};
 		
-		ModularGUIShader shader = new ModularGUIShader();
 		
 		SimpleTexture texture = new SimpleTexture("khronos.png");
 		
@@ -45,19 +48,28 @@ public class DEMO_ModularShader {
 			}
 			@Override
 			public void draw(GUIInstance gui, int depth) {
-				gui.canvas().push_shader(shader.program());
 				gui.canvas().color(Color.WHITE.val());
-				gui.canvas().uniform("rect_width", demo_rect.width());
-				gui.canvas().uniform("rect_height", demo_rect.height());
+				shader.use(gui.canvas(), SM_RoundCorners.class, true);
+				shader.module(SM_RoundCorners.class).current_rectangle(gui.canvas(), demo_rect);
 				gui.canvas().rect(demo_rect, depth, texture);
-				gui.canvas().pop_shader();
+				shader.use(gui.canvas(), SM_RoundCorners.class, false);
 			}
 		};
 
 		gui.root(root_element);
 		gui.clear_color(Color.WHITE.val());		
 		
+		GLShaderProgram last_program = shader.program();
+		gui.shader(shader.program());
+		
+		shader.enable(SM_RoundCorners.class);
+
+		
 		while (!window.should_close()) {
+			if (last_program != shader.program()) {
+				gui.shader(shader.program());
+				last_program = shader.program();
+			}
 			gui.size(window.width, window.height);
 			gui.render();
 			window.tick();
