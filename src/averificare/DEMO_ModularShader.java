@@ -12,8 +12,10 @@ import frost3d.utility.Rectangle;
 import snowui.GUIInstance;
 import snowui.coss.enums.Color;
 import snowui.elements.abstracts.GUIElement;
+import snowui.elements.base.GUIList;
 import snowui.elements.base.GUISlider;
 import snowui.frost3d.ModularGUIShader;
+import snowui.frost3d.SM_FadeEdges;
 import snowui.frost3d.SM_RoundCorners;
 import frost3d.GLShaderProgram;
 
@@ -26,33 +28,53 @@ public class DEMO_ModularShader {
 		
 		GUIInstance gui = new GUIInstance(window, window.input());
 		
-				ModularGUIShader shader = new ModularGUIShader();
+		gui.style().addContains("list", "snowui-w_contained");
+		
+		ModularGUIShader shader = new ModularGUIShader();
+		
+		GUIList sliders = new GUIList();
 
-		GUISlider slider = new GUISlider() {
+		sliders.add(new GUISlider() {
 			@Override
 			public void onChange(float newv) {
 				shader.module(SM_RoundCorners.class).corner_size_pixels(gui.canvas(), (int) (newv * 100));
 			}
-		};
+		});
+		
+		sliders.add(new GUISlider() {
+			@Override
+			public void onChange(float newv) {
+				shader.module(SM_FadeEdges.class).left_edge(gui.canvas(), (int) (newv * window.width) - 30, (int) (newv * window.width));
+			}
+		});
+		
+		sliders.add(new GUISlider() {
+			@Override
+			public void onChange(float newv) {
+				shader.module(SM_FadeEdges.class).right_edge(gui.canvas(), (int) (newv * window.width) - 30, (int) (newv * window.width));
+			}
+		});
 		
 		
 		SimpleTexture texture = new SimpleTexture("khronos.png");
 		
 		GUIElement root_element = new GUIElement() {
-			{ registerSubElement(slider); }
+			{ registerSubElement(sliders); }
 			Rectangle demo_rect;
 			@Override public void recalculateSize(GUIInstance gui) { }
 			@Override public void updateDrawInfo(GUIInstance gui) {
 				demo_rect = limit_rectangle().internal(0.3f, 0.3f, 0.7f, 0.7f);
-				slider.limit_rectangle(limit_rectangle().internal(0.1f, 0.8f, 0.9f, 1f));
+				sliders.limit_rectangle(limit_rectangle().internal(0.1f, 0.8f, 0.9f, 1f));
 			}
 			@Override
 			public void draw(GUIInstance gui, int depth) {
 				gui.canvas().color(Color.WHITE.val());
 				shader.use(gui.canvas(), SM_RoundCorners.class, true);
+				shader.use(gui.canvas(), SM_FadeEdges.class, true);
 				shader.module(SM_RoundCorners.class).current_rectangle(gui.canvas(), demo_rect);
 				gui.canvas().rect(demo_rect, depth, texture);
 				shader.use(gui.canvas(), SM_RoundCorners.class, false);
+				shader.use(gui.canvas(), SM_FadeEdges.class, false);
 			}
 		};
 
@@ -63,6 +85,7 @@ public class DEMO_ModularShader {
 		gui.shader(shader.program());
 		
 		shader.enable(SM_RoundCorners.class);
+		shader.enable(SM_FadeEdges.class);
 
 		
 		while (!window.should_close()) {

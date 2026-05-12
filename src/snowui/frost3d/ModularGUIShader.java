@@ -79,6 +79,7 @@ public class ModularGUIShader {
 	
 	{
 		register(new SM_RoundCorners());
+		register(new SM_FadeEdges());
 	}
 
 	public GLShaderProgram program() {
