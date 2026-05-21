@@ -329,6 +329,19 @@ public class GUIScrollable extends GUIElement {
 				(area_rectangle.top() 	- vertical_scrollbar	.scroll_amount_pixels()) + root.height()
 		);
 		
+		if (GUIInstance.DEBUG) {
+			if (root_limit.top() > root_limit.bottom()) {
+				throw new IllegalStateException(
+						"How???" 
+						+ "\n  root_limit      = " + root_limit
+						+ "\n  area_rectangle  = " + area_rectangle
+						+ "\n  limit_rectangle = " + limit_rectangle()
+						+ "\n  root size       = " + root.width() + ", " + root.height()
+						+ "\n  root            = " + "(" + root.getClass().getSimpleName() + ") " + root.listStyles()
+					);
+			}
+		}
+		
 		if (root.style().min_width().constant() == Constant.CONTAINER) {
 			root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
 		}
