@@ -70,7 +70,7 @@ public class GUIMasonryList extends GUIElement {
 		
 		int[] heightmap = new int[elements.size()];
 		
-		int max_y = 0;
+		int max_y = yy;
 		
 		int column = 0;
 		
