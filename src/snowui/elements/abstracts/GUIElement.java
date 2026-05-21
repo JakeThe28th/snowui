@@ -108,6 +108,10 @@ public abstract class GUIElement {
 	public 	  Rectangle padded_limit_rectangle() 				{ return padded_limit_rectangle; 	}
 	public 	  Rectangle aligned_limit_rectangle() 				{ return aligned_limit_rectangle; 	}
 	/** Defines the bounding box that updateDrawInfo() stays within */
+	public 	  void 	 	limit_rectangle(int left, int top, int right, int bottom) 	{  
+		this.limit_rectangle(new Rectangle(left, top, right, bottom));
+	}
+	/** Defines the bounding box that updateDrawInfo() stays within */
 	public 	  void 	 	limit_rectangle(Rectangle rectangle) 	{  
 		boolean limit_changed = false;
 		boolean was_on_screen = false; // <-- value doesn't matter since 
