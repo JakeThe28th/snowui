@@ -181,6 +181,8 @@ public class GUIScrollable extends GUIElement {
 		@Override public void onScroll() {scroll_this().should_update(true); }
 	};
 	
+	boolean horizontal_scroll_enabled = true;
+	boolean vertical_scroll_enabled = true;
 	
 	{
 		registerSubElement(horizontal_scrollbar);
@@ -251,8 +253,8 @@ public class GUIScrollable extends GUIElement {
 
 		// Whether or not we should be scrolling affects the scrollbar size, so check twice
 		for (int rep = 0; rep < 2; rep ++) {
-			scrolling_y = content_height 	> screen_height;
-			scrolling_x = content_width 	> screen_width;
+			if (vertical_scroll_enabled) scrolling_y = content_height 	> screen_height;
+			if (horizontal_scroll_enabled) scrolling_x = content_width 	> screen_width;
 			if (scrolling_y) screen_width 	-= scrollbar_width;
 			if (scrolling_x) screen_height 	-= scrollbar_height;
 		}
@@ -343,7 +345,14 @@ public class GUIScrollable extends GUIElement {
 		}
 		
 		if (root.style().min_width().constant() == Constant.CONTAINER) {
+			// (to allow for the element to fill the space [i forgot why this doesn't set both right and bottom but im not touching it lol])
 			root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
+		} else if (!horizontal_scroll_enabled) {
+			// (to allow for horizontal centering when only vertical scrolling is wanted)
+			root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
+		} else if (!vertical_scroll_enabled) {
+			// (to allow for vertical centering when only horizontal scrolling is wanted)
+			root_limit = new Rectangle(root_limit.left(), root_limit.top(), root_limit.right(), area_rectangle.bottom());
 		}
 		
 		root.limit_rectangle(root_limit);
@@ -362,5 +371,8 @@ public class GUIScrollable extends GUIElement {
 		if (horizontal_scrollbar.get(PredicateKey.HIDDEN)) horizontal_scrollbar.scroll_amount(0);
 		if (vertical_scrollbar.get(PredicateKey.HIDDEN)) vertical_scrollbar.scroll_amount(0);
 	}
-	
+
+	public void horizontal_scroll_enabled(boolean b) { horizontal_scroll_enabled = b; }
+	public void vertical_scroll_enabled(boolean b) { vertical_scroll_enabled = b; }
+
 }
