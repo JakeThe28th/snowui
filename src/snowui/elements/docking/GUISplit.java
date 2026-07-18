@@ -133,7 +133,22 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 			can_drag = false;
 		}
 		
-		return can_drag || dragging;
+		return true; // can_drag || dragging; - Jul 18 '26 
+					 // - Returning false here causes problems
+					 //   where sub-splits won't update their 
+					 //   can_drag status to 'false'. But,
+					 //   fixing that would mean that only one
+					 //   split can be dragged at a time, which
+					 //   breaks dragging corners.
+					 //   
+		   			 //   As of now, it seems like allowing corners
+					 //   while still making non-split sub-elements
+					 //   not update while dragging, and allowing
+		 			 //   splits to be update-blocked with this
+		 			 //   same mechanism by other super-elements
+					 //   would take some effort to figure out.
+					 // 
+					 //   So, I'm leaving this for now. TODO .
 	}
 	
 	@Override
