@@ -179,9 +179,10 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 		return split;
 	}
 	
-	public void split(float nsplit) {
+	public GUISplit split(float nsplit) {
 		split = nsplit;
 		this.should_update(true);
+		return this;
 	}
 	
 	// -= : Collapsing : =- //
