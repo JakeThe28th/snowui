@@ -57,6 +57,7 @@ public class GUIDockable extends GUIElement implements ElementReceiver {
 		if (this.root != null) this.removeSubElement(this.root);
 		this.registerSubElement(root);
 		this.root = root;
+		this.should_update(true);
 	}
 	
 	public GUIElement 	root() 		{ return this.root; }
