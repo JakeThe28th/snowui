@@ -216,6 +216,8 @@ public class GUIScrollable extends GUIElement {
 		removeSubElement(vertical_scrollbar);
 		registerSubElement(horizontal_scrollbar);
 		registerSubElement(vertical_scrollbar);
+		
+		this.should_update(true);
 	}
 
 	@Override
