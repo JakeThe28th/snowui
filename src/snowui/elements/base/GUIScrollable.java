@@ -282,6 +282,9 @@ public class GUIScrollable extends GUIElement {
 			vertical_scrollbar.content_size(content_height);
 			vertical_scrollbar.screen_size(screen_height);
 			vertical_scrollbar.limit_rectangle(v_scrollbar);
+		} else {
+			// prevent crashes...
+			vertical_scrollbar.limit_rectangle(limit_rectangle());	
 		}
 
 		
@@ -304,6 +307,9 @@ public class GUIScrollable extends GUIElement {
 			horizontal_scrollbar.content_size(content_width);
 			horizontal_scrollbar.screen_size(screen_width);
 			horizontal_scrollbar.limit_rectangle(h_scrollbar);	
+		} else {
+			// prevent crashes...
+			horizontal_scrollbar.limit_rectangle(limit_rectangle());	
 		}
 
 		Rectangle area_rectangle = limit_rectangle().internal_int(0, 0, limit_rectangle().width(), limit_rectangle().height());
