@@ -73,6 +73,7 @@ public class GUITabList extends GUIElement {
 		this.registerSubElement(new_hidden);
 		tab.tab_hidden = new_hidden;
 		tab.tab_hidden.set(PredicateKey.HIDDEN, current_tab != index);
+		this.should_update(true);
 	}
 	
 	public void remove(int index) {
