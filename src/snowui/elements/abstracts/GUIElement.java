@@ -196,7 +196,7 @@ public abstract class GUIElement {
 		}
 	}
 	
-	private void ensure_non_null_limit() {
+	protected void ensure_non_null_limit() {
 		if (limit_rectangle() == null) {
 			throw new Error("Limit rectangle of " +  "(" + this.getClass().getSimpleName() + ";" + identifier + ")" + " is null. " + parent_tree());
 		}

@@ -14,6 +14,15 @@ public class GUIScrollable extends GUIElement {
 	
 	private class GUIScrollBar extends GUIElement {
 		
+		@Override
+		protected void ensure_non_null_limit() {
+			if (limit_rectangle() == null) {
+				limit_rectangle(0,0,0,0);
+				// TODO It's terrible, but I can't figure out this bug so 
+				// I'm going to do this and come back to it later...
+			}
+		}
+		
 		GUIClickableRectangle scroll_handle = new GUIClickableRectangle() {
 			{ identifier("scroll_handle"); }
 			@Override public void onPress(GUIInstance gui) {
@@ -282,9 +291,6 @@ public class GUIScrollable extends GUIElement {
 			vertical_scrollbar.content_size(content_height);
 			vertical_scrollbar.screen_size(screen_height);
 			vertical_scrollbar.limit_rectangle(v_scrollbar);
-		} else {
-			// prevent crashes...
-			vertical_scrollbar.limit_rectangle(limit_rectangle());	
 		}
 
 		
@@ -307,9 +313,6 @@ public class GUIScrollable extends GUIElement {
 			horizontal_scrollbar.content_size(content_width);
 			horizontal_scrollbar.screen_size(screen_width);
 			horizontal_scrollbar.limit_rectangle(h_scrollbar);	
-		} else {
-			// prevent crashes...
-			horizontal_scrollbar.limit_rectangle(limit_rectangle());	
 		}
 
 		Rectangle area_rectangle = limit_rectangle().internal_int(0, 0, limit_rectangle().width(), limit_rectangle().height());
