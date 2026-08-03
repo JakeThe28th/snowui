@@ -17,6 +17,11 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	
 	boolean vertical = true;
 	boolean wrap = false;
+	int drop_m = 0;
+	
+	public void drop_margin(int amt) {
+		this.drop_m = amt;
+	}
 	
 	protected ArrayList<GUIElement> elements = new ArrayList<>();
 	
@@ -188,6 +193,14 @@ public class GUIList extends GUIElement implements ElementReceiver {
 		
 		int max_element_width = 0;
 		int max_element_height = 0;
+		
+		if (!wrap) {
+			if (vertical) {
+				drop_points.add(new Rectangle(left, top - drop_m, right, top + drop_m));
+			} else {
+				drop_points.add(new Rectangle(left - drop_m, top, left + drop_m, bottom));
+			}
+		}
 				
 		for (GUIElement element : elements) {
 			if (wrap) {
@@ -228,9 +241,9 @@ public class GUIList extends GUIElement implements ElementReceiver {
 			
 			if (!wrap) {
 				if (vertical) {
-					drop_points.add(new Rectangle(left, bottom, right, top));
+					drop_points.add(new Rectangle(left, bottom - drop_m, right, top + drop_m));
 				} else {
-					drop_points.add(new Rectangle(right, top, left, bottom));
+					drop_points.add(new Rectangle(right - drop_m, top, left + drop_m, bottom));
 				}
 			}
 			
@@ -253,7 +266,7 @@ public class GUIList extends GUIElement implements ElementReceiver {
 		for (int i = 0; i < drop_points.size(); i++) {
 			Rectangle r = drop_points.get(i);
 			if (r.contains(gui.mousepos())) {
-				add(element, i+1);
+				add(element, i);
 			}
 		}
 	}
