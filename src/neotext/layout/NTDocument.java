@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 import org.joml.Vector4f;
 
+import disaethia.io.nbt.NBTCompound;
+import disaethia.io.nbt.NBTList;
 import frost3d.Framebuffer;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.utility.Rectangle;
+import neotext.layout.NTEditor.RestorableState;
 import neotext.text.NTSimpleFontRenderer;
 import neotext.text.NTTextUnit;
 import neotext.text.NTTextUnit.NTPostRenderInfo;
@@ -105,6 +108,28 @@ public class NTDocument {
 		canvas.color(WHITE);
 		canvas.rect(area.flipY(), 0, document_canvas.framebuffer().texture());
 		
+	}
+
+	public static NTDocument deserialize(NBTCompound ser_document) {
+		// TODO only dealing with text rn but TODO deal with other units
+		NTDocument document = new NTDocument();
+		document.document.clear();
+		NBTList ser_units = ser_document.get("units").getList();
+		for (int i = 0; i < ser_units.length.get(); i++) {
+			document.document.add(NTTextUnit.deserialize(ser_units.getCompound(i)));
+		}
+		return document;
+	}
+
+	public NBTCompound serialize() {
+		// TODO only dealing with text rn but TODO deal with other units
+		NBTCompound ser_document = new NBTCompound();
+		NBTList ser_units = new NBTList(NBTCompound.TAG_TYPE);
+		for (NTTextUnit unit : document) {
+			ser_units.add(unit.serialize());
+		}
+		ser_document.put("units", ser_units);
+		return ser_document;
 	}
 
 }

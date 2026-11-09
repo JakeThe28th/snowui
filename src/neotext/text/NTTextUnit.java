@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.joml.Vector4f;
 
+import disaethia.io.nbt.NBTCompound;
+import disaethia.io.nbt.NBTTag;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.utility.Rectangle;
 import neotext.layout.NTDocument.CharacterInfo;
@@ -187,6 +189,17 @@ public final class NTTextUnit {
 	
 	public void remove(int position) {
 		contents = contents.substring(0, position) + contents.substring(position + 1, contents.length());
+	}
+
+	public NBTCompound serialize() {
+		NBTCompound ser_unit = new NBTCompound();
+		ser_unit.put("txt", contents);
+		return ser_unit;
+	}
+
+	public static NTTextUnit deserialize(NBTCompound ser_unit) {
+		NTTextUnit unit = new NTTextUnit(ser_unit.get("txt").getString().get(), new NTSimpleFontRenderer());
+		return unit;
 	}
 
 }

@@ -15,10 +15,6 @@ import neotext.layout.NTDocument.CharacterInfo;
 
 public class NTEditor {
 	
-	record RestorableState(NBTCompound document, int cursor) {}
-	
-	ArrayList<RestorableState> undo_history = new ArrayList<>();
-	
 	public NTDocument document;
 	
 	public NTEditor() {
@@ -184,11 +180,11 @@ public class NTEditor {
 		}
 		
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && input(input, GLFW.GLFW_KEY_Z)) {
-			// TODO 
+			undo();
 		}
 		
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && input(input, GLFW.GLFW_KEY_Y)) {
-			// TODO 
+			redo();
 		}
 		
 //		TODO:
@@ -208,12 +204,13 @@ public class NTEditor {
 		
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && input(input, GLFW.GLFW_KEY_V)) {
 			input.input_string(input.input_string() + Input.getClipboardString());
+			set_restore_point(true);
 		}
 		
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && input(input, GLFW.GLFW_KEY_A)) {
+			setcursor(len, shift, false);
 			select_start = 0;
 			select_end = len;
-			setcursor(len, shift, false);
 		}
 		
 	}
@@ -304,7 +301,6 @@ public class NTEditor {
 		return (cursor <= first_whitespace_of_line) ? first_char_of_line : first_whitespace_of_line;
 	}
 	
-	// TODO cursor blinking [copied from GUITextbox ]
 	boolean blink() { return (System.currentTimeMillis() - last_input_time < 500) || ((System.nanoTime() / 1000000000) % 2 == 0); }
 	
 	record CharacterLocation(NTTextUnit unit, int index) {}
@@ -320,21 +316,57 @@ public class NTEditor {
 		return null;
 	}
 	
+	// -- Undo/Redo -- //
+	
+	record RestorableState(NBTCompound document, int cursor) {}
+	
+	int undo_index = 0;
+	ArrayList<RestorableState> undo_history = new ArrayList<>();
+	
+	long last_restore_point_time = System.currentTimeMillis();
+	
+	public void set_restore_point(boolean force) {
+		if (!force && System.currentTimeMillis() - last_restore_point_time < 1000) return;
+		last_restore_point_time = System.currentTimeMillis();
+		while (undo_history.size() > undo_index) {
+			undo_history.removeLast();
+		}
+		undo_history.add(new RestorableState(document.serialize(), cursor));
+		undo_index++;
+	}
+	
+	public void undo() {
+		if (undo_index <= 0) return;
+		undo_index--;
+		document = NTDocument.deserialize(undo_history.get(undo_index).document);
+		cursor = undo_history.get(undo_index).cursor;
+	}
+	
+	public void redo() {
+		if (undo_index >= undo_history.size()) return;
+		undo_index++;
+		document = NTDocument.deserialize(undo_history.get(undo_index).document);
+		cursor = undo_history.get(undo_index).cursor;
+	}
+	
 	// -- Actions -- //
 
 	private void delete_selection() {
 		int selection_length = select_end() - select_start();
 		int selection_start = select_start();
+		set_restore_point(true);
 		for (int i = 0; i < selection_length; i++) remove(selection_start);
 	}
 	
 	private void insert(int index, String string) {
+		set_restore_point(false);
 		CharacterLocation cursor_pos = find_char(index);
 		cursor_pos.unit.insert(string, cursor_pos.index);
 		if (insert) remove(cursor + 1);
 	}
 	
 	private void remove(int index) {
+		set_restore_point(false);
 		if (cursor >= index) {
 			setcursor(cursor - 1, false, false);
 		}
