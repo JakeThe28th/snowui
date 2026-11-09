@@ -213,11 +213,32 @@ public final class NTTextUnit {
 	public NBTCompound serialize() {
 		NBTCompound ser_unit = new NBTCompound();
 		ser_unit.put("txt", contents);
+		
+		ser_unit.put("b", (byte) (bold ? 1 : 0));
+		ser_unit.put("s", (byte) (strikethrough ? 1 : 0));
+		ser_unit.put("i", (byte) (italic ? 1 : 0));
+		ser_unit.put("u", (byte) (underlined ? 1 : 0));
+		
+//		ser_unit.put("c", color);
+//		ser_unit.put("h", highlight_color);
+		
+		ser_unit.put("f", font_size);
+
 		return ser_unit;
 	}
 
 	public static NTTextUnit deserialize(NBTCompound ser_unit) {
 		NTTextUnit unit = new NTTextUnit(ser_unit.get("txt").getString().get());
+		
+		unit.bold(ser_unit.get("b").getByte().get() == 1);
+		unit.strikethrough(ser_unit.get("s").getByte().get() == 1);
+		unit.italic(ser_unit.get("i").getByte().get() == 1);
+		unit.underlined(ser_unit.get("u").getByte().get() == 1);
+		
+		// todo read color
+		
+		unit.font_size(ser_unit.get("f").getInt().get());
+
 		return unit;
 	}
 
