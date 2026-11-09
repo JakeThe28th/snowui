@@ -12,6 +12,7 @@ public class GUIText extends GUIElement {
 	String text = null;
 	
 	public void text(String new_text) {
+		if (new_text == null) throw new Error("Attempted to set text to null.");
 		if (text == new_text) return;
 		this.text = new_text;
 		this.should_recalculate_size(true);
@@ -20,6 +21,7 @@ public class GUIText extends GUIElement {
 	public String text() { return text; }
 	
 	public GUIText(String text) {
+		if (text == null) throw new Error("Attempted to set text to null.");
 		this.text = text;
 	}
 

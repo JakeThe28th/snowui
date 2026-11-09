@@ -32,6 +32,7 @@ public enum Color {
 	PURPLE(new Vector4f(1, 0, 1, 1)),
 	TRANSPARENT_AQUA(new Vector4f(0, 1, 0.75f, 0.25f)),
 	TRANSPARENT_RED(new Vector4f(1,0,0,0.25f)),
+	TRANSPARENT_YELLOW(new Vector4f(1, 1, 0, 0.25f)),
 
 	HOT_PINK(Utility.fromHex("#FF69B4")),
 
