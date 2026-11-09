@@ -9,7 +9,6 @@ import disaethia.io.nbt.NBTList;
 import frost3d.Framebuffer;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.utility.Rectangle;
-import neotext.layout.NTEditor.RestorableState;
 import neotext.text.NTSimpleFontRenderer;
 import neotext.text.NTTextUnit;
 import neotext.text.NTTextUnit.NTPostRenderInfo;
@@ -37,10 +36,10 @@ public class NTDocument {
 	
 	{
 		NTTextUnit[] units = new NTTextUnit[] {
-			new NTTextUnit("Hello everyone! ", new NTSimpleFontRenderer()),
-			new NTTextUnit("I'm Boldy. ", new NTSimpleFontRenderer()).bold(true),
-			new NTTextUnit("Boldy the boldtype. ", new NTSimpleFontRenderer()).highlight_color(new Vector4f(0.5f,0.5f,0,1)).font_size(18),
-			new NTTextUnit("Blue\n\n", new NTSimpleFontRenderer()).color(new Vector4f(0,0,1,1)).font_size(26),
+			new NTTextUnit("Hello everyone! "),
+			new NTTextUnit("I'm Boldy. ").bold(true),
+			new NTTextUnit("Boldy the boldtype. ").highlight_color(new Vector4f(0.5f,0.5f,0,1)).font_size(18),
+			new NTTextUnit("Blue\n\n").color(new Vector4f(0,0,1,1)).font_size(26),
 			new NTTextUnit(" (There's an anime review.)\r\n"
 								+ "* (Read it?)\r\n"
 								+ "* Teen'z Corner\r\n"
@@ -56,7 +55,7 @@ public class NTDocument {
 								+ "* Teens and older should check out this dark masterpiece!\r\n"
 								+ "* Signed,\r\n"
 								+ "  The Anonymous Yellow Lizard\r\n"
-								+ "* (You decide not to read it.)", new NTSimpleFontRenderer()).font_size(14),
+								+ "* (You decide not to read it.)").font_size(14),
 		};
 		for (NTTextUnit unit : units) document.add(unit);
 	}
@@ -83,7 +82,7 @@ public class NTDocument {
 				NTPostRenderInfo info = new NTPostRenderInfo(0,0,0,false,false,null);
 				int unit_start = 0;
 				while (!info.end_of_unit()) {
-					info = unit.render(current_chara, unit_start, document_canvas, xx, yy, area.width()-xx, area.width(), tab_size_px);
+					info = unit.render(current_chara, unit_start, document_canvas, xx, yy, area.width()-xx, area.width(), tab_size_px, area);
 					xx += info.width();
 					if (info.height() > max_height) max_height = info.height();
 					if (info.newline() || (info.width() == 0 && !info.end_of_unit()) || (xx > area.width())) {

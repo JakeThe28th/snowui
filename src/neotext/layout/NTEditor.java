@@ -324,9 +324,11 @@ public class NTEditor {
 	ArrayList<RestorableState> undo_history = new ArrayList<>();
 	
 	long last_restore_point_time = System.currentTimeMillis();
+	boolean force_next_restore_point = true;
 	
 	public void set_restore_point(boolean force) {
-		if (!force && System.currentTimeMillis() - last_restore_point_time < 1000) return;
+		if (!force && !force_next_restore_point && System.currentTimeMillis() - last_restore_point_time < 1000) return;
+		force_next_restore_point = false;
 		last_restore_point_time = System.currentTimeMillis();
 		while (undo_history.size() > undo_index) {
 			undo_history.removeLast();
@@ -337,6 +339,7 @@ public class NTEditor {
 	
 	public void undo() {
 		if (undo_index <= 0) return;
+		force_next_restore_point = true;
 		undo_index--;
 		document = NTDocument.deserialize(undo_history.get(undo_index).document);
 		cursor = undo_history.get(undo_index).cursor;
@@ -344,6 +347,7 @@ public class NTEditor {
 	
 	public void redo() {
 		if (undo_index >= undo_history.size()) return;
+		force_next_restore_point = true;
 		undo_index++;
 		document = NTDocument.deserialize(undo_history.get(undo_index).document);
 		cursor = undo_history.get(undo_index).cursor;

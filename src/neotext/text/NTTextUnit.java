@@ -1,18 +1,18 @@
 package neotext.text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.joml.Vector4f;
 
 import disaethia.io.nbt.NBTCompound;
-import disaethia.io.nbt.NBTTag;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.utility.Rectangle;
 import neotext.layout.NTDocument.CharacterInfo;
 
 public final class NTTextUnit {
-	
+		
 	public static record NTPostRenderInfo (int next_character, int width, int height, boolean end_of_unit, boolean newline, List<CharacterInfo> infos) {}
 	
 	public static final boolean WRAP_ON_BREAKPOINTS = true;
@@ -37,36 +37,53 @@ public final class NTTextUnit {
 	
 	public NTTextUnit(String contents) {
 		set_contents(contents);
-	}
-	
-	public NTTextUnit(String contents, NTSimpleFontRenderer renderer) {
-		this(contents);
-		set_font(renderer);
+		update_font();
 	}
 
 	private void set_contents(String contents) {
 		this.contents = contents;
 	}
 	
-	public NTTextUnit bold				(boolean 	v) { bold 				= v; return this; }
-	public NTTextUnit italic			(boolean 	v) { italic 			= v; return this; }
-	public NTTextUnit strikethrough	(boolean 	v) { strikethrough 		= v; return this; }
-	public NTTextUnit underlined		(boolean 	v) { underlined 		= v; return this; }
-	public NTTextUnit color			(Vector4f 	v) { color 				= v; return this; }
+	// TODO : font handling probably can be improved
+	// i only did it this way because i somehow forgot
+	// constantly recreating and deleting font renderers
+	// is extremely slow (undo/redo uses deserialization uses this)
+	
+	record FontCategorization(
+			boolean bold, 
+			boolean italic,
+			boolean strikethrough,
+			boolean underlined,
+			int size
+		) {}
+	
+	static HashMap<FontCategorization, NTFontRenderer> font_cache = new HashMap<>();
+	
+	void update_font() {
+		FontCategorization cat = new FontCategorization(bold, italic, strikethrough, underlined, font_size);
+		font = font_cache.get(cat);
+		if (font == null) {
+			font = new NTSimpleFontRenderer();
+			font.bold(bold);
+			font.italic(italic);
+			font.font_size(font_size);
+			font_cache.put(cat, font);
+		}
+	}
+	
+	public NTTextUnit bold				(boolean 	v) { bold 				= v; update_font(); return this; }
+	public NTTextUnit italic			(boolean 	v) { italic 			= v; update_font(); return this; }
+	public NTTextUnit strikethrough		(boolean 	v) { strikethrough 		= v; update_font(); return this; }
+	public NTTextUnit underlined		(boolean 	v) { underlined 		= v; update_font(); return this; }
+	public NTTextUnit color				(Vector4f 	v) { color 				= v; return this; }
 	public NTTextUnit highlight_color	(Vector4f 	v) { highlight_color 	= v; return this; }
 	
-	public NTTextUnit font_size		(int	 	v) { font_size 	= v; font.font_size(v); return this; }
+	public NTTextUnit font_size			(int	 	v) { font_size 	= v; update_font(); return this; }
 
-	/** Note: the font object passed here is retained */
-	public void set_font(NTFontRenderer font) {
-		font.bold		(bold);
-		font.italic		(italic);
-		font.font_size	(font_size);
-		this.font 		= font;
-	}
-
+	// TODO : clean up redundant arguments
 	/** Renders characters until the wrap_width is achieved. */
-	public NTPostRenderInfo render(int document_index, int start, SimpleCanvas canvas, int x, int y, int c_wrap_w, int t_wrap_w, int tab_size_px) {
+	public NTPostRenderInfo render(int document_index, int start, SimpleCanvas canvas, int x, int y, int c_wrap_w, int t_wrap_w, int tab_size_px, Rectangle area) {
+		Rectangle a = area.offset(-area.left(), -area.top());
 		int p = start;
 		int px = 0;
 		int height = font_size;
@@ -139,8 +156,10 @@ public final class NTTextUnit {
 					}
 				}
 				
-				if (bold) font.render_character(contents.charAt(p), canvas, x + px + 1, y, 0);
-				font.render_character(contents.charAt(p), canvas, x + px, y, 0);
+				if (!(x+px > a.right() || x+px+k < a.left() || y > a.bottom() || y + height < a.top())) {
+					if (bold) font.render_character(contents.charAt(p), canvas, x + px + 1, y, 0);
+					font.render_character(contents.charAt(p), canvas, x + px, y, 0);	
+				}
 				
 				infos.add(new CharacterInfo(new Rectangle(x+px, y, x+px+k, y+height), this, p, document_index + p));
 				
@@ -198,7 +217,7 @@ public final class NTTextUnit {
 	}
 
 	public static NTTextUnit deserialize(NBTCompound ser_unit) {
-		NTTextUnit unit = new NTTextUnit(ser_unit.get("txt").getString().get(), new NTSimpleFontRenderer());
+		NTTextUnit unit = new NTTextUnit(ser_unit.get("txt").getString().get());
 		return unit;
 	}
 
