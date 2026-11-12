@@ -66,7 +66,7 @@ public class NTEditor {
 	
 	public void tick(Input input, Vector2i mp) {
 		
-		int len = content_length();
+		int len = document.content_length();
 		
 		boolean shift = input.keyDown(GLFW.GLFW_KEY_LEFT_SHIFT);
 		
@@ -246,12 +246,6 @@ public class NTEditor {
 	
 	long last_input_time = System.currentTimeMillis();
 	void setinputtime() { last_input_time = System.currentTimeMillis(); }
-
-	int content_length() { 
-		int len = 0;
-		for (NTTextUnit unit : document.document) len += unit.character_count();
-		return len;
-	}
 	
 	int first_char_of_line() {
 		int current = 0;
@@ -389,7 +383,7 @@ public class NTEditor {
 		cursor = position;
 		if (!y_nav) cursor_for_y_navigation = position;
 		if (cursor < 0) cursor = 0;
-		int len = content_length();	if (cursor > len) cursor = len;
+		int len = document.content_length();	if (cursor > len) cursor = len;
 		if (!shift) select_start = cursor;
 		select_end = cursor;
 	}

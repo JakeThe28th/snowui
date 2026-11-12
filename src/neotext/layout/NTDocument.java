@@ -155,5 +155,11 @@ public class NTDocument {
 		ser_document.put("units", ser_units);
 		return ser_document;
 	}
+	
+	int content_length() { 
+		int len = 0;
+		for (NTTextUnit unit : document) len += unit.character_count();
+		return len;
+	}
 
 }
