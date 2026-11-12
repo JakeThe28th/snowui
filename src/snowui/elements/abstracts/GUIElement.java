@@ -497,8 +497,12 @@ public abstract class GUIElement {
 			for (GUIElement e : sub_elements) { e.triggerRecalculateSize(gui); }
 			if (should_recalculate_size) {
 				log_update();
+				int old_unpadded_height = unpadded_height;
+				int old_unpadded_width = unpadded_width;
 				recalculateSize(gui);
-				should_update(true);
+				if (old_unpadded_height != unpadded_height || old_unpadded_width != unpadded_width) {
+					should_update(true);
+				}
 				should_recalculate_size = false;
 				if (this.aligned_limit_rectangle != null && limit_rectangle != null) {
 					set_aligned_limit_rectangle();
