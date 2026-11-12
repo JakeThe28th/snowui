@@ -26,6 +26,12 @@ public class NTDocument {
 	public int						tab_size_px = 40;
 	public NTTextUnit.WrapSettings	wrap_config = new NTTextUnit.WrapSettings();
 	
+	int scroll_x = 0;
+	int scroll_y = 0;
+	
+	public void set_scroll_x(int val) { scroll_x = val; }
+	public void set_scroll_y(int val) { scroll_y = val; }
+
 	// --= Temporary State =-- //
 	ArrayList<CharacterInfo> rendered_characters = new ArrayList<>();
 	boolean 				 should_rerender_frame = true;
