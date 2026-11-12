@@ -8,6 +8,7 @@ import org.joml.Vector4f;
 
 import disaethia.io.nbt.NBTCompound;
 import frost3d.implementations.SimpleCanvas;
+import frost3d.utility.Log;
 import frost3d.utility.Rectangle;
 import neotext.layout.NTDocument.CharacterInfo;
 
@@ -40,6 +41,18 @@ public final class NTTextUnit {
 	
 	public NTTextUnit(String contents) {
 		set_contents(contents);
+		update_font();
+	}
+
+	public NTTextUnit(NTTextUnit unit, String contents) {
+		this(contents);
+		italic 			= unit.italic;
+		bold			= unit.bold;
+		font_size 		= unit.font_size;
+		strikethrough 	= unit.strikethrough;
+		underlined 		= unit.underlined;
+		highlight_color = unit.highlight_color;
+		color 			= unit.color;
 		update_font();
 	}
 
@@ -82,6 +95,8 @@ public final class NTTextUnit {
 	public NTTextUnit highlight_color	(Vector4f 	v) { highlight_color 	= v; return this; }
 	
 	public NTTextUnit font_size			(int	 	v) { font_size 	= v; update_font(); return this; }
+	
+	public Vector4f color() { return color; }
 
 	/** Renders characters until the wrap_width is achieved. 
 	 * @param scroll_x 
@@ -197,7 +212,7 @@ public final class NTTextUnit {
 	}
 
 	private int kerning(int p) {
-		if (character_count() == 1) return 0;
+		if (character_count() == 1) return font.kerning(' ', contents.charAt(p), ' ');
 		if (p == 0) {
 			return font.kerning(' ', contents.charAt(p), contents.charAt(p+1));
 		} if (p != character_count()-1) {
