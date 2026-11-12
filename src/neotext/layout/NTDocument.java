@@ -103,7 +103,7 @@ public class NTDocument {
 				NTPostRenderInfo info = new NTPostRenderInfo(0,0,0,false,false,null);
 				int unit_start = 0;
 				while (!info.end_of_unit()) {
-					info = unit.render(document_canvas, current_chara, unit_start, xx, yy, tab_size_px, area, wrap_config);
+					info = unit.render(document_canvas, current_chara, unit_start, xx, yy, tab_size_px, area, wrap_config, scroll_x, scroll_y);
 					xx += info.width();
 					
 					if (xx > cached_rendered_size.x) cached_rendered_size.x = xx;

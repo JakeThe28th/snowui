@@ -29,7 +29,7 @@ public final class NTTextUnit {
 
 	boolean 	italic 			= false;
 	boolean 	bold 			= false;
-	int 		font_size 		= 24;
+	int 		font_size 		= 18;
 	
 	boolean 	strikethrough 	= false;
 	boolean 	underlined 		= false;
@@ -83,8 +83,10 @@ public final class NTTextUnit {
 	
 	public NTTextUnit font_size			(int	 	v) { font_size 	= v; update_font(); return this; }
 
-	/** Renders characters until the wrap_width is achieved. */
-	public NTPostRenderInfo render(SimpleCanvas canvas, int doc_index, int rel_index, int x, int y, int tab_size, Rectangle area, WrapSettings settings) {
+	/** Renders characters until the wrap_width is achieved. 
+	 * @param scroll_x 
+	 * @param scroll_y */
+	public NTPostRenderInfo render(SimpleCanvas canvas, int doc_index, int rel_index, int x, int y, int tab_size, Rectangle area, WrapSettings settings, int scroll_x, int scroll_y) {
 		Rectangle a = area.offset(-area.left(), -area.top());
 		int total_width = area.width();
 		int remaining_width = area.width() - x;
@@ -160,12 +162,18 @@ public final class NTTextUnit {
 					}
 				}
 				
-				if (!(x+px > a.right() || x+px+k < a.left() || y > a.bottom() || y + height < a.top())) {
-					if (bold) font.render_character(contents.charAt(p), canvas, x + px + 1, y, 0);
-					font.render_character(contents.charAt(p), canvas, x + px, y, 0);	
+				{ 	// actually render character
+					int fin_x = x + px - scroll_x;
+					int fin_y = y - scroll_y;
+	
+					if (!(fin_x > a.right() || fin_x+k < a.left() || fin_y > a.bottom() || fin_y + height < a.top())) {
+						if (bold) font.render_character(contents.charAt(p), canvas, fin_x + 1, fin_y, 0);
+						font.render_character(contents.charAt(p), canvas, fin_x, fin_y, 0);	
+					}
+					
+					infos.add(new CharacterInfo(new Rectangle(fin_x, fin_y, fin_x+k, fin_y+height), this, p, doc_index + p));
+
 				}
-				
-				infos.add(new CharacterInfo(new Rectangle(x+px, y, x+px+k, y+height), this, p, doc_index + p));
 				
 				px += k;
 				p  ++;

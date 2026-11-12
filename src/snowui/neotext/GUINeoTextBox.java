@@ -41,6 +41,9 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		
 		@Override
 		public void tickAnimation(GUIInstance gui) {
+			// deselect when somewhere else is clicked
+			if (hover_rectangle() != null && gui.primary_click_released() && !hover_rectangle().contains(gui.mousepos())) deselect();
+			// tick editor
 			if (is_selected()) text_editor.tick(gui.rawinput(), gui.mousepos().sub(area.left(), area.top()));
 		}
 		
@@ -95,26 +98,18 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		set(PredicateKey.SELECTED, false);
 	}
 	
-	@Override
-	public boolean updateState(GUIInstance gui) {
-		if (hover_rectangle() != null && gui.primary_click_released() && !hover_rectangle().contains(gui.mousepos())) deselect();
-		return false;
-	}
-	
 	public void show_toolbar(boolean v) {};
 	public void show_scrollbars(boolean v) {};
 	public void allow_search(boolean v) {}
 
 	@Override
 	public void set_x_scroll(int pixels) {
-		// TODO Auto-generated method stub
-		
+		text.text_editor.document.set_scroll_x(pixels);
 	}
 
 	@Override
 	public void set_y_scroll(int pixels) {
-		// TODO Auto-generated method stub
-		
+		text.text_editor.document.set_scroll_y(pixels);
 	};
 	
 }
