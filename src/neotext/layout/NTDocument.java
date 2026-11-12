@@ -9,7 +9,6 @@ import disaethia.io.nbt.NBTList;
 import frost3d.Framebuffer;
 import frost3d.implementations.SimpleCanvas;
 import frost3d.utility.Rectangle;
-import neotext.text.NTSimpleFontRenderer;
 import neotext.text.NTTextUnit;
 import neotext.text.NTTextUnit.NTPostRenderInfo;
 
@@ -23,7 +22,8 @@ public class NTDocument {
 	ArrayList<NTTextUnit> 	document = new ArrayList<>(); // TODO : allow other types like images here
 	SimpleCanvas 			document_canvas;
 	
-	int						tab_size_px = 40;
+	public int						tab_size_px = 40;
+	public NTTextUnit.WrapSettings	wrap_config = new NTTextUnit.WrapSettings();
 	
 	// --= Temporary State =-- //
 	ArrayList<CharacterInfo> rendered_characters = new ArrayList<>();
@@ -82,7 +82,7 @@ public class NTDocument {
 				NTPostRenderInfo info = new NTPostRenderInfo(0,0,0,false,false,null);
 				int unit_start = 0;
 				while (!info.end_of_unit()) {
-					info = unit.render(current_chara, unit_start, document_canvas, xx, yy, area.width()-xx, area.width(), tab_size_px, area);
+					info = unit.render(document_canvas, current_chara, unit_start, xx, yy, tab_size_px, area, wrap_config);
 					xx += info.width();
 					if (info.height() > max_height) max_height = info.height();
 					if (info.newline() || (info.width() == 0 && !info.end_of_unit()) || (xx > area.width())) {

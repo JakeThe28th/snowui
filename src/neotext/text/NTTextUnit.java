@@ -15,10 +15,13 @@ public final class NTTextUnit {
 		
 	public static record NTPostRenderInfo (int next_character, int width, int height, boolean end_of_unit, boolean newline, List<CharacterInfo> infos) {}
 	
-	public static final boolean WRAP_ON_BREAKPOINTS = true;
-	public static final boolean FORCE_WRAP_ON_EDGE = true;
 	public static final boolean DEBUG_SHOW_WORD_BOUNDS = false;
-	public static final boolean SKIP_SPACE_IF_FIRST_CHAR = true;
+
+	public static class WrapSettings {
+		public boolean WRAP_ON_BREAKPOINTS 			= true;
+		public boolean FORCE_WRAP_ON_EDGE 			= true;
+		public boolean SKIP_SPACE_IF_FIRST_CHAR 	= true;
+	}
 
 	public static final Vector4f BLACK = new Vector4f(0,0,0,1);
 	
@@ -80,11 +83,12 @@ public final class NTTextUnit {
 	
 	public NTTextUnit font_size			(int	 	v) { font_size 	= v; update_font(); return this; }
 
-	// TODO : clean up redundant arguments
 	/** Renders characters until the wrap_width is achieved. */
-	public NTPostRenderInfo render(int document_index, int start, SimpleCanvas canvas, int x, int y, int c_wrap_w, int t_wrap_w, int tab_size_px, Rectangle area) {
+	public NTPostRenderInfo render(SimpleCanvas canvas, int doc_index, int rel_index, int x, int y, int tab_size, Rectangle area, WrapSettings settings) {
 		Rectangle a = area.offset(-area.left(), -area.top());
-		int p = start;
+		int total_width = area.width();
+		int remaining_width = area.width() - x;
+		int p = rel_index;
 		int px = 0;
 		int height = font_size;
 		boolean newline = false;
@@ -92,7 +96,7 @@ public final class NTTextUnit {
 		canvas.color(color);
 		//Log.send((px < wrap_width && p < character_count()) + "?");
 		
-		if (SKIP_SPACE_IF_FIRST_CHAR) {
+		if (settings.SKIP_SPACE_IF_FIRST_CHAR) {
 			if (p != 0 && !Character.isWhitespace(contents.charAt(p-1)))
 			if (contents.charAt(p) == ' ') p++;
 		}
@@ -110,7 +114,7 @@ public final class NTTextUnit {
 			
 			// break the whole word if it's longer than the current remaining width, 
 			// but not if it's longer than the entire width (in that case, break per-character)
-			if (WRAP_ON_BREAKPOINTS && (px + word_width > c_wrap_w) && (word_width < t_wrap_w)) break d;
+			if (settings.WRAP_ON_BREAKPOINTS && (px + word_width > remaining_width) && (word_width < total_width)) break d;
 			
 			// actually render section
 			
@@ -120,11 +124,11 @@ public final class NTTextUnit {
 				canvas.rect(x + px, y, x + px + word_width, y + 10, 0);
 				
 				canvas.color(new Vector4f(0.1f,0,0,0.8f));
-				if ((t_wrap_w-(px + word_width)) < 0) {
+				if ((total_width-(px + word_width)) < 0) {
 					canvas.color(new Vector4f(0.6f,0,0,0.8f));
 				}
 				canvas.textrenderer().font_size(10);
-				canvas.text(x + px, y - 10, 0, "["+(t_wrap_w-(px + word_width))+"]");
+				canvas.text(x + px, y - 10, 0, "["+(total_width-(px + word_width))+"]");
 				
 				canvas.color(color);
 			
@@ -133,7 +137,7 @@ public final class NTTextUnit {
 			while (p <= next_break_char && p < character_count()) {
 				
 				if (contents.charAt(p) == '\n') {
-					infos.add(new CharacterInfo(new Rectangle(x+px, y, x+px+5, y+height), this, p, document_index + p));
+					infos.add(new CharacterInfo(new Rectangle(x+px, y, x+px+5, y+height), this, p, doc_index + p));
 					p++;
 					newline = true;
 					break d;
@@ -142,14 +146,14 @@ public final class NTTextUnit {
 				int k = kerning(p);
 				
 				if (contents.charAt(p) == '\t') {
-					int next_indent = (int) (Math.ceil((x + px + 1) / (double) tab_size_px) * tab_size_px);
+					int next_indent = (int) (Math.ceil((x + px + 1) / (double) tab_size) * tab_size);
 					k = next_indent-(x + px);
 				}
 				
 				// return from function when over edge (to force a character wrap)
 				boolean break_later = false;
-				if (FORCE_WRAP_ON_EDGE && px + k > c_wrap_w) {
-					if (k > t_wrap_w) {
+				if (settings.FORCE_WRAP_ON_EDGE && px + k > remaining_width) {
+					if (k > total_width) {
 						break_later = true;
 					} else {
 						break d;
@@ -161,7 +165,7 @@ public final class NTTextUnit {
 					font.render_character(contents.charAt(p), canvas, x + px, y, 0);	
 				}
 				
-				infos.add(new CharacterInfo(new Rectangle(x+px, y, x+px+k, y+height), this, p, document_index + p));
+				infos.add(new CharacterInfo(new Rectangle(x+px, y, x+px+k, y+height), this, p, doc_index + p));
 				
 				px += k;
 				p  ++;
