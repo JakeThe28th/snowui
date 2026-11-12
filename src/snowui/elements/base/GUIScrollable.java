@@ -8,6 +8,11 @@ import snowui.elements.abstracts.GUIElement;
 
 public class GUIScrollable extends GUIElement {
 	
+	public interface CanHandleOwnScrolling {
+		public void set_x_scroll(int pixels);
+		public void set_y_scroll(int pixels);
+	}
+	
 	private GUIScrollable scroll_this() { return this; }
 	
 	{ identifier("scroll_area"); }
@@ -355,15 +360,21 @@ public class GUIScrollable extends GUIElement {
 			}
 		}
 		
-		if (root.style().min_width().constant() == Constant.CONTAINER) {
-			// (to allow for the element to fill the space [i forgot why this doesn't set both right and bottom but im not touching it lol])
-			root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
-		} else if (!horizontal_scroll_enabled) {
-			// (to allow for horizontal centering when only vertical scrolling is wanted)
-			root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
-		} else if (!vertical_scroll_enabled) {
-			// (to allow for vertical centering when only horizontal scrolling is wanted)
-			root_limit = new Rectangle(root_limit.left(), root_limit.top(), root_limit.right(), area_rectangle.bottom());
+		if (root instanceof CanHandleOwnScrolling) {
+			root_limit = new Rectangle(area_rectangle.left(), area_rectangle.top(), area_rectangle.right(), area_rectangle.bottom());
+			((CanHandleOwnScrolling) root).set_x_scroll(horizontal_scrollbar.scroll_amount_pixels());
+			((CanHandleOwnScrolling) root).set_y_scroll(vertical_scrollbar  .scroll_amount_pixels());
+		} else {
+			if (root.style().min_width().constant() == Constant.CONTAINER) {
+				// (to allow for the element to fill the space [i forgot why this doesn't set both right and bottom but im not touching it lol])
+				root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
+			} else if (!horizontal_scroll_enabled) {
+				// (to allow for horizontal centering when only vertical scrolling is wanted)
+				root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
+			} else if (!vertical_scroll_enabled) {
+				// (to allow for vertical centering when only horizontal scrolling is wanted)
+				root_limit = new Rectangle(root_limit.left(), root_limit.top(), root_limit.right(), area_rectangle.bottom());
+			}
 		}
 		
 		root.limit_rectangle(root_limit);
