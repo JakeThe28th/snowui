@@ -367,6 +367,7 @@ public class NTEditor {
 		CharacterLocation cursor_pos = find_char(index);
 		cursor_pos.unit.insert(string, cursor_pos.index);
 		if (insert) remove(cursor + 1);
+		onTextModified(this);
 	}
 	
 	private void remove(int index) {
@@ -380,6 +381,7 @@ public class NTEditor {
 		if (cursor_pos.unit.character_count() == 0) {
 			document.document.remove(cursor_pos.unit);
 		}
+		onTextModified(this);
 	}
 
 	private void setcursor(int position, boolean shift, boolean y_nav) {
@@ -392,4 +394,12 @@ public class NTEditor {
 		select_end = cursor;
 	}
 
+	public void onTextModified(NTEditor self) {
+		// callback
+	}
+
+	public int cursor() {
+		return cursor;
+	}
+	
 }

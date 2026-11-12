@@ -3,6 +3,7 @@ package snowui.neotext;
 import org.joml.Vector2i;
 
 import frost3d.utility.Rectangle;
+import neotext.layout.NTDocument;
 import neotext.layout.NTEditor;
 import snowui.GUIInstance;
 import snowui.coss.enums.PredicateKey;
@@ -19,7 +20,13 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 
 		{ identifier("textbox-text"); }
 
-		public NTEditor text_editor = new NTEditor();
+		public NTEditor text_editor = new NTEditor() {
+			@Override
+			public void onTextModified(NTEditor self) {
+				GUINeoTextBox.this.onTextModified(self);
+				GUINeoTextBox.this.onTextModified(self.document.toPlainText());
+			}
+		};
 
 		@Override public void onSingleClick(GUIInstance gui) { select(gui); }
 		
@@ -112,4 +119,25 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		text.text_editor.document.set_scroll_y(pixels);
 	};
 	
+	public void set_text(String plaintext) {
+		text.text_editor.document.set_from_string(plaintext);
+		onTextModified(plaintext);
+	}
+
+	public NTDocument document() {
+		return text.text_editor.document;
+	}
+
+	public NTEditor editor() {
+		return text.text_editor;
+	}
+	
+	public void onTextModified(NTEditor self) {
+		// callback
+	}
+	
+	public void onTextModified(String plaintext) {
+		// callback
+	}
+
 }
