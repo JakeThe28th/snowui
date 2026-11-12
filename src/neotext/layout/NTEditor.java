@@ -172,7 +172,7 @@ public class NTEditor {
 			setcursor(closest.real_char(), true, false); 
 
 			// Reset slection
-			if (input.mouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+			if (input.mouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !shift) {
 				select_start = cursor;
 				select_end   = cursor;
 			}
@@ -218,15 +218,19 @@ public class NTEditor {
 	private double distance(Vector2i p1, Vector2i p2) {
 		return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 	}
-
+	
 	private String selected_string_plaintext() {
+		return string_plaintext(select_start(), select_end());
+	}
+
+	private String string_plaintext(int start, int end) {
 		String str = "";
 		int index = 0;
 		for (NTTextUnit unit : document.document) {
 			int ulen = unit.character_count();
-			if (index < select_end() && index + ulen > select_start()) {
-				int internal_start = select_start() - index;
-				int internal_end = select_end() - index;
+			if (index < end && index + ulen > start) {
+				int internal_start = start - index;
+				int internal_end = end - index;
 				if (internal_end > ulen) internal_end = ulen;
 				if (internal_start < 0) internal_start = 0;
 				str += unit.contents.substring(internal_start, internal_end);
