@@ -7,6 +7,10 @@ public class NTSimpleFontRenderer implements NTFontRenderer {
 	
 	SimpleTextRenderer renderer = new SimpleTextRenderer();
 	
+	{
+		renderer.anti_aliasing_enabled(true);
+	}
+	
 	public boolean 	italic 			= false;
 	public boolean 	bold 			= false;
 	public int 		font_size 		= 12;
