@@ -72,7 +72,6 @@ public class NTDocument {
 	public void set_from_string(String string) {
 		document.clear();
 		document.add(new NTTextUnit(string));
-		document.getFirst().color(Color.DESBLUE.val());
 		generate_character_map();
 	}
 
@@ -249,6 +248,12 @@ public class NTDocument {
 								document.add(index, new_unit);
 		if (prev.length() != 0) document.add(index, new NTTextUnit(unit, prev));
 				
+	}
+	
+	public void recolor_all(Vector4f color) {
+		for (NTTextUnit unit : document) {
+			unit.color(color);
+		}
 	}
 
 }

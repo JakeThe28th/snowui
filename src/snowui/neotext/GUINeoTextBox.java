@@ -1,6 +1,7 @@
 package snowui.neotext;
 
 import org.joml.Vector2i;
+import org.joml.Vector4f;
 
 import frost3d.utility.Rectangle;
 import neotext.layout.NTDocument;
@@ -119,8 +120,9 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		text.text_editor.document.set_scroll_y(pixels);
 	};
 	
-	public void set_text(String plaintext) {
+	public void set_text(String plaintext, Vector4f color) {
 		text.text_editor.document.set_from_string(plaintext);
+		document().recolor_all(color);
 		onTextModified(plaintext);
 	}
 
