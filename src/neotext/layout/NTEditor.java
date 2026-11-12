@@ -361,6 +361,7 @@ public class NTEditor {
 		CharacterLocation cursor_pos = find_char(index);
 		cursor_pos.unit.insert(string, cursor_pos.index);
 		if (insert) remove(cursor + 1);
+		document.generate_character_map();
 		onTextModified(this);
 	}
 	
@@ -375,6 +376,7 @@ public class NTEditor {
 		if (cursor_pos.unit.character_count() == 0) {
 			document.document.remove(cursor_pos.unit);
 		}
+		document.generate_character_map();
 		onTextModified(this);
 	}
 

@@ -12,6 +12,7 @@ import frost3d.implementations.SimpleCanvas;
 import frost3d.utility.Rectangle;
 import neotext.text.NTTextUnit;
 import neotext.text.NTTextUnit.NTPostRenderInfo;
+import snowui.coss.enums.Color;
 
 public class NTDocument {
 	
@@ -71,6 +72,8 @@ public class NTDocument {
 	public void set_from_string(String string) {
 		document.clear();
 		document.add(new NTTextUnit(string));
+		document.getFirst().color(Color.DESBLUE.val());
+		generate_character_map();
 	}
 
 	Vector2i cached_rendered_size = new Vector2i(0,0);
@@ -146,6 +149,7 @@ public class NTDocument {
 		for (int i = 0; i < ser_units.length.get(); i++) {
 			document.document.add(NTTextUnit.deserialize(ser_units.getCompound(i)));
 		}
+		document.generate_character_map();
 		return document;
 	}
 
@@ -181,5 +185,70 @@ public class NTDocument {
 		return new Vector2i(0,0);
 	}
 	
+	CharacterInfo[] character_map = null;
+	
+	/** probably faster than iterating 10 billionne times */
+	void generate_character_map() {
+		character_map = new CharacterInfo[content_length()];
+		
+		int current = 0;
+		for (NTTextUnit unit : document) {
+			for (int c = 0; c < unit.character_count(); c ++) {
+				character_map[current + c] = new CharacterInfo(null, unit, c, current + c);
+			}
+			current += unit.character_count();
+		}
+	}
+	
+	public void change_color(int character_index, Vector4f color) {
+//		boolean v = true;
+//		if (v) return;
+		//if (character_map == null)
+		// TODO : clean up this whole change color function
+		// + generalize to change formatting and support selections?
+			generate_character_map();
+
+		CharacterInfo mapo = character_map[character_index];
+		
+		NTTextUnit unit = character_map[character_index].source;
+		if (unit.color().equals(color)) return;
+		
+		if (unit.character_count() == 1) {
+			unit.color(color);
+			return;
+		}
+		
+		int relative_index = character_map[character_index].source_char;
+		
+		if (character_index > 0 && character_map[character_index-1].source.color().equals(color)) {
+			NTTextUnit other = character_map[character_index-1].source;
+			other.insert(String.valueOf(unit.contents.charAt(relative_index)), other.character_count());
+			unit.remove(relative_index);
+			character_map[character_index] = new CharacterInfo(null, other, mapo.source_char, mapo.real_char);
+			return;
+		}
+		
+		if (character_index < character_map.length && character_map[character_index+1].source.color().equals(color)) {
+			NTTextUnit other = character_map[character_index+1].source;
+			other.insert(String.valueOf(unit.contents.charAt(relative_index)), 0);
+			unit.remove(relative_index);
+			character_map[character_index] = new CharacterInfo(null, other, mapo.source_char, mapo.real_char);
+			return;
+		}
+		
+		String prev = unit.contents.substring(0, relative_index);
+		String next = unit.contents.substring(relative_index + 1, unit.character_count());
+
+		NTTextUnit new_unit = new NTTextUnit(unit, String.valueOf(unit.contents.charAt(relative_index)));
+		new_unit.color(color);
+		
+		int index = document.indexOf(unit);
+		document.remove(unit);
+		
+		if (next.length() != 0) document.add(index, new NTTextUnit(unit, next));
+								document.add(index, new_unit);
+		if (prev.length() != 0) document.add(index, new NTTextUnit(unit, prev));
+				
+	}
 
 }
