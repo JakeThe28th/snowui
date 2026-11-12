@@ -346,7 +346,7 @@ public class NTEditor {
 	}
 	
 	public void redo() {
-		if (undo_index >= undo_history.size()) return;
+		if (undo_index + 1>= undo_history.size()) return;
 		force_next_restore_point = true;
 		undo_index++;
 		document = NTDocument.deserialize(undo_history.get(undo_index).document);
