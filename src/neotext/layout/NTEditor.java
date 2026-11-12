@@ -31,6 +31,8 @@ public class NTEditor {
 	int select_end   = 0;
 	
 	boolean insert = false;
+	
+	boolean inherit_indent_on_newline = true;
 
 	CharacterInfo cursor_draw;
 	
@@ -117,8 +119,16 @@ public class NTEditor {
 			if (select_end() - select_start() > 0) {
 				delete_selection();
 			}
-			insert(cursor, "\n");
-			cursor += 1;
+			
+			if (inherit_indent_on_newline) {
+				String indent = string_plaintext(first_char_of_line(), first_whitespace_of_line());
+				insert(cursor, "\n" + indent);
+				cursor += 1 + indent.length();
+			} else {
+				insert(cursor, "\n");
+				cursor += 1;
+			}
+			
 		}
 		
 		if (input(input, GLFW.GLFW_KEY_TAB)) {
