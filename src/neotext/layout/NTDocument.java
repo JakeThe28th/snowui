@@ -2,6 +2,7 @@ package neotext.layout;
 
 import java.util.ArrayList;
 
+import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import disaethia.io.nbt.NBTCompound;
@@ -60,6 +61,18 @@ public class NTDocument {
 		for (NTTextUnit unit : units) document.add(unit);
 	}
 	
+
+	public void set_from_string(String string) {
+		document.clear();
+		document.add(new NTTextUnit(string));
+	}
+
+	Vector2i cached_rendered_size = new Vector2i(0,0);
+	
+	public Vector2i cached_rendered_size() {
+		return cached_rendered_size;
+	}
+	
 	/** Renders the provided Content. */
 	public void render(Rectangle area, SimpleCanvas canvas) {
 				
@@ -71,6 +84,8 @@ public class NTDocument {
 		}
 		
 		if (should_rerender_frame) {
+			
+			cached_rendered_size = new Vector2i(0,0);
 						
 			rendered_characters.clear();
 			int current_chara = 0;
@@ -84,6 +99,10 @@ public class NTDocument {
 				while (!info.end_of_unit()) {
 					info = unit.render(document_canvas, current_chara, unit_start, xx, yy, tab_size_px, area, wrap_config);
 					xx += info.width();
+					
+					if (xx > cached_rendered_size.x) cached_rendered_size.x = xx;
+					if (yy > cached_rendered_size.y) cached_rendered_size.y = yy; 
+					
 					if (info.height() > max_height) max_height = info.height();
 					if (info.newline() || (info.width() == 0 && !info.end_of_unit()) || (xx > area.width())) {
 						xx = 0;
