@@ -79,8 +79,12 @@ public class NTDocument {
 		return cached_rendered_size;
 	}
 	
+	Rectangle last_area;
+	
 	/** Renders the provided Content. */
 	public void render(Rectangle area, SimpleCanvas canvas) {
+		
+		last_area = area;
 				
 		if (area.width() != document_canvas.width() || area.height() != document_canvas.height()) {
 			Framebuffer old = document_canvas.framebuffer();
@@ -161,5 +165,21 @@ public class NTDocument {
 		for (NTTextUnit unit : document) len += unit.character_count();
 		return len;
 	}
+	
+	public String toPlainText() {
+		String str = "";
+		for (NTTextUnit unit : document) str += unit.contents;
+		return str;
+	}
+	
+	public Vector2i getXY(int character_index) {
+		for (CharacterInfo info : rendered_characters) {
+			if (info.real_char() == character_index) {
+				return new Vector2i(info.area.left(), info.area.top()).add(last_area.left(), last_area.top());
+			}
+		}
+		return new Vector2i(0,0);
+	}
+	
 
 }
