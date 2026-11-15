@@ -172,7 +172,9 @@ public class ComposingStyleSheet {
 		sheet.addContains("textbox-text", 								"snowui-black");
 		sheet.addContains("textbox", 									"snowui-margin_large");
 		sheet.addContains("textbox-text", 								"snowui-margin_medium");
-		
+		sheet.addContains("textbox", 									"snowui-contained");
+		sheet.addContains("textbox-text", 								"snowui-contained");
+
 		sheet.addContains("dockable", 									"snowui-w_contained");
 		sheet.addContains("dockable", 									"snowui-h_contained");
 		
