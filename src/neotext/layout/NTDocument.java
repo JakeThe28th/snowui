@@ -33,6 +33,9 @@ public class NTDocument {
 	public void set_scroll_x(int val) { scroll_x = val; }
 	public void set_scroll_y(int val) { scroll_y = val; }
 
+	// TODO : make a class for formatting incl. color, highlight, bold, italic, etc
+	public Vector4f default_color = new Vector4f(0,0,0,1);
+
 	// --= Temporary State =-- //
 	ArrayList<CharacterInfo> rendered_characters = new ArrayList<>();
 	boolean 				 should_rerender_frame = true;
@@ -72,6 +75,12 @@ public class NTDocument {
 	public void set_from_string(String string) {
 		document.clear();
 		document.add(new NTTextUnit(string));
+		document.getFirst().color(default_color);
+		generate_character_map();
+	}
+	
+	public void clear() {
+		document.clear();
 		generate_character_map();
 	}
 
@@ -131,6 +140,18 @@ public class NTDocument {
 				current_chara += unit.character_count();
 			}
 			
+			cached_rendered_size.y += max_height;
+			
+			if (rendered_characters.size() > 0) {
+				CharacterInfo previous = rendered_characters.getLast();
+				rendered_characters.add(new CharacterInfo
+					(
+							previous.area().offset(previous.area().width(), 0),
+							previous.source(),
+							previous.source_char+1,
+							previous.real_char+1
+					)); // dummy character for end of document
+			}
 			
 			document_canvas.draw_frame();
 		}
@@ -254,6 +275,13 @@ public class NTDocument {
 		for (NTTextUnit unit : document) {
 			unit.color(color);
 		}
+	}
+	
+	public void add_unit(NTTextUnit unit) {
+		document.add(unit);
+	}
+	public ArrayList<NTTextUnit> units() {
+		return document;
 	}
 
 }
