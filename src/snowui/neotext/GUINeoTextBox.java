@@ -14,18 +14,26 @@ import snowui.elements.base.GUIScrollable;
 public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandleOwnScrolling {
 	
 	static GUINeoTextBox focused_text_box = null;
-	
+		
 	{ identifier("textbox"); }
 	
 	public class EditableText extends GUIElement {
+		
+		public void should_recalculate_size(boolean b){
+			super.should_recalculate_size(b);
+		}
 
 		{ identifier("textbox-text"); }
 
 		public NTEditor text_editor = new NTEditor() {
 			@Override
 			public void onTextModified(NTEditor self) {
-				GUINeoTextBox.this.onTextModified(self);
 				GUINeoTextBox.this.onTextModified(self.document.toPlainText());
+				should_recalculate_size(true);
+			}
+			@Override
+			public void onEnter(NTEditor self) {
+				deselect();
 			}
 		};
 
@@ -41,7 +49,7 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		
 		@Override
 		public void updateDrawInfo(GUIInstance gui) {
-			area = padded_limit_rectangle();
+			area = aligned_limit_rectangle();
 			hover_rectangle(area);
 			// (every limit rectangle change should recalculate the text box's size)
 			should_recalculate_size(true);
@@ -78,13 +86,20 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 	
 	@Override
 	public void draw(GUIInstance gui, int depth) {
-		gui.canvas().color(style().base_color().color());
-		gui.canvas().rect(hover_rectangle(), depth);
+		if (show_background()) {
+			gui.canvas().color(style().base_color().color());
+			gui.canvas().rect(hover_rectangle(), depth);
+		}
 	}
+
+	boolean show_background = true;
+	
+	public boolean show_background() { return show_background; }
+	public void show_background(boolean v) { show_background = v;; }
 
 	@Override
 	public void updateDrawInfo(GUIInstance gui) {
-		hover_rectangle(padded_limit_rectangle());
+		hover_rectangle(aligned_limit_rectangle());
 		text.limit_rectangle(hover_rectangle());
 	}
 
@@ -93,7 +108,7 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 	
 	public boolean is_selected() { return (focused_text_box == this); }
 
-	private void select(GUIInstance gui) {
+	public void select(GUIInstance gui) {
 		if (focused_text_box != null) focused_text_box.deselect();
 		gui.rawinput().input_string("");
 		focused_text_box = this;
@@ -104,6 +119,7 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		if (!is_selected()) return;
 		focused_text_box = null;
 		set(PredicateKey.SELECTED, false);
+		onFinish(text.text_editor.document.toPlainText());
 	}
 	
 	public void show_toolbar(boolean v) {};
@@ -125,6 +141,12 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		document().recolor_all(color);
 		onTextModified(plaintext);
 	}
+	
+	public void set_text(String plaintext, boolean silent) {
+		text.text_editor.document.set_from_string(plaintext);
+		if (!silent) onTextModified(plaintext);
+		text.should_recalculate_size(true);
+	}
 
 	public NTDocument document() {
 		return text.text_editor.document;
@@ -134,12 +156,17 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		return text.text_editor;
 	}
 	
-	public void onTextModified(NTEditor self) {
-		// callback
-	}
 	
 	public void onTextModified(String plaintext) {
 		// callback
 	}
+	
+	public void onFinish(String plaintext) {
+		// callback
+	}
 
+	public void finish_on_enter(boolean b) {
+		text.text_editor.finish_on_enter(b);
+	}
+	
 }
