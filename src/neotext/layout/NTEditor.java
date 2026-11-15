@@ -33,6 +33,9 @@ public class NTEditor {
 	boolean insert = false;
 	
 	boolean inherit_indent_on_newline = true;
+	boolean finish_on_enter = false;
+	
+	public Vector4f input_text_color = new Vector4f(0,0,0,1);
 
 	CharacterInfo cursor_draw;
 	
@@ -53,7 +56,8 @@ public class NTEditor {
 					document.document_canvas.color(CURSOR_COLOR_INSERT);
 					document.document_canvas.rect(info.area(), 0);
 				} else {
-					document.document_canvas.color(CURSOR_COLOR);
+					// document.document_canvas.color(CURSOR_COLOR);
+					document.document_canvas.color(info.source().color());
 					document.document_canvas.rect(info.area().left(), info.area().top(), info.area().left() + 2, info.area().bottom(), 0);
 				}
 			}
@@ -116,19 +120,22 @@ public class NTEditor {
 		if (input(input, GLFW.GLFW_KEY_UP ) && cursor < len ) new YNavigation().navigate(true);
 
 		if (input(input, GLFW.GLFW_KEY_ENTER)) {
-			if (select_end() - select_start() > 0) {
-				delete_selection();
-			}
-			
-			if (inherit_indent_on_newline) {
-				String indent = string_plaintext(first_char_of_line(), first_whitespace_of_line());
-				insert(cursor, "\n" + indent);
-				cursor += 1 + indent.length();
+			if (finish_on_enter) {
+				onEnter(this);
 			} else {
-				insert(cursor, "\n");
-				cursor += 1;
+				if (select_end() - select_start() > 0) {
+					delete_selection();
+				}
+				
+				if (inherit_indent_on_newline) {
+					String indent = string_plaintext(first_char_of_line(), first_whitespace_of_line());
+					insert(cursor, "\n" + indent);
+					cursor += 1 + indent.length();
+				} else {
+					insert(cursor, "\n");
+					cursor += 1;
+				}
 			}
-			
 		}
 		
 		if (input(input, GLFW.GLFW_KEY_TAB)) {
@@ -179,7 +186,7 @@ public class NTEditor {
 			}
 			
 			// Drag cursor & select
-			setcursor(closest.real_char(), true, false); 
+			if (closest != null) setcursor(closest.real_char(), true, false); 
 
 			// Reset slection
 			if (input.mouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !shift) {
@@ -333,7 +340,7 @@ public class NTEditor {
 	
 	long last_restore_point_time = System.currentTimeMillis();
 	boolean force_next_restore_point = true;
-	
+		
 	public void set_restore_point(boolean force) {
 		if (!force && !force_next_restore_point && System.currentTimeMillis() - last_restore_point_time < 1000) return;
 		force_next_restore_point = false;
@@ -373,7 +380,22 @@ public class NTEditor {
 	private void insert(int index, String string) {
 		set_restore_point(false);
 		CharacterLocation cursor_pos = find_char(index);
-		cursor_pos.unit.insert(string, cursor_pos.index);
+		if (cursor_pos == null) {
+			if (document.units().size() > 0) {
+				document.units().getFirst().insert(string, document.units().getFirst().character_count());
+				document.generate_character_map();
+				document.change_color(document.units().getFirst().character_count()-1, input_text_color);
+			} else {
+				NTTextUnit unit = new NTTextUnit(string);
+				unit.color(input_text_color);
+				document.add_unit(unit);
+				
+			}
+		} else {
+			cursor_pos.unit.insert(string, cursor_pos.index);
+			document.generate_character_map();
+			document.change_color(cursor, input_text_color);
+		}
 		if (insert) remove(cursor + 1);
 		document.generate_character_map();
 		onTextModified(this);
@@ -386,6 +408,7 @@ public class NTEditor {
 		}
 		if (index < 0) return;
 		CharacterLocation cursor_pos = find_char(index);
+		if (cursor_pos == null) return;
 		cursor_pos.unit.remove(cursor_pos.index);
 		if (cursor_pos.unit.character_count() == 0) {
 			document.document.remove(cursor_pos.unit);
@@ -406,6 +429,14 @@ public class NTEditor {
 
 	public void onTextModified(NTEditor self) {
 		// callback
+	}
+
+	public void onEnter(NTEditor self) {
+		// callback
+	}
+
+	public void finish_on_enter(boolean b) {
+		finish_on_enter = b;
 	}
 
 	public int cursor() {
