@@ -9,6 +9,8 @@ import snowui.elements.interfaces.components.SubElementReplaceQueue;
 
 public class GUISplit extends GUIElement implements SubElementReplaceable {
 	
+	public interface ForceTightSplit {}
+	
 	{ identifier("split_view"); }
 
 	public GUISplit(GUIElement first, GUIElement second) {
@@ -41,6 +43,10 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 	
 	float split = 0.5f;
 	boolean vertical = false;
+
+	public boolean is_vertical() {
+		return vertical;
+	}
 	
 	public GUISplit verticalify() {
 		if (!vertical) {
@@ -82,6 +88,23 @@ public class GUISplit extends GUIElement implements SubElementReplaceable {
 	public void updateDrawInfo(GUIInstance gui) {
 		Rectangle b = limit_rectangle();
 		this.hover_rectangle(b);
+		
+		// TODO : this interface makes GUIRemainderSplit redundant
+		if (vertical) {
+			if (first instanceof GUISplit.ForceTightSplit) {
+				split = first.height() / (float) b.height();
+			}
+			if (second instanceof GUISplit.ForceTightSplit) {
+				split = 1 - (second.height() / (float)  b.height());
+			}
+		} else {
+			if (first instanceof GUISplit.ForceTightSplit) {
+				split = first.width() / (float) b.width();
+			}
+			if (second instanceof GUISplit.ForceTightSplit) {
+				split = 1 - (second.width() / (float)  b.width());
+			}
+		}
 		
 		if ((first == null || second == null) && (first != null || second != null)) { 
 			if (first  != null) first.limit_rectangle(b);
