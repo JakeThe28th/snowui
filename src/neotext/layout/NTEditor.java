@@ -21,7 +21,6 @@ public class NTEditor {
 		document = new NTDocument();
 	}
 	
-	private static final Vector4f CURSOR_COLOR 			= new Vector4f(0,0,0,1);
 	private static final Vector4f CURSOR_COLOR_INSERT 	= new Vector4f(0.2f, .8f, .8f, 0.75f);
 	private static final Vector4f SELECTION_COLOR 		= new Vector4f(0.2f, .8f, .8f, 0.5f);
 	
@@ -174,26 +173,7 @@ public class NTEditor {
 		}
 		
 		if (input.mouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT) || input.mouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
-			CharacterInfo closest = null;
-			double closest_dist = -1;
-			for (CharacterInfo info : document.rendered_characters) {
-				Vector2i c = info.area().center();
-		        double distance = distance(mp, c);
-		        if (closest_dist < 0 || distance < closest_dist) {
-		        	closest_dist = distance;
-		        	closest = info;
-		        }
-			}
-			
-			// Drag cursor & select
-			if (closest != null) setcursor(closest.real_char(), true, false); 
-
-			// Reset slection
-			if (input.mouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !shift) {
-				select_start = cursor;
-				select_end   = cursor;
-			}
-			
+			if (input.hasInputThisFrame()) select_hovered(input, mp, shift, true);
 		}
 		
 		if (input.keyDown(GLFW.GLFW_KEY_LEFT_CONTROL) && input(input, GLFW.GLFW_KEY_Z)) {
@@ -425,6 +405,28 @@ public class NTEditor {
 		int len = document.content_length();	if (cursor > len) cursor = len;
 		if (!shift) select_start = cursor;
 		select_end = cursor;
+	}
+	
+	public void select_hovered(Input input, Vector2i mp, boolean shift, boolean shift_for_setcursor) {
+		CharacterInfo closest = null;
+		double closest_dist = -1;
+		for (CharacterInfo info : document.rendered_characters) {
+			Vector2i c = info.area().center();
+	        double distance = distance(mp, c);
+	        if (closest_dist < 0 || distance < closest_dist) {
+	        	closest_dist = distance;
+	        	closest = info;
+	        }
+		}
+
+		// Drag cursor & select
+		if (closest != null) setcursor(closest.real_char(), shift_for_setcursor, false); 
+
+		// Reset slection
+		if (input.mouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT) && !shift) {
+			select_start = cursor;
+			select_end   = cursor;
+		}
 	}
 
 	public void onTextModified(NTEditor self) {

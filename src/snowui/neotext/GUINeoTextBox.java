@@ -3,6 +3,7 @@ package snowui.neotext;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 
+import frost3d.enums.CursorType;
 import frost3d.utility.Rectangle;
 import neotext.layout.NTDocument;
 import neotext.layout.NTEditor;
@@ -37,7 +38,12 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 			}
 		};
 
-		@Override public void onSingleClick(GUIInstance gui) { select(gui); }
+		@Override public void onPress(GUIInstance gui) { 
+			if (!is_selected()) {
+				select(gui);
+				text.text_editor.select_hovered(gui.rawinput(), gui.mousepos().sub(area.left(), area.top()), false, false); 
+			}
+		}
 		
 		Rectangle area = new Rectangle(0,0,0,0);
 
@@ -61,6 +67,8 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 			if (hover_rectangle() != null && gui.primary_click_released() && !hover_rectangle().contains(gui.mousepos())) deselect();
 			// tick editor
 			if (is_selected()) text_editor.tick(gui.rawinput(), gui.mousepos().sub(area.left(), area.top()));
+			// cursor icon
+			if (get(PredicateKey.HOVERED)) gui.cursor(CursorType.IBEAM_CURSOR);
 		}
 		
 		@Override
@@ -76,6 +84,12 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 	public GUINeoTextBox(String string) {
 		registerSubElement(text);
 		text.text_editor.document.set_from_string(string);
+	}
+	
+	@Override
+	public void tickAnimation(GUIInstance gui) {
+		// cursor icon
+		if (get(PredicateKey.HOVERED)) gui.cursor(CursorType.IBEAM_CURSOR);
 	}
 	
 	@Override
@@ -104,7 +118,7 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 	}
 
 	@Override 
-	public void onSingleClick(GUIInstance gui) { select(gui); }
+	public void onPress(GUIInstance gui) { select(gui); }
 	
 	public boolean is_selected() { return (focused_text_box == this); }
 
