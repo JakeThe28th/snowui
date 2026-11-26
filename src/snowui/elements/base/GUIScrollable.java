@@ -366,8 +366,11 @@ public class GUIScrollable extends GUIElement {
 			((CanHandleOwnScrolling) root).set_y_scroll(vertical_scrollbar  .scroll_amount_pixels());
 		} else {
 			if (root.style().min_width().constant() == Constant.CONTAINER) {
-				// (to allow for the element to fill the space [i forgot why this doesn't set both right and bottom but im not touching it lol])
-				root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
+				// OLD (to allow for the element to fill the space [i forgot why this doesn't set both right and bottom but im not touching it lol])
+				// OLD root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
+				int right = root_limit.left() + root.width();
+				if (area_rectangle.right() > right) right = area_rectangle.right();
+				root_limit = new Rectangle(root_limit.left(), root_limit.top(), right, root_limit.bottom());
 			} else if (!horizontal_scroll_enabled) {
 				// (to allow for horizontal centering when only vertical scrolling is wanted)
 				root_limit = new Rectangle(root_limit.left(), root_limit.top(), area_rectangle.right(), root_limit.bottom());
