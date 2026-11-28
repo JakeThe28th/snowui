@@ -63,10 +63,15 @@ public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandle
 		
 		@Override
 		public void tickAnimation(GUIInstance gui) {
+			// TODO : the check in if (is_selected()) { ... } should prolly catch this
+			if (unpadded_width != text_editor.document.cached_rendered_size().x) should_recalculate_size(true);
 			// deselect when somewhere else is clicked
 			if (hover_rectangle() != null && gui.primary_click_released() && !hover_rectangle().contains(gui.mousepos())) deselect();
 			// tick editor
-			if (is_selected()) text_editor.tick(gui.rawinput(), gui.mousepos().sub(area.left(), area.top()));
+			if (is_selected()) {
+				if (!gui.rawinput().input_string().isEmpty()) should_recalculate_size(true);
+				text_editor.tick(gui.rawinput(), gui.mousepos().sub(area.left(), area.top()));
+			}
 			// cursor icon
 			if (get(PredicateKey.HOVERED)) gui.cursor(CursorType.IBEAM_CURSOR);
 		}
