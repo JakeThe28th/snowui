@@ -14,7 +14,7 @@ import snowui.elements.base.GUIScrollable;
 
 public class GUINeoTextBox extends GUIElement implements GUIScrollable.CanHandleOwnScrolling {
 	
-	static GUINeoTextBox focused_text_box = null;
+	public static GUINeoTextBox focused_text_box = null;
 		
 	{ identifier("textbox"); }
 	
