@@ -19,6 +19,10 @@ public class GUIList extends GUIElement implements ElementReceiver {
 	boolean wrap = false;
 	int drop_m = 0;
 	
+	public boolean is_vertical() {
+		return vertical;
+	}
+	
 	public void drop_margin(int amt) {
 		this.drop_m = amt;
 	}
